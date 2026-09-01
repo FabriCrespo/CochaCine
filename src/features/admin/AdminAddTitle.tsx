@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react'
+import type { Movie } from '../../domain/movie.ts'
 import { useAddCatalogMovie } from '../../query/overrides/useOverrides.ts'
 
 type AdminAddTitleProps = {
-  onAdded: (movie: { id: number }) => void
+  onAdded: (movie: Movie) => void
 }
 
 export function AdminAddTitle({ onAdded }: AdminAddTitleProps) {

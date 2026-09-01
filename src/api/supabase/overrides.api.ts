@@ -13,15 +13,25 @@ import {
   type MovieOverrideWrite,
 } from './types.ts'
 
+type LooseResult = {
+  data: unknown
+  error: { message: string } | null
+}
+
 export async function fetchMovieOverride(tmdbId: number): Promise<MovieOverride | null> {
   const supabase = getSupabase()
   if (!supabase || tmdbId <= 0) return null
 
-  const row = await selectOverride((columns) =>
+  const result = await selectWithFallback((columns) =>
     supabase.from(MOVIE_OVERRIDES_TABLE).select(columns).eq('tmdb_id', tmdbId).maybeSingle(),
   )
 
-  return row
+  if (result.error) {
+    console.warn('[Supabase] override', tmdbId, result.error.message)
+    return null
+  }
+
+  return asOverride(result.data)
 }
 
 export async function fetchMovieOverrides(
@@ -36,10 +46,16 @@ export async function fetchMovieOverrides(
 
   for (let index = 0; index < unique.length; index += chunkSize) {
     const chunk = unique.slice(index, index + chunkSize)
-    const rows = await selectOverrideList((columns) =>
+    const result = await selectWithFallback((columns) =>
       supabase.from(MOVIE_OVERRIDES_TABLE).select(columns).in('tmdb_id', chunk),
     )
-    for (const row of rows) {
+
+    if (result.error) {
+      console.warn('[Supabase] overrides', result.error.message)
+      continue
+    }
+
+    for (const row of asOverrideList(result.data)) {
       map.set(row.tmdb_id, row)
     }
   }
@@ -51,9 +67,15 @@ export async function fetchAllMovieOverrides(): Promise<MovieOverride[]> {
   const supabase = getSupabase()
   if (!supabase) return []
 
-  return selectOverrideList((columns) =>
+  const result = await selectWithFallback((columns) =>
     supabase.from(MOVIE_OVERRIDES_TABLE).select(columns).order('updated_at', { ascending: false }),
   )
+
+  if (result.error) {
+    throw new AppError(result.error.message, 'HTTP', null)
+  }
+
+  return asOverrideList(result.data)
 }
 
 export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<MovieOverride> {
@@ -64,8 +86,9 @@ export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<
     .select(MOVIE_OVERRIDE_COLUMNS)
     .single()
 
-  if (!full.error && full.data) {
-    return normalizeMovieOverride(full.data)
+  if (!full.error) {
+    const row = asOverride(full.data)
+    if (row) return row
   }
 
   if (!isMissingColumnError(full.error?.message)) {
@@ -79,11 +102,12 @@ export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<
     .select(MOVIE_OVERRIDE_LEGACY_COLUMNS)
     .single()
 
-  if (legacy.error || !legacy.data) {
+  const row = asOverride(legacy.data)
+  if (legacy.error || !row) {
     throw new AppError(legacy.error?.message ?? 'Could not save the override.', 'HTTP', null)
   }
 
-  return normalizeMovieOverride(legacy.data)
+  return row
 }
 
 export async function deleteMovieOverride(tmdbId: number): Promise<void> {
@@ -114,50 +138,27 @@ export async function uploadMoviePoster(tmdbId: number, file: File): Promise<str
   return data.publicUrl
 }
 
-type SelectResult<T> = PromiseLike<{ data: T; error: { message: string } | null }>
-
-async function selectOverride(
-  run: (columns: string) => SelectResult<Partial<MovieOverride> | null>,
-): Promise<MovieOverride | null> {
+async function selectWithFallback(
+  run: (columns: string) => PromiseLike<LooseResult>,
+): Promise<LooseResult> {
   const full = await run(MOVIE_OVERRIDE_COLUMNS)
-  if (!full.error) {
-    return full.data ? normalizeMovieOverride(full.data as MovieOverride) : null
-  }
-
-  if (!isMissingColumnError(full.error.message)) {
-    console.warn('[Supabase] override', full.error.message)
-    return null
-  }
-
-  const legacy = await run(MOVIE_OVERRIDE_LEGACY_COLUMNS)
-  if (legacy.error) {
-    console.warn('[Supabase] override', legacy.error.message)
-    return null
-  }
-
-  return legacy.data ? normalizeMovieOverride(legacy.data as MovieOverride) : null
+  if (!full.error || !isMissingColumnError(full.error.message)) return full
+  return run(MOVIE_OVERRIDE_LEGACY_COLUMNS)
 }
 
-async function selectOverrideList(
-  run: (columns: string) => SelectResult<Array<Partial<MovieOverride>> | null>,
-): Promise<MovieOverride[]> {
-  const full = await run(MOVIE_OVERRIDE_COLUMNS)
-  if (!full.error) {
-    return (full.data ?? []).map((row) => normalizeMovieOverride(row as MovieOverride))
-  }
+function asOverride(row: unknown): MovieOverride | null {
+  if (!row || typeof row !== 'object') return null
+  const tmdbId = (row as { tmdb_id?: unknown }).tmdb_id
+  if (typeof tmdbId !== 'number' || tmdbId <= 0) return null
+  return normalizeMovieOverride(row as Partial<MovieOverride> & { tmdb_id: number })
+}
 
-  if (!isMissingColumnError(full.error.message)) {
-    console.warn('[Supabase] overrides', full.error.message)
-    return []
-  }
-
-  const legacy = await run(MOVIE_OVERRIDE_LEGACY_COLUMNS)
-  if (legacy.error) {
-    console.warn('[Supabase] overrides', legacy.error.message)
-    return []
-  }
-
-  return (legacy.data ?? []).map((row) => normalizeMovieOverride(row as MovieOverride))
+function asOverrideList(data: unknown): MovieOverride[] {
+  if (!Array.isArray(data)) return []
+  return data.flatMap((row) => {
+    const override = asOverride(row)
+    return override ? [override] : []
+  })
 }
 
 function isMissingColumnError(message: string | undefined): boolean {
