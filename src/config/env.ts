@@ -29,8 +29,8 @@ function requiredEnv(name: EnvName): string {
 
   if (!value) {
     throw new Error(
-      `Falta la variable ${name} en el archivo .env. ` +
-        `Cópiala desde .env.example y completa el valor.`,
+      `Missing ${name} in the .env file. ` +
+        `Copy it from .env.example and fill in the value.`,
     )
   }
 

@@ -26,3 +26,23 @@ export function formatRuntimeMinutes(minutes: number | null): string | null {
   if (rest === 0) return `${hours} h`
   return `${hours} h ${rest} min`
 }
+
+/** 98 min → "1h 38m". */
+export function formatRuntimeCompact(minutes: number | null): string | null {
+  if (minutes == null || minutes <= 0) return null
+  const hours = Math.floor(minutes / 60)
+  const rest = minutes % 60
+  if (hours === 0) return `${rest}m`
+  if (rest === 0) return `${hours}h`
+  return `${hours}h ${rest}m`
+}
+
+/** 2024-03-07 → "March 7, 2024". */
+export function formatReleaseDateLong(isoDate: string | null): string | null {
+  if (!isoDate) return null
+  const [year, month, day] = isoDate.split('-').map(Number)
+  if (!year || !month || !day) return isoDate
+  return format(new Date(year, month - 1, day), 'MMMM d, yyyy', {
+    locale: enUS,
+  })
+}

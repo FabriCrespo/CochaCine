@@ -125,6 +125,29 @@ export type TmdbWatchProvidersDto = {
  * GET /movie/{id}?append_to_response=credits,videos,watch/providers
  * El slash en `watch/providers` es el nombre real de la key de TMDB.
  */
+export type TmdbKeywordDto = {
+  id: number
+  name: string
+}
+
+export type TmdbMovieKeywordsDto = {
+  keywords?: TmdbKeywordDto[]
+  results?: TmdbKeywordDto[]
+}
+
+export type TmdbReleaseDateItemDto = {
+  certification?: string
+  release_date?: string
+  type?: number
+}
+
+export type TmdbReleaseDatesDto = {
+  results?: Array<{
+    iso_3166_1: string
+    release_dates?: TmdbReleaseDateItemDto[]
+  }>
+}
+
 export type TmdbMovieDetailDto = TmdbMovieListItemDto & {
   runtime: number | null
   tagline?: string | null
@@ -140,10 +163,16 @@ export type TmdbMovieDetailDto = TmdbMovieListItemDto & {
     iso_3166_1?: string
     name?: string
   }>
+  production_companies?: Array<{
+    id?: number
+    name?: string
+  }>
   credits?: TmdbCreditsDto
   videos?: { results?: TmdbVideoDto[] }
   images?: TmdbMovieImagesDto
   translations?: TmdbMovieTranslationsDto
+  keywords?: TmdbMovieKeywordsDto
+  release_dates?: TmdbReleaseDatesDto
   imdb_id?: string | null
   external_ids?: { imdb_id?: string | null }
   'watch/providers'?: TmdbWatchProvidersDto

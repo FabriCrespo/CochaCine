@@ -277,7 +277,7 @@ export async function fetchMovieByIdFromSources(id: number): Promise<MovieDetail
     axiosClient.get<TmdbMovieDetailDto>(TMDB_ENDPOINTS.movies.detail(id), {
       params: {
         ...ENGLISH_MEDIA_PARAMS,
-        append_to_response: 'credits,translations',
+        append_to_response: 'credits,translations,keywords,release_dates',
       },
     }),
     fetchMovieVideos(id),

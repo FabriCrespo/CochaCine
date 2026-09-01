@@ -71,6 +71,13 @@ export type MoviePerson = {
   photoUrl: string | null
 }
 
+export type MovieHighlightKind = 'bolivia' | 'true-story'
+
+export type MovieHighlight = {
+  kind: MovieHighlightKind
+  text: string
+}
+
 export type MovieDetail = Movie & {
   originalTitle: string
   tagline: string | null
@@ -80,6 +87,11 @@ export type MovieDetail = Movie & {
   countries: string[]
   backdropUrl: string | null
   director: MoviePerson | null
+  writers: string[]
+  productionCompanies: string[]
+  releaseDate: string | null
+  certification: string | null
+  highlights: MovieHighlight[]
   cast: MovieCastMember[]
   trailerYoutubeKey: string | null
   watch: MovieWatchOptions

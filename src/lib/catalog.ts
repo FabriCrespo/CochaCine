@@ -56,6 +56,27 @@ function suggestionScore(movie: Movie, needle: string): number {
   return 0
 }
 
+export function similarCatalogMovies(
+  movies: Movie[],
+  current: { id: number; genreIds: number[] },
+  limit = 10,
+): Movie[] {
+  const wanted = new Set(current.genreIds)
+  const ranked = movies
+    .filter((movie) => movie.id !== current.id)
+    .map((movie) => ({
+      movie,
+      overlap: movie.genreIds.filter((id) => wanted.has(id)).length,
+    }))
+    .sort(
+      (left, right) =>
+        right.overlap - left.overlap ||
+        right.movie.popularity - left.movie.popularity,
+    )
+
+  return ranked.slice(0, limit).map((item) => item.movie)
+}
+
 export function sortCatalogMovies(movies: Movie[], sortBy: CatalogSort): Movie[] {
   return [...movies].sort((left, right) => compareMovies(left, right, sortBy))
 }

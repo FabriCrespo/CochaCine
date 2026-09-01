@@ -14,14 +14,17 @@ import { paths } from '../../lib/paths.ts'
 type AppShellProps = {
   title: string
   toolbar?: ReactNode
+  wide?: boolean
   children: ReactNode
 }
 
-export function AppShell({ title, toolbar, children }: AppShellProps) {
+export function AppShell({ title, toolbar, wide = false, children }: AppShellProps) {
+  const width = wide ? 'max-w-7xl' : 'max-w-6xl'
+
   return (
     <div className="min-h-screen bg-ink text-brand">
       <header className="sticky top-0 z-50 border-b border-brand/20 bg-ink/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-2.5">
+        <div className={`mx-auto flex ${width} flex-wrap items-center gap-3 px-4 py-2.5`}>
           <Link to={paths.catalog()} className="shrink-0">
             <img
               src="/logo.png?v=2"
@@ -39,7 +42,7 @@ export function AppShell({ title, toolbar, children }: AppShellProps) {
           </Link>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6 pb-16">{children}</main>
+      <main className={`mx-auto ${width} px-4 ${wide ? 'py-8 pb-20' : 'py-6 pb-16'}`}>{children}</main>
     </div>
   )
 }

@@ -12,6 +12,7 @@ import type {
   Movie,
   MovieCastMember,
   MovieDetail,
+  MovieHighlight,
   MoviePerson,
   MovieWatchOptions,
   PopularMoviesPage,
@@ -28,7 +29,10 @@ import type {
   TmdbWatchCountryDto,
 } from './tmdb.types.ts'
 
-const CAST_LIMIT = 8
+const CAST_LIMIT = 12
+const WRITER_JOBS = new Set(['Writer', 'Screenplay', 'Story', 'Teleplay'])
+const TRUE_STORY_KEYWORD = /true story|real (life|events)|based on.*(true|real)/i
+const CERT_REGIONS = ['BO', 'US', 'ES', 'MX', 'AR', 'PE', 'CL']
 
 export function mapMovie(dto: TmdbMovieListItemDto): Movie {
   return {
@@ -111,6 +115,11 @@ export function mapMovieDetail(dto: TmdbMovieDetailDto): MovieDetail {
     ),
     voteCount: dto.vote_count ?? 0,
     director: pickDirector(dto),
+    writers: mapCrewNames(dto, WRITER_JOBS),
+    productionCompanies: mapProductionCompanies(dto),
+    releaseDate: dto.release_date?.trim() || null,
+    certification: pickCertification(dto),
+    highlights: mapHighlights(dto),
     cast: mapCast(dto),
     trailerYoutubeKey: pickYoutubeTrailer(dto.videos?.results),
     watch: mapWatchOptions(dto, BOLIVIA_ORIGIN_COUNTRY),
@@ -121,13 +130,102 @@ function pickDirector(dto: TmdbMovieDetailDto): MoviePerson | null {
   const directors = (dto.credits?.crew ?? []).filter((person) => person.job === 'Director')
   if (directors.length === 0) return null
 
+  const names = uniqueStrings(directors.map((person) => person.name.trim()).filter(Boolean))
   const chosen =
     directors.find((person) => person.profile_path) ?? directors[0]
 
   return {
-    name: chosen.name,
+    name: names.join(', ') || chosen.name,
     photoUrl: profileUrl(chosen.profile_path),
   }
+}
+
+function mapCrewNames(dto: TmdbMovieDetailDto, jobs: Set<string>): string[] {
+  return uniqueStrings(
+    (dto.credits?.crew ?? [])
+      .filter((person) => jobs.has(person.job))
+      .map((person) => person.name.trim())
+      .filter(Boolean),
+  )
+}
+
+function mapProductionCompanies(dto: TmdbMovieDetailDto): string[] {
+  const companies = uniqueStrings(
+    (dto.production_companies ?? [])
+      .map((company) => company.name?.trim() ?? '')
+      .filter(Boolean),
+  )
+  if (companies.length > 0) return companies
+
+  return mapCrewNames(dto, new Set(['Producer']))
+}
+
+function pickCertification(dto: TmdbMovieDetailDto): string | null {
+  const groups = dto.release_dates?.results ?? []
+  for (const region of CERT_REGIONS) {
+    const formatted = formatCertification(firstCertification(groups, region))
+    if (formatted) return formatted
+  }
+
+  for (const group of groups) {
+    const formatted = formatCertification(firstCertification([group]))
+    if (formatted) return formatted
+  }
+
+  return null
+}
+
+function firstCertification(
+  groups: NonNullable<TmdbMovieDetailDto['release_dates']>['results'],
+  region?: string,
+): string | null {
+  const pool = (groups ?? []).filter((group) =>
+    region ? group.iso_3166_1 === region : true,
+  )
+
+  for (const group of pool) {
+    for (const item of group.release_dates ?? []) {
+      const cert = item.certification?.trim()
+      if (cert) return cert
+    }
+  }
+
+  return null
+}
+
+function formatCertification(raw: string | null): string | null {
+  if (!raw) return null
+  const digits = raw.match(/(\d{1,2})/)
+  if (digits) return `+${digits[1]}`
+  return raw
+}
+
+function mapHighlights(dto: TmdbMovieDetailDto): MovieHighlight[] {
+  const highlights: MovieHighlight[] = []
+  const filmedInBolivia =
+    (dto.production_countries ?? []).some(
+      (country) => country.iso_3166_1 === BOLIVIA_ORIGIN_COUNTRY,
+    ) || (dto.origin_country ?? []).includes(BOLIVIA_ORIGIN_COUNTRY)
+  if (filmedInBolivia) {
+    highlights.push({
+      kind: 'bolivia',
+      text: 'Shot entirely in Bolivia',
+    })
+  }
+
+  const keywordNames = [
+    ...(dto.keywords?.keywords ?? []),
+    ...(dto.keywords?.results ?? []),
+  ].map((keyword) => keyword.name)
+
+  if (keywordNames.some((name) => TRUE_STORY_KEYWORD.test(name))) {
+    highlights.push({
+      kind: 'true-story',
+      text: 'Inspired by true events',
+    })
+  }
+
+  return highlights
 }
 
 const LANGUAGE_NAMES: Record<string, string> = {

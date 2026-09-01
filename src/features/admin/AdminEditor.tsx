@@ -47,7 +47,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   async function persist(next: Draft) {
     try {
       await save.mutateAsync(toWrite(movie.id, next))
-      setFlash('Guardado')
+      setFlash('Saved')
       window.setTimeout(() => setFlash(null), 1600)
     } catch {
       setFlash(null)
@@ -98,11 +98,11 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
 
   async function handleDelete() {
     if (!override) return
-    if (!window.confirm('¿Borrar la corrección y volver a TMDB?')) return
+    if (!window.confirm('Delete this override and revert to TMDB?')) return
     try {
       await remove.mutateAsync(movie.id)
       setDraft(emptyDraft())
-      setFlash('Volviste a TMDB')
+      setFlash('Reverted to TMDB')
       window.setTimeout(() => setFlash(null), 1600)
     } catch {
       setFlash(null)
@@ -125,7 +125,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
         <div>
           <p className="text-xs tracking-[0.2em] uppercase text-brand/60">TMDB {movie.id}</p>
           <h2 className="mt-1 text-xl text-brand">{movie.title}</h2>
-          <p className="text-sm text-brand/60">{movie.releaseYear ?? 's/año'}</p>
+          <p className="text-sm text-brand/60">{movie.releaseYear ?? 'no year'}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
@@ -134,7 +134,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
             rel="noreferrer"
             className="border border-brand/40 px-3 py-1.5 text-xs tracking-[0.16em] uppercase text-brand/80 hover:border-brand"
           >
-            Ver ficha
+            View page
           </Link>
           {override ? (
             <button
@@ -142,7 +142,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
               onClick={() => void handleDelete()}
               className="border border-red-400/40 px-3 py-1.5 text-xs tracking-[0.16em] uppercase text-red-200 hover:border-red-300"
             >
-              Borrar override
+              Delete override
             </button>
           ) : null}
         </div>
@@ -158,14 +158,14 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
             />
           ) : (
             <div className="flex aspect-2/3 items-center justify-center bg-ink-soft text-xs text-brand/50">
-              Sin póster
+              No poster
             </div>
           )}
         </div>
 
         <div className="space-y-3">
           <Field
-            label="Título EN"
+            label="Title EN"
             hint={hint.title}
             value={draft.title_en}
             onChange={(value) => field('title_en', value)}
@@ -190,26 +190,26 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
 
       <label className="block">
         <span className="mb-1 flex items-center justify-between text-xs tracking-[0.16em] uppercase text-brand/70">
-          Sinopsis EN
+          Plot EN
           <button
             type="button"
             onClick={() => field('overview_en', hint.overview)}
             className="tracking-normal text-brand/50 lowercase hover:text-brand"
           >
-            copiar TMDB
+            copy TMDB
           </button>
         </span>
         <textarea
           value={draft.overview_en}
           onChange={(event) => field('overview_en', event.target.value)}
           rows={9}
-          placeholder={hint.overview || 'Vacío = se muestra TMDB/IMDb'}
+          placeholder={hint.overview || 'Empty = show TMDB/IMDb'}
           className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm leading-relaxed text-brand outline-none placeholder:text-brand/35 focus:border-brand"
         />
       </label>
 
       <Field
-        label="Póster (URL)"
+        label="Poster (URL)"
         hint={hint.poster}
         value={draft.poster_url}
         onChange={(value) => field('poster_url', value)}
@@ -217,7 +217,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
       />
 
       <label className="flex cursor-pointer items-center justify-center border border-dashed border-brand/40 px-3 py-2 text-xs tracking-[0.16em] uppercase text-brand/80 hover:border-brand">
-        {upload.isPending ? 'Subiendo...' : 'Subir póster'}
+        {upload.isPending ? 'Uploading...' : 'Upload poster'}
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
@@ -245,12 +245,12 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
 
       <label className="block">
         <span className="mb-1 block text-xs tracking-[0.16em] uppercase text-brand/70">
-          Notas internas
+          Internal notes
         </span>
         <input
           value={draft.notes}
           onChange={(event) => field('notes', event.target.value)}
-          placeholder="Solo para vos"
+          placeholder="Just for you"
           className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/35 focus:border-brand"
         />
       </label>
@@ -261,7 +261,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
           disabled={save.isPending || !dirty}
           className="border border-brand bg-brand px-4 py-2 text-sm tracking-[0.18em] uppercase text-ink disabled:opacity-40"
         >
-          {save.isPending ? 'Guardando...' : 'Guardar'}
+          {save.isPending ? 'Saving...' : 'Save'}
         </button>
         <p className="text-xs text-brand/50">Ctrl+S</p>
         {flash ? <p className="text-sm text-brand">{flash}</p> : null}
@@ -291,7 +291,7 @@ function Field({ label, hint, value, onChange, onUseHint, onBlur }: FieldProps) 
             onClick={onUseHint}
             className="tracking-normal text-brand/50 lowercase hover:text-brand"
           >
-            copiar TMDB
+            copy TMDB
           </button>
         ) : null}
       </span>
@@ -299,7 +299,7 @@ function Field({ label, hint, value, onChange, onUseHint, onBlur }: FieldProps) 
         value={value}
         onChange={(event) => onChange(event.target.value)}
         onBlur={onBlur}
-        placeholder={hint || 'Vacío = TMDB'}
+        placeholder={hint || 'Empty = TMDB'}
         className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/35 focus:border-brand"
       />
     </label>

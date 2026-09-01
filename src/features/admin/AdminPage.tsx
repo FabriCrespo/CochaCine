@@ -57,16 +57,16 @@ export function AdminPage() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar título..."
+              placeholder="Search titles..."
               className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-brand"
             />
             <div className="flex flex-wrap gap-1.5">
               {(
                 [
-                  ['missing-overview', 'Sin sinopsis'],
-                  ['missing-poster', 'Sin póster'],
-                  ['edited', 'Editadas'],
-                  ['all', 'Todas'],
+                  ['missing-overview', 'No plot'],
+                  ['missing-poster', 'No poster'],
+                  ['edited', 'Edited'],
+                  ['all', 'All'],
                 ] as const
               ).map(([value, label]) => (
                 <button
@@ -84,13 +84,13 @@ export function AdminPage() {
               ))}
             </div>
             <p className="text-xs text-brand/50">
-              {visibleMovies.length} títulos
-              {overrides.isError ? ' · no pude leer overrides (¿corriste el SQL?)' : ''}
+              {visibleMovies.length} titles
+              {overrides.isError ? ' · could not load overrides (did you run the SQL?)' : ''}
             </p>
           </div>
           <ul className="min-h-0 flex-1 overflow-auto">
             {catalog.isPending ? (
-              <li className="px-4 py-3 text-sm text-brand/60">Cargando catálogo...</li>
+              <li className="px-4 py-3 text-sm text-brand/60">Loading catalog...</li>
             ) : null}
             {visibleMovies.map((movie) => {
               const active = movie.id === selectedId
@@ -116,9 +116,9 @@ export function AdminPage() {
                     <span className="min-w-0">
                       <span className="block truncate text-sm text-brand">{movie.title}</span>
                       <span className="mt-0.5 block text-[11px] text-brand/50">
-                        {movie.releaseYear ?? 's/año'}
-                        {edited ? ' · editada' : ''}
-                        {!movie.overview ? ' · sin sinopsis' : ''}
+                        {movie.releaseYear ?? 'no year'}
+                        {edited ? ' · edited' : ''}
+                        {!movie.overview ? ' · no plot' : ''}
                       </span>
                     </span>
                   </button>
@@ -138,7 +138,7 @@ export function AdminPage() {
             />
           ) : (
             <p className="pt-16 text-center text-sm text-brand/60">
-              Elegí una película a la izquierda. El filtro arranca en las que no tienen sinopsis.
+              Pick a title on the left. The list starts with movies that have no plot.
             </p>
           )}
         </section>
@@ -172,11 +172,11 @@ function AdminFrame({
         </div>
         <div className="flex items-center gap-3 text-xs tracking-[0.16em] uppercase">
           <Link to={paths.catalog()} className="text-brand/70 hover:text-brand">
-            Cartelera
+            Catalog
           </Link>
           {onLock ? (
             <button type="button" onClick={onLock} className="text-brand/70 hover:text-brand">
-              Salir
+              Sign out
             </button>
           ) : null}
         </div>

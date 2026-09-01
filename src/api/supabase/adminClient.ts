@@ -35,13 +35,13 @@ export function clearAdminSession(): void {
 
 export function requireWriteClient(): SupabaseClient {
   if (!hasAdminSession()) {
-    throw new AppError('Sesión de editor cerrada.', 'HTTP', 401)
+    throw new AppError('Editor session ended.', 'HTTP', 401)
   }
 
   const client = getSupabase()
   if (!client) {
     throw new AppError(
-      'Falta VITE_SUPABASE_URL o VITE_SUPABASE_PUBLISHABLE_KEY en .env. Reiniciá npm run dev.',
+      'Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY in .env. Restart npm run dev.',
       'HTTP',
       null,
     )
@@ -53,11 +53,11 @@ export function requireWriteClient(): SupabaseClient {
 export async function verifyAdminPassword(password: string): Promise<void> {
   const expected = env.adminPassword
   if (!expected) {
-    throw new AppError('Falta VITE_ADMIN_PASSWORD en .env.', 'HTTP', null)
+    throw new AppError('Missing VITE_ADMIN_PASSWORD in .env.', 'HTTP', null)
   }
 
   if (password !== expected) {
-    throw new AppError('Contraseña incorrecta.', 'HTTP', 401)
+    throw new AppError('Incorrect password.', 'HTTP', 401)
   }
 
   localStorage.setItem(STORAGE_KEY, '1')

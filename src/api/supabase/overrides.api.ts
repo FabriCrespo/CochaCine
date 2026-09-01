@@ -82,7 +82,7 @@ export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<
     .single()
 
   if (error || !data) {
-    throw new AppError(error?.message ?? 'No se pudo guardar el override.', 'HTTP', null)
+    throw new AppError(error?.message ?? 'Could not save the override.', 'HTTP', null)
   }
 
   return data

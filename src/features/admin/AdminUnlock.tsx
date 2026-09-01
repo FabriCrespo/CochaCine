@@ -19,7 +19,7 @@ export function AdminUnlock({ onUnlocked }: AdminUnlockProps) {
       await verifyAdminPassword(password)
       onUnlocked()
     } catch (caught) {
-      setError(caught instanceof AppError ? caught.message : 'No se pudo entrar.')
+      setError(caught instanceof AppError ? caught.message : 'Could not sign in.')
     } finally {
       setPending(false)
     }
@@ -28,17 +28,17 @@ export function AdminUnlock({ onUnlocked }: AdminUnlockProps) {
   return (
     <div className="mx-auto max-w-md pt-16">
       <p className="text-center text-xs tracking-[0.28em] uppercase text-brand/70">Editor</p>
-      <h1 className="mt-3 text-center text-2xl text-brand">Correcciones rápidas</h1>
-      <p className="mt-4 text-center text-sm text-brand/70">Ingresá la contraseña del editor.</p>
+      <h1 className="mt-3 text-center text-2xl text-brand">Quick edits</h1>
+      <p className="mt-4 text-center text-sm text-brand/70">Enter the editor password.</p>
       <form onSubmit={(event) => void handleSubmit(event)} className="mt-8 space-y-4">
         <label className="block">
-          <span className="sr-only">Contraseña</span>
+          <span className="sr-only">Password</span>
           <input
             type="password"
             autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="Contraseña"
+            placeholder="Password"
             className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/35 focus:border-brand"
           />
         </label>
@@ -48,7 +48,7 @@ export function AdminUnlock({ onUnlocked }: AdminUnlockProps) {
           disabled={pending || !password}
           className="w-full border border-brand bg-brand px-3 py-2 text-sm tracking-[0.18em] uppercase text-ink disabled:opacity-40"
         >
-          {pending ? 'Entrando...' : 'Entrar'}
+          {pending ? 'Signing in...' : 'Sign in'}
         </button>
       </form>
     </div>
