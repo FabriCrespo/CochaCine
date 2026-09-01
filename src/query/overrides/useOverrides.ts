@@ -6,7 +6,9 @@ import {
   uploadMoviePoster,
   upsertMovieOverride,
 } from '../../api/supabase/overrides.api.ts'
+import { addCatalogMovieFromInput } from '../../api/tmdb/movies.api.ts'
 import type { AppError } from '../../api/http/errors.ts'
+import type { Movie } from '../../domain/movie.ts'
 import type { MovieOverride, MovieOverrideWrite } from '../../api/supabase/types.ts'
 import { movieKeys, overrideKeys } from '../keys.ts'
 
@@ -56,6 +58,17 @@ export function useDeleteOverride() {
     mutationFn: deleteMovieOverride,
     onSuccess: (_void, tmdbId) => {
       invalidateEditorial(queryClient, tmdbId)
+    },
+  })
+}
+
+export function useAddCatalogMovie() {
+  const queryClient = useQueryClient()
+
+  return useMutation<Movie, AppError, string>({
+    mutationFn: addCatalogMovieFromInput,
+    onSuccess: (movie) => {
+      invalidateEditorial(queryClient, movie.id)
     },
   })
 }

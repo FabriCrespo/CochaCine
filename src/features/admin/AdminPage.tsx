@@ -7,6 +7,7 @@ import { paths, parseMovieIdParam } from '../../lib/paths.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
 import { useMovieSource } from '../../query/movies/useMovieSource.ts'
 import { useMovieOverride, useOverrideList } from '../../query/overrides/useOverrides.ts'
+import { AdminAddTitle } from './AdminAddTitle.tsx'
 import { AdminEditor } from './AdminEditor.tsx'
 import { AdminUnlock } from './AdminUnlock.tsx'
 
@@ -19,10 +20,22 @@ export function AdminPage() {
   const [unlocked, setUnlocked] = useState(() => hasAdminSession())
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<ListFilter>('missing-overview')
+  const [pinned, setPinned] = useState<Movie | null>(null)
 
   const catalog = useBolivianMovies()
   const overrides = useOverrideList()
-  const selectedMovie = catalog.data?.movies.find((movie) => movie.id === selectedId) ?? null
+
+  const catalogMovies = useMemo(() => {
+    const movies = catalog.data?.movies ?? []
+    if (pinned && !movies.some((movie) => movie.id === pinned.id)) {
+      return [pinned, ...movies]
+    }
+    return movies
+  }, [catalog.data?.movies, pinned])
+
+  const selectedMovie =
+    catalogMovies.find((movie) => movie.id === selectedId) ??
+    (pinned?.id === selectedId ? pinned : null)
   const source = useMovieSource(selectedId ?? 0)
   const override = useMovieOverride(selectedId ?? 0)
 
@@ -31,9 +44,9 @@ export function AdminPage() {
   }, [overrides.data])
 
   const visibleMovies = useMemo(() => {
-    const searched = filterCatalogMovies(catalog.data?.movies ?? [], query, [], '')
+    const searched = filterCatalogMovies(catalogMovies, query, [], '')
     return searched.filter((movie) => matchesFilter(movie, filter, editedIds))
-  }, [catalog.data?.movies, query, filter, editedIds])
+  }, [catalogMovies, query, filter, editedIds])
 
   if (!unlocked) {
     return (
@@ -53,6 +66,13 @@ export function AdminPage() {
       <div className="grid min-h-[calc(100vh-5.5rem)] gap-0 lg:grid-cols-[minmax(260px,340px)_1fr]">
         <aside className="flex min-h-0 flex-col border-b border-brand/25 lg:border-r lg:border-b-0">
           <div className="space-y-3 p-4">
+            <AdminAddTitle
+              onAdded={(movie) => {
+                setPinned(movie)
+                setFilter('all')
+                navigate(paths.adminMovie(movie.id))
+              }}
+            />
             <input
               type="search"
               value={query}

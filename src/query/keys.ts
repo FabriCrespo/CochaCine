@@ -21,7 +21,7 @@ export const movieKeys = {
   director: (personId: number) => [...movieKeys.lists(), 'director', personId] as const,
   genres: () => [...movieKeys.all, 'genres'] as const,
   details: () => [...movieKeys.all, 'detail'] as const,
-  detail: (id: number) => [...movieKeys.details(), id, 'supabase-overlay-v3'] as const,
+  detail: (id: number) => [...movieKeys.details(), id, 'supabase-overlay-v5'] as const,
   detailSource: (id: number) => [...movieKeys.details(), id, 'tmdb-imdb'] as const,
 }
 

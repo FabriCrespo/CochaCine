@@ -16,6 +16,7 @@ export const TMDB_ENDPOINTS = {
   movies: {
     discover: '/discover/movie',
     search: '/search/movie',
+    find: (externalId: string) => `/find/${externalId}`,
     detail: (id: number) => `/movie/${id}`,
     videos: (id: number) => `/movie/${id}/videos`,
     images: (id: number) => `/movie/${id}/images`,

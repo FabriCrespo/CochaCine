@@ -37,6 +37,10 @@ export type TmdbMovieListItemDto = {
   genre_ids?: number[]
 }
 
+export type TmdbFindDto = {
+  movie_results?: TmdbMovieListItemDto[]
+}
+
 export type TmdbPopularMoviesDto = {
   page: number
   results: TmdbMovieListItemDto[]

@@ -51,6 +51,7 @@ function movieFromListCache(queryClient: QueryClient, id: number): MovieDetail |
       productionCompanies: [],
       releaseDate: null,
       certification: null,
+      plot: null,
       highlights: [],
       cast: [],
       trailerYoutubeKey: null,

@@ -116,7 +116,11 @@ function isForeignShootInBolivia(dto: TmdbMovieListItemDto): boolean {
  * Filtro local (cinturón y tirantes).
  * TMDB a veces ignora un query o deja adult=false en cine erótico suave.
  */
-export function isBolivianCatalogMovie(dto: TmdbMovieListItemDto): boolean {
+export function isBolivianCatalogMovie(
+  dto: TmdbMovieListItemDto,
+  allowIds: ReadonlySet<number> = new Set(),
+): boolean {
+  if (allowIds.has(dto.id)) return !dto.adult
   if (dto.adult) return false
   if (HIDDEN_FROM_SHOWCASE_IDS.has(dto.id)) return false
 

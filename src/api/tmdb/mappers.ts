@@ -119,6 +119,7 @@ export function mapMovieDetail(dto: TmdbMovieDetailDto): MovieDetail {
     productionCompanies: mapProductionCompanies(dto),
     releaseDate: dto.release_date?.trim() || null,
     certification: pickCertification(dto),
+    plot: null,
     highlights: mapHighlights(dto),
     cast: mapCast(dto),
     trailerYoutubeKey: pickYoutubeTrailer(dto.videos?.results),

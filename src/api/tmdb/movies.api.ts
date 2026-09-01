@@ -39,8 +39,14 @@
 
 import { DEFAULT_LANGUAGE, TMDB_IMAGE_LANGUAGES, TMDB_PERSON_MARCOS_LOAYZA } from '../../config/constants.ts'
 import type { Movie, MovieDetail, MovieGenre, PopularMoviesPage } from '../../domain/movie.ts'
+import { AppError } from '../http/errors.ts'
 import { fetchImdbPlot } from '../imdb/plot.api.ts'
+import { parseCatalogAddInput } from '../../lib/catalogAdd.ts'
 import { applyMovieDetailOverride, applyMovieOverride } from '../supabase/merge.ts'
+import {
+  fetchManualCatalogIds,
+  insertManualCatalogMovie,
+} from '../supabase/catalogManual.api.ts'
 import { fetchMovieOverride, fetchMovieOverrides } from '../supabase/overrides.api.ts'
 import { axiosClient } from '../http/axiosClient.ts'
 import {
@@ -58,6 +64,7 @@ import {
 import { TMDB_ENDPOINTS } from './endpoints.ts'
 import { mapMovie, mapMovieDetail, mapMovieListItemFromDetail, mapPopularMoviesPage } from './mappers.ts'
 import type {
+  TmdbFindDto,
   TmdbMovieDetailDto,
   TmdbMovieImagesDto,
   TmdbMovieListItemDto,
@@ -76,20 +83,23 @@ const ENGLISH_MEDIA_PARAMS = {
  * El orden lo aplica la página principal en cliente (filtros + sort).
  */
 export async function fetchBolivianMovies(): Promise<PopularMoviesPage> {
-  const [fromCountry, fromKeyword] = await Promise.all([
+  const [fromCountry, fromKeyword, manualIds] = await Promise.all([
     collectDiscoverPages('country'),
     collectDiscoverPages('keyword'),
+    fetchManualCatalogIds(),
   ])
+  const allowIds = new Set(manualIds)
 
   const discoveredIds = new Set(
     [...fromCountry, ...fromKeyword].map((item) => item.id),
   )
-  const missingProducedIds = BOLIVIA_PRODUCED_TMDB_IDS.filter(
-    (id) => !discoveredIds.has(id),
-  )
+  const missingIds = uniqueNumbers([
+    ...BOLIVIA_PRODUCED_TMDB_IDS.filter((id) => !discoveredIds.has(id)),
+    ...manualIds.filter((id) => !discoveredIds.has(id)),
+  ])
 
   const [fromProduced, fromTitles] = await Promise.all([
-    fetchMoviesByIds(missingProducedIds),
+    fetchMoviesByIds(missingIds),
     resolveUnresolvedBolivianTitles(discoveredIds),
   ])
 
@@ -99,10 +109,10 @@ export async function fetchBolivianMovies(): Promise<PopularMoviesPage> {
     ...fromCountry,
     ...fromKeyword,
   ])
-  const catalog = unique.filter(isBolivianCatalogMovie)
+  const catalog = unique.filter((item) => isBolivianCatalogMovie(item, allowIds))
 
   console.log(
-    `[TMDB] Bolivian catalog: country=${fromCountry.length}, keyword=${fromKeyword.length}, wikidata=${fromProduced.length}, titles=${fromTitles.length}, unique=${unique.length}, visible=${catalog.length}`,
+    `[TMDB] Bolivian catalog: country=${fromCountry.length}, keyword=${fromKeyword.length}, wikidata=${fromProduced.length}, titles=${fromTitles.length}, manual=${manualIds.length}, unique=${unique.length}, visible=${catalog.length}`,
   )
 
   const page = mapPopularMoviesPage({
@@ -231,6 +241,56 @@ function uniqueById(items: TmdbMovieListItemDto[]): TmdbMovieListItemDto[] {
     seen.add(item.id)
     return true
   })
+}
+
+function uniqueNumbers(ids: number[]): number[] {
+  return [...new Set(ids.filter((id) => id > 0))]
+}
+
+export async function addCatalogMovieFromInput(input: string): Promise<Movie> {
+  const parsed = parseCatalogAddInput(input)
+  if (!parsed) {
+    throw new AppError(
+      'Paste an IMDb title URL or ID (tt1234567). A TMDB movie URL also works.',
+      'HTTP',
+      null,
+    )
+  }
+
+  let tmdbId = parsed.tmdbId
+  if (!tmdbId && parsed.imdbId) {
+    tmdbId = await findTmdbIdByImdbId(parsed.imdbId)
+  }
+
+  if (!tmdbId) {
+    throw new AppError(
+      'TMDB has no movie for that IMDb title. TV series cannot be added.',
+      'HTTP',
+      404,
+    )
+  }
+
+  await insertManualCatalogMovie(tmdbId, parsed.imdbId)
+  const items = await fetchMoviesByIds([tmdbId])
+  if (items.length === 0) {
+    throw new AppError('Could not load that title from TMDB.', 'HTTP', 404)
+  }
+
+  const movie = mapMovie(items[0])
+  const override = await fetchMovieOverride(tmdbId)
+  return applyMovieOverride(movie, override ?? undefined)
+}
+
+async function findTmdbIdByImdbId(imdbId: string): Promise<number | null> {
+  const { data } = await axiosClient.get<TmdbFindDto>(TMDB_ENDPOINTS.movies.find(imdbId), {
+    params: {
+      ...ENGLISH_MEDIA_PARAMS,
+      external_source: 'imdb_id',
+    },
+  })
+
+  const match = (data.movie_results ?? []).find((item) => item.id > 0)
+  return match?.id ?? null
 }
 
 export async function fetchMovieGenres(): Promise<MovieGenre[]> {

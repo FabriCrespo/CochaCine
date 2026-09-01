@@ -26,8 +26,10 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
   const prefetch = usePrefetchMovie()
   const runtime = formatRuntimeCompact(movie.runtimeMinutes)
   const overview = movie.overview.trim()
-  const teaser = teaserOverview(overview)
-  const showDetailed = overview.length > teaser.length
+  const longPlot = (movie.plot ?? '').trim()
+  const teaser = teaserOverview(overview || longPlot)
+  const detailed = longPlot || overview
+  const showDetailed = Boolean(longPlot) || detailed.length > teaser.length
   const writers = movie.writers ?? []
   const companies = movie.productionCompanies ?? []
   const highlights = movie.highlights ?? []
@@ -125,7 +127,7 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
             <section>
               <h3 className="text-xl font-semibold text-white">Plot</h3>
               <div className="mt-4 max-w-2xl space-y-4 text-[15px] leading-7 text-white/70">
-                {splitParagraphs(overview).map((paragraph) => (
+                {splitParagraphs(detailed).map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
@@ -259,10 +261,10 @@ function HighlightsCard({ highlights }: { highlights: MovieHighlight[] }) {
   return (
     <aside className="rounded-2xl bg-[#161616] px-5 py-5">
       <ul className="space-y-4">
-        {highlights.map((item) => (
-          <li key={item.kind} className="flex gap-3 text-sm leading-6 text-white/80">
+        {highlights.map((item, index) => (
+          <li key={`${item.kind}-${index}`} className="flex gap-3 text-sm leading-6 text-white/80">
             <span className="mt-0.5 shrink-0 text-brand">
-              {item.kind === 'bolivia' ? <ShieldIcon /> : <BriefcaseIcon />}
+              <HighlightIcon kind={item.kind} index={index} />
             </span>
             {item.text}
           </li>
@@ -339,6 +341,48 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
         d="M7 4.5h10a1 1 0 0 1 1 1v14l-6-3.2-6 3.2v-14a1 1 0 0 1 1-1z"
         stroke="currentColor"
         strokeWidth="1.6"
+      />
+    </svg>
+  )
+}
+
+function HighlightIcon({
+  kind,
+  index,
+}: {
+  kind: MovieHighlight['kind']
+  index: number
+}) {
+  if (kind === 'bolivia') return <ShieldIcon />
+  if (kind === 'true-story') return <BriefcaseIcon />
+  const cycle = [TrophyIcon, StarOutlineIcon, ShieldIcon, BriefcaseIcon]
+  const Icon = cycle[index % cycle.length]
+  return <Icon />
+}
+
+function TrophyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
+      <path
+        d="M8 4h8v4a4 4 0 0 1-8 0z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12 12v3M9 20h6M10 17h4v3h-4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function StarOutlineIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
+      <path
+        d="m12 3.5 2.3 4.7 5.2.8-3.8 3.6.9 5.2L12 15.7 7.4 17.8l.9-5.2-3.8-3.6 5.2-.8z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
       />
     </svg>
   )
