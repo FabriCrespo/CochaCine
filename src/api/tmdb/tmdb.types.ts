@@ -37,6 +37,13 @@ export type TmdbMovieListItemDto = {
   genre_ids?: number[]
 }
 
+export type TmdbPopularMoviesDto = {
+  page: number
+  results: TmdbMovieListItemDto[]
+  total_pages: number
+  total_results: number
+}
+
 export type TmdbCrewMovieCreditDto = TmdbMovieListItemDto & {
   job?: string
   department?: string

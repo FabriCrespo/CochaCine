@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { Movie, MovieGenre } from '../../../domain/movie.ts'
 import {
@@ -88,7 +88,7 @@ export function CatalogControls({
       }
     }
 
-    function handleKey(event: KeyboardEvent) {
+    function handleKey(event: globalThis.KeyboardEvent) {
       if (event.key === 'Escape') onCloseFilters()
     }
 
@@ -118,7 +118,7 @@ export function CatalogControls({
     void navigate(paths.movie(id))
   }
 
-  function handleSearchKey(event: KeyboardEvent<HTMLInputElement>) {
+  function handleSearchKey(event: ReactKeyboardEvent<HTMLInputElement>) {
     if (!showSuggestions || suggestions.length === 0) {
       if (event.key === 'Escape') setOpenSuggestions(false)
       return
