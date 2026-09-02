@@ -112,6 +112,8 @@ body {
 .spotlight-name-word {
   display: block;
   overflow: hidden;
+  padding: 0.16em 0.22em 0.2em 0.08em;
+  margin-inline: -0.08em -0.22em;
 }
 
 .spotlight-name-word > span {

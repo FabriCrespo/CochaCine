@@ -105,7 +105,7 @@ export function HomeDirectors() {
           className="flex flex-col items-center lg:items-end"
         >
           <h3
-            className="text-center font-display text-5xl italic leading-[0.88] text-ink sm:text-6xl lg:text-right lg:text-7xl xl:text-8xl"
+            className="text-center font-display text-5xl italic leading-[1.02] text-ink sm:text-6xl lg:text-right lg:text-7xl xl:text-8xl"
             aria-live="polite"
           >
             {nameLines.map((part) => (
