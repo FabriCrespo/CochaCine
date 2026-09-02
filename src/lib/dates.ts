@@ -46,3 +46,13 @@ export function formatReleaseDateLong(isoDate: string | null): string | null {
     locale: enUS,
   })
 }
+
+/** YYYY-MM-DD en zona de Bolivia. */
+export function todayIsoInLaPaz(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/La_Paz',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+}

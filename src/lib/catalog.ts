@@ -1,4 +1,5 @@
 import { CATALOG_SORT, type CatalogSort } from '../api/tmdb/sort.ts'
+import type { FilmmakerFilm } from '../config/directors.ts'
 import type { Movie, MovieGenre } from '../domain/movie.ts'
 
 export function filterCatalogMovies(
@@ -81,6 +82,37 @@ export function sortCatalogMovies(movies: Movie[], sortBy: CatalogSort): Movie[]
   return [...movies].sort((left, right) => compareMovies(left, right, sortBy))
 }
 
+export const HOME_POPULAR_LIMIT = 10
+
+export const CATALOG_DECADES = [
+  { id: '2020s', label: 'The 2020s', from: 2020, to: 2029 },
+  { id: '2010s', label: 'The 2010s', from: 2010, to: 2019 },
+  { id: '2000s', label: 'The 2000s', from: 2000, to: 2009 },
+  { id: '1990s', label: 'The 1990s', from: 1990, to: 1999 },
+  { id: '1980s', label: 'The 1980s', from: 1980, to: 1989 },
+] as const
+
+export function popularCatalogMovies(
+  movies: Movie[],
+  limit = HOME_POPULAR_LIMIT,
+): Movie[] {
+  return sortCatalogMovies(movies, CATALOG_SORT.popularity).slice(0, limit)
+}
+
+export function moviesInDecade(
+  movies: Movie[],
+  from: number,
+  to: number,
+): Movie[] {
+  return sortCatalogMovies(
+    movies.filter((movie) => {
+      const year = Number(movie.releaseYear)
+      return Number.isFinite(year) && year >= from && year <= to
+    }),
+    CATALOG_SORT.popularity,
+  )
+}
+
 export function yearsPresentInCatalog(movies: Movie[]): string[] {
   const years = new Set<string>()
   for (const movie of movies) {
@@ -143,4 +175,94 @@ function foldText(value: string): string {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+}
+
+function foldTitle(value: string): string {
+  return foldText(value)
+    .replace(/[!¡¿?.,:;'"()[\]]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function titleKeys(value: string): string[] {
+  const folded = foldTitle(value)
+  if (!folded) return []
+  const keys = [folded]
+  for (const part of folded.split(/\s+\/\s+|\s+-\s+/)) {
+    if (part && part !== folded) keys.push(part)
+  }
+  return keys
+}
+
+function filmYear(year: number | string | undefined): number | null {
+  if (year == null) return null
+  const match = String(year).match(/\d{4}/)
+  return match ? Number(match[0]) : null
+}
+
+export function matchCatalogMovie(
+  movies: Movie[],
+  film: Pick<
+    FilmmakerFilm,
+    'title' | 'english_title' | 'original_title' | 'alternative_title' | 'year'
+  >,
+): Movie | null {
+  const names = [
+    film.title,
+    film.english_title,
+    film.original_title,
+    film.alternative_title,
+  ].flatMap((name) => (name ? titleKeys(name) : []))
+
+  return matchCatalogMovieByNames(movies, names, filmYear(film.year))
+}
+
+export function matchCatalogMovieByTitle(
+  movies: Movie[],
+  title: string,
+  year?: number | string,
+): Movie | null {
+  return matchCatalogMovieByNames(movies, titleKeys(title), filmYear(year))
+}
+
+function matchCatalogMovieByNames(
+  movies: Movie[],
+  names: string[],
+  year: number | null,
+): Movie | null {
+  const wanted = [...new Set(names.filter((name) => name.length >= 3))]
+  if (wanted.length === 0) return null
+
+  let best: Movie | null = null
+  let bestScore = 0
+
+  for (const movie of movies) {
+    const catalogNames = [...titleKeys(movie.title), ...titleKeys(movie.originalTitle)]
+    let score = 0
+
+    for (const name of wanted) {
+      for (const catalog of catalogNames) {
+        if (catalog === name) score = Math.max(score, 4)
+        else if (name.length >= 6 && (catalog.includes(name) || name.includes(catalog))) {
+          score = Math.max(score, 2)
+        }
+      }
+    }
+
+    if (score === 0) continue
+
+    const movieYear = Number(movie.releaseYear)
+    if (year != null && Number.isFinite(movieYear)) {
+      if (movieYear === year) score += 2
+      else if (Math.abs(movieYear - year) === 1) score += 1
+      else if (score < 4) continue
+    }
+
+    if (score > bestScore) {
+      best = movie
+      bestScore = score
+    }
+  }
+
+  return bestScore >= 2 ? best : null
 }

@@ -1,11 +1,6 @@
 /**
- * =============================================================================
- * BolivianMoviesPage
- * =============================================================================
- *
- * Bolivian film catalog. Search, genre, year and sort live in the URL
- * so they survive a trip to a movie page.
- * Route: `/`
+ * Archive — catálogo completo con búsqueda, género, año y orden.
+ * Route: `/archivo`
  */
 
 import { useEffect, useMemo, useState } from 'react'
@@ -32,7 +27,7 @@ import { useMovieGenres } from '../../query/movies/useMovieGenres.ts'
 import { CatalogControls } from './components/CatalogControls.tsx'
 import { MovieGrid } from './components/MovieGrid.tsx'
 
-export function BolivianMoviesPage() {
+export function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const view = useMemo(
     () => parseCatalogSearch(searchParams.toString()),
@@ -100,7 +95,7 @@ export function BolivianMoviesPage() {
 
   return (
     <AppShell
-      title="Bolivian cinema"
+      title="Archive"
       toolbar={
         <CatalogControls
           query={view.query}
@@ -122,7 +117,7 @@ export function BolivianMoviesPage() {
       }
     >
       {view.genreIds.length > 0 ? (
-        <ul className="mb-5 flex flex-wrap gap-2">
+        <ul className="mb-8 flex flex-wrap gap-x-4 gap-y-2">
           {catalogGenres
             .filter((genre) => view.genreIds.includes(genre.id))
             .map((genre) => (
@@ -130,7 +125,7 @@ export function BolivianMoviesPage() {
                 <button
                   type="button"
                   onClick={() => toggleGenre(genre.id)}
-                  className="bg-ink-soft px-2 py-1 text-xs tracking-[0.12em] uppercase text-brand hover:text-white"
+                  className="text-xs tracking-[0.16em] uppercase text-brand hover:text-ivory"
                 >
                   {genre.name} ×
                 </button>
@@ -140,10 +135,10 @@ export function BolivianMoviesPage() {
       ) : null}
 
       {data ? (
-        <p className="mb-6 text-sm text-brand/70">
-          <span className="font-medium text-brand">{visibleMovies.length}</span> of{' '}
-          {data.totalResults} titles
-          {filtersActive ? ' (filters on)' : ''}.
+        <p className="mb-10 font-serif text-lg text-ivory">
+          {visibleMovies.length}
+          <span className="text-muted"> of {data.totalResults} titles</span>
+          {filtersActive ? <span className="text-muted"> — filtered</span> : null}
         </p>
       ) : null}
 
@@ -152,11 +147,11 @@ export function BolivianMoviesPage() {
         isError={isError}
         error={error}
         isEmpty={visibleMovies.length === 0}
-        pendingMessage="Loading catalog..."
+        pendingMessage="Loading archive..."
         emptyMessage={
           filtersActive
             ? 'No movies match this search, genre or year.'
-            : 'No movies left in the catalog.'
+            : 'No movies left in the archive.'
         }
         onRetry={() => {
           void refetch()

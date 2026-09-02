@@ -3,24 +3,28 @@
  * App — rutas
  * =============================================================================
  *
- *   /                  → catálogo de cine boliviano
- *   /pelicula/:movieId → ficha
- *   /bolivia           → redirige a /
- *   /admin             → editor de overrides
- *   /admin/:movieId    → editor de una película
+ *   /                    → home (populares + décadas)
+ *   /archivo             → catálogo completo con filtros
+ *   /pelicula/:movieId   → ficha
+ *   /director/:directorId → perfil de director
+ *   /admin               → editor de overrides
  */
 
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
-import { BolivianMoviesPage } from './features/movies/BolivianMoviesPage.tsx'
+import { HomePage } from './features/movies/HomePage.tsx'
+import { CatalogPage } from './features/movies/CatalogPage.tsx'
 import { MovieDetailPage } from './features/movies/MovieDetailPage.tsx'
+import { DirectorPage } from './features/directors/DirectorPage.tsx'
 import { AdminPage } from './features/admin/AdminPage.tsx'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    if (pathname.startsWith('/admin') || pathname === '/') return
+    if (pathname.startsWith('/admin') || pathname === '/' || pathname === '/archivo') {
+      return
+    }
     window.scrollTo(0, 0)
   }, [pathname])
 
@@ -32,8 +36,10 @@ export default function App() {
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<BolivianMoviesPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/archivo" element={<CatalogPage />} />
         <Route path="/pelicula/:movieId" element={<MovieDetailPage />} />
+        <Route path="/director/:directorId" element={<DirectorPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/:movieId" element={<AdminPage />} />
         <Route path="/bolivia" element={<Navigate to="/" replace />} />

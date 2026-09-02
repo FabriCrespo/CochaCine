@@ -1,5 +1,5 @@
 /**
- * Ficha estilo streaming: póster + ficha, reparto, sinopsis y similares.
+ * Ficha editorial: póster primario, título serif, plot marfil.
  */
 
 import { useState, type ReactNode } from 'react'
@@ -43,9 +43,9 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
   ]
 
   return (
-    <article className="text-white">
-      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,280px)_1fr] xl:grid-cols-[minmax(0,320px)_1fr] xl:gap-12">
-        <div className="mx-auto w-full max-w-72 overflow-hidden rounded-xl bg-ink-soft lg:mx-0">
+    <article className="text-ivory">
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,280px)_1fr] xl:grid-cols-[minmax(0,320px)_1fr] xl:gap-16">
+        <div className="mx-auto w-full max-w-72 bg-ink-soft lg:mx-0">
           {movie.posterUrl ? (
             <img
               src={movie.posterUrl}
@@ -53,38 +53,38 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
               className="aspect-2/3 w-full object-cover"
             />
           ) : (
-            <div className="flex aspect-2/3 items-center justify-center text-sm text-white/40">
+            <div className="flex aspect-2/3 items-center justify-center text-sm text-muted">
               No poster
             </div>
           )}
         </div>
 
         <div className="min-w-0">
-          <p className="flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase text-brand">
+          <p className="flex items-center gap-2 font-serif text-sm italic text-muted">
             <BoliviaFlag />
             Bolivian cinema
           </p>
 
-          <h2 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+          <h2 className="mt-4 font-serif text-4xl font-medium tracking-tight text-ivory sm:text-5xl">
             {movie.title}
           </h2>
 
           <MetaRow movie={movie} runtime={runtime} />
 
           {teaser ? (
-            <p className="mt-6 max-w-2xl text-[15px] leading-7 text-white/70">{teaser}</p>
+            <p className="mt-8 max-w-2xl text-[15px] leading-8 text-ivory/70">{teaser}</p>
           ) : (
-            <p className="mt-6 max-w-2xl text-[15px] leading-7 text-white/45">
+            <p className="mt-8 max-w-2xl text-[15px] leading-8 text-muted">
               No English plot is available for this title.
             </p>
           )}
 
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             {movie.trailerYoutubeKey ? (
               <button
                 type="button"
                 onClick={() => setTrailerOpen(true)}
-                className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-ink hover:bg-brand/90"
+                className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-sm tracking-[0.12em] uppercase text-ink hover:bg-brand/90"
               >
                 <PlayIcon />
                 Watch trailer
@@ -93,18 +93,18 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
             <button
               type="button"
               onClick={() => setSaved(toggleWatchlist(movie.id))}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-5 py-2.5 text-sm font-medium text-white hover:border-white/40 hover:bg-white/5"
+              className="inline-flex items-center gap-2 border border-ivory/25 px-5 py-2.5 text-sm tracking-[0.12em] uppercase text-ivory hover:border-ivory/50"
             >
               <BookmarkIcon filled={saved} />
               {saved ? 'On my list' : 'Want to watch'}
             </button>
           </div>
 
-          <dl className="mt-8 grid gap-x-16 gap-y-2.5 sm:grid-cols-2">
+          <dl className="mt-10 grid gap-x-16 gap-y-3 sm:grid-cols-2">
             {facts.map((fact) => (
               <div key={fact.label} className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-3 text-sm">
-                <dt className="text-white/40">{fact.label}</dt>
-                <dd className="text-white">{fact.value || '—'}</dd>
+                <dt className="text-muted">{fact.label}</dt>
+                <dd className="text-ivory">{fact.value || '—'}</dd>
               </div>
             ))}
           </dl>
@@ -125,8 +125,8 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
         <div className="mt-16 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
           {showDetailed ? (
             <section>
-              <h3 className="text-xl font-semibold text-white">Plot</h3>
-              <div className="mt-4 max-w-2xl space-y-4 text-[15px] leading-7 text-white/70">
+              <h3 className="font-serif text-xl text-ivory">Plot</h3>
+              <div className="mt-5 max-w-2xl space-y-5 text-[15px] leading-8 text-ivory/70">
                 {splitParagraphs(detailed).map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
@@ -146,10 +146,10 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
               <Link
                 key={item.id}
                 to={paths.movie(item.id)}
-                className="w-40 shrink-0 sm:w-44"
+                className="w-40 shrink-0 transition-opacity hover:opacity-80 sm:w-44"
                 onMouseEnter={() => prefetch(item.id)}
               >
-                <div className="overflow-hidden rounded-xl bg-ink-soft">
+                <div className="overflow-hidden bg-ink-soft">
                   {item.posterUrl ? (
                     <img
                       src={item.posterUrl}
@@ -157,13 +157,13 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
                       className="aspect-2/3 w-full object-cover"
                     />
                   ) : (
-                    <div className="flex aspect-2/3 items-center justify-center text-xs text-white/35">
+                    <div className="flex aspect-2/3 items-center justify-center text-xs text-muted">
                       No poster
                     </div>
                   )}
                 </div>
-                <p className="mt-2 truncate text-sm text-white">{item.title}</p>
-                <p className="text-xs text-white/45">{item.releaseYear ?? ''}</p>
+                <p className="mt-2.5 truncate font-serif text-sm text-ivory">{item.title}</p>
+                <p className="text-xs text-muted">{item.releaseYear ?? ''}</p>
               </Link>
             ))}
           </HorizontalCarousel>
@@ -214,7 +214,7 @@ function MetaRow({
     parts.push({
       key: 'cert',
       node: (
-        <span className="rounded border border-white/35 px-1.5 py-0.5 text-[11px] tracking-wide text-white/80">
+        <span className="border border-ivory/30 px-1.5 py-0.5 text-[11px] tracking-wide text-ivory/80">
           {movie.certification}
         </span>
       ),
@@ -222,10 +222,10 @@ function MetaRow({
   }
 
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-white/70">
+    <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
       {parts.map((part, index) => (
         <span key={part.key} className="inline-flex items-center gap-3">
-          {index > 0 ? <span className="h-3.5 w-px bg-white/20" aria-hidden /> : null}
+          {index > 0 ? <span className="h-3.5 w-px bg-ivory/20" aria-hidden /> : null}
           {part.node}
         </span>
       ))}
@@ -239,7 +239,7 @@ function CastCard({ person }: { person: MovieCastMember }) {
 
   return (
     <div className="w-32 shrink-0 text-center">
-      <div className="mx-auto h-28 w-28 overflow-hidden rounded-full bg-ink ring-1 ring-brand/35">
+      <div className="mx-auto h-28 w-28 overflow-hidden rounded-full bg-ink-soft">
         {showPhoto ? (
           <img
             src={person.photoUrl ?? undefined}
@@ -251,18 +251,18 @@ function CastCard({ person }: { person: MovieCastMember }) {
           <PersonPlaceholder />
         )}
       </div>
-      <p className="mt-3 truncate text-sm text-white">{person.name}</p>
-      <p className="truncate text-xs text-brand">{person.character || '—'}</p>
+      <p className="mt-3 truncate text-sm text-ivory">{person.name}</p>
+      <p className="truncate text-xs text-muted">{person.character || '—'}</p>
     </div>
   )
 }
 
 function HighlightsCard({ highlights }: { highlights: MovieHighlight[] }) {
   return (
-    <aside className="rounded-2xl bg-[#161616] px-5 py-5">
+    <aside className="bg-ink-soft px-5 py-6">
       <ul className="space-y-4">
         {highlights.map((item, index) => (
-          <li key={`${item.kind}-${index}`} className="flex gap-3 text-sm leading-6 text-white/80">
+          <li key={`${item.kind}-${index}`} className="flex gap-3 text-sm leading-7 text-ivory/80">
             <span className="mt-0.5 shrink-0 text-brand">
               <HighlightIcon kind={item.kind} index={index} />
             </span>

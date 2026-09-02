@@ -29,7 +29,7 @@ type CatalogControlsProps = {
 }
 
 const fieldClass =
-  'border-0 bg-ink-soft px-2.5 py-1.5 text-xs tracking-[0.14em] uppercase text-brand outline-none focus:ring-1 focus:ring-brand/50'
+  'border-0 border-b border-ivory/15 bg-transparent px-1 py-1.5 text-xs tracking-[0.16em] uppercase text-ivory outline-none focus:border-brand'
 
 export function CatalogControls({
   query,
@@ -175,8 +175,8 @@ export function CatalogControls({
             }}
             onFocus={() => setOpenSuggestions(true)}
             onKeyDown={handleSearchKey}
-            placeholder="Search..."
-            className="w-full rounded-sm border-0 bg-ink-soft px-3 py-1.5 text-sm text-brand outline-none placeholder:text-brand/35 focus:ring-1 focus:ring-brand/50"
+            placeholder="Search the archive..."
+            className="w-full border-0 border-b border-ivory/15 bg-transparent px-0 py-1.5 text-sm text-ivory outline-none placeholder:text-muted/70 focus:border-brand"
           />
         </label>
 
@@ -184,10 +184,10 @@ export function CatalogControls({
           <ul
             id={listId}
             role="listbox"
-            className="absolute z-50 mt-1 max-h-80 w-full overflow-auto border border-brand/25 bg-ink shadow-lg"
+            className="absolute z-50 mt-1 max-h-80 w-full overflow-auto border border-ivory/10 bg-ink"
           >
             {suggestions.length === 0 ? (
-              <li className="px-3 py-2.5 text-sm text-brand/50">No titles match.</li>
+              <li className="px-3 py-2.5 text-sm text-muted">No titles match.</li>
             ) : (
               suggestions.map((movie, index) => {
                 const active = index === activeIndex
@@ -203,8 +203,8 @@ export function CatalogControls({
                       onClick={() => setOpenSuggestions(false)}
                       className={
                         active
-                          ? 'flex items-center gap-3 bg-brand/15 px-3 py-2'
-                          : 'flex items-center gap-3 px-3 py-2 hover:bg-brand/10'
+                          ? 'flex items-center gap-3 bg-ivory/8 px-3 py-2'
+                          : 'flex items-center gap-3 px-3 py-2 hover:bg-ivory/5'
                       }
                     >
                       {movie.posterUrl ? (
@@ -217,8 +217,8 @@ export function CatalogControls({
                         <div className="h-12 w-8 shrink-0 bg-ink-soft" />
                       )}
                       <span className="min-w-0">
-                        <span className="block truncate text-sm text-brand">{movie.title}</span>
-                        <span className="text-xs text-brand/55">
+                        <span className="block truncate font-serif text-sm text-ivory">{movie.title}</span>
+                        <span className="text-xs text-muted">
                           {movie.releaseYear ?? '—'}
                         </span>
                       </span>
@@ -246,31 +246,31 @@ export function CatalogControls({
         {filtersOpen ? (
           <div
             id={panelId}
-            className="absolute right-0 z-50 mt-2 w-72 border border-brand/30 bg-ink p-4 shadow-lg"
+            className="absolute right-0 z-50 mt-2 w-72 border border-ivory/10 bg-ink p-4"
           >
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs tracking-[0.2em] uppercase text-brand/70">
+              <p className="text-xs tracking-[0.2em] uppercase text-muted">
                 Categories
               </p>
               {selectedCount > 0 ? (
                 <button
                   type="button"
                   onClick={onClearGenres}
-                  className="text-xs tracking-wide text-brand/70 underline-offset-4 hover:underline"
+                  className="text-xs tracking-wide text-muted underline-offset-4 hover:text-ivory hover:underline"
                 >
                   Clear
                 </button>
               ) : null}
             </div>
             {genres.length === 0 ? (
-              <p className="text-sm text-brand/50">No genres in this catalog yet.</p>
+              <p className="text-sm text-muted">No genres in this catalog yet.</p>
             ) : (
               <ul className="max-h-64 space-y-2 overflow-auto">
                 {genres.map((genre) => {
                   const checked = selectedGenreIds.includes(genre.id)
                   return (
                     <li key={genre.id}>
-                      <label className="flex cursor-pointer items-center gap-2 text-sm text-brand">
+                      <label className="flex cursor-pointer items-center gap-2 text-sm text-ivory">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -292,7 +292,7 @@ export function CatalogControls({
         aria-label="Year"
         value={selectedYear}
         onChange={(event) => onYearChange(event.target.value)}
-        className={fieldClass}
+        className={`${fieldClass} [&>option]:bg-ink [&>option]:text-ivory`}
       >
         <option value="">Year</option>
         {years.map((year) => (
@@ -306,7 +306,7 @@ export function CatalogControls({
         aria-label="Sort"
         value={sortBy}
         onChange={(event) => onSortByChange(event.target.value as CatalogSort)}
-        className={fieldClass}
+        className={`${fieldClass} [&>option]:bg-ink [&>option]:text-ivory`}
       >
         {(Object.values(CATALOG_SORT) as CatalogSort[]).map((value) => (
           <option key={value} value={value}>

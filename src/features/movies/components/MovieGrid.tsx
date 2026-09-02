@@ -21,14 +21,14 @@ export function MovieGrid({ movies }: MovieGridProps) {
   const prefetchMovie = usePrefetchMovie()
 
   return (
-    <ul className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+    <ul className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 sm:gap-x-8 sm:gap-y-12 md:grid-cols-4 lg:grid-cols-5">
       {movies.map((movie) => (
         <li key={movie.id}>
           <Link
             to={paths.movie(movie.id)}
             onPointerEnter={() => prefetchMovie(movie.id)}
             onFocus={() => prefetchMovie(movie.id)}
-            className="block outline-none ring-brand/0 transition hover:ring-2 hover:ring-brand/50 focus-visible:ring-2 focus-visible:ring-brand"
+            className="block outline-none transition-opacity hover:opacity-80 focus-visible:opacity-100 focus-visible:ring-1 focus-visible:ring-brand"
           >
             <MovieCard movie={movie} />
           </Link>

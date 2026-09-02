@@ -43,6 +43,12 @@ export const TMDB_PERSON_MARCOS_LOAYZA = 1372187
 
 export const MARCOS_LOAYZA_PHOTO = '/directors/marcos-loayza.jpg'
 
+/** Still del hero del catálogo (archivo local en /public). */
+export const CATALOG_HERO_IMAGE = '/hero-catalog.jpg'
+
+/** La Hija Cóndor — featured on the catalog hero. */
+export const TMDB_MOVIE_LA_HIJA_CONDOR = 1459062
+
 export const HTTP_TIMEOUT_MS = 10_000
 
 /** IMDb vía lector: la página tarda más que TMDB. */

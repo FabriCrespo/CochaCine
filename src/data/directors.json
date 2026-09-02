@@ -1,0 +1,909 @@
+{
+  "filmmakers": [
+    {
+      "id": "jorge-sanjines",
+      "name": "Jorge Sanjinés",
+      "full_name": "Jorge Sanjinés Aramayo",
+      "nationality": "Bolivian",
+      "birth_date": "1936-07-31",
+      "birth_place": "La Paz, Bolivia",
+      "occupation": [
+        "Film Director",
+        "Screenwriter",
+        "Editor",
+        "Writer"
+      ],
+      "active_years": "1957-present",
+      "education": [
+        "Universidad Mayor de San Andrés, La Paz",
+        "Pontifical Catholic University of Chile, Santiago",
+        "Film Institute of the Pontifical Catholic University of Chile"
+      ],
+      "organizations": [
+        {
+          "name": "Grupo Ukamau",
+          "role": "Founder",
+          "description": "Founded alongside Óscar Soria, Ricardo Rada and Antonio Eguino. The group became one of the defining forces of politically engaged and Indigenous-centered Bolivian cinema."
+        }
+      ],
+      "short_bio": "Jorge Sanjinés is one of the most influential figures in Bolivian and Latin American cinema. Through the Grupo Ukamau, he developed a politically committed cinema centered on Indigenous communities, historical memory, social inequality, and resistance to colonial and state violence.",
+      "biography": "Jorge Sanjinés Aramayo was born in La Paz in 1936 and became one of the defining filmmakers of Bolivian cinema during the second half of the twentieth century. After studying Philosophy and Literature at the Universidad Mayor de San Andrés, he studied filmmaking in Chile and returned to Bolivia in the early 1960s with the ambition of creating a cinema rooted in the country's own social and cultural reality. Alongside Óscar Soria, Ricardo Rada, Antonio Eguino and other collaborators, he helped establish the group that would become Grupo Ukamau, one of the most important filmmaking movements in Bolivia.\n\nFrom the beginning, Sanjinés rejected the idea that Bolivian cinema should simply imitate European or North American models. His films sought to place Indigenous people, miners and rural communities at the center of the country's cinematic image, not as exotic subjects to be observed, but as historical actors with their own voices, languages, traditions and political agency. His early films gradually evolved from more conventional individual narratives toward a collective form of storytelling influenced by Andean conceptions of community and time.\n\nThis evolution can be seen throughout his major works. Ukamau introduced Aymara language and Indigenous non-professional performers into a landmark Bolivian feature. Yawar Mallku confronted the exploitation and abuse suffered by Indigenous women and communities, while El Coraje del Pueblo reconstructed the 1967 San Juan massacre through the testimony and participation of miners who had experienced the violence themselves. La Nación Clandestina later transformed these ideas into one of his most accomplished films, combining political history, Indigenous identity and an innovative conception of cinematic time.\n\nSanjinés' career was also shaped by political repression and exile. Several of his films were censored or prohibited, and he was forced to work outside Bolivia during periods of dictatorship. Yet exile did not interrupt his filmmaking. Instead, it expanded the geographical and political scope of his work and allowed him to continue developing what he described as a cinema made 'with the people'. His theoretical writing, particularly Theory and Practice of a Cinema with the People, became an important contribution to debates surrounding political cinema, Indigenous representation and the possibilities of filmmaking outside conventional commercial structures.",
+      "impact": "Sanjinés fundamentally changed the way Bolivia could represent itself on screen. His cinema brought Indigenous languages, communities, landscapes, historical memory and political struggles into the center of cinematic storytelling at a time when Indigenous people were frequently marginalized from national cultural representation. Yawar Mallku became particularly significant because its fictional story addressed allegations of forced sterilization of Indigenous women and contributed to a major public and political controversy in Bolivia. His films therefore demonstrate that cinema can function not only as artistic expression, but also as testimony, historical memory and political intervention.",
+      "cinematic_legacy": "His influence extends far beyond his individual filmography. Sanjinés became one of the major figures of the Nuevo Cine Latinoamericano and helped develop a cinematic language that challenged conventional ideas of authorship, narrative structure and representation. His use of collective protagonists, non-professional performers, Indigenous languages, documentary elements and long takes was connected to his belief that cinematic form should emerge from the cultural reality being represented. For international audiences, his work offers one of the most important cinematic gateways into the political history and Indigenous experience of the Andes. For Bolivian cinema, his legacy is foundational.",
+      "themes": [
+        "Indigenous identity",
+        "Decolonization",
+        "Political violence",
+        "Social inequality",
+        "Collective memory",
+        "Andean culture",
+        "Colonialism",
+        "Resistance",
+        "National identity",
+        "Revolution"
+      ],
+      "career_highlights": [
+        "Directed the first feature film of Grupo Ukamau, Ukamau (1966).",
+        "Developed a politically committed form of cinema associated with New Latin American Cinema and Third Cinema.",
+        "Frequently collaborated with Indigenous communities and non-professional actors.",
+        "Made films in Aymara, Quechua and Spanish.",
+        "Used cinema as a tool for historical memory, political reflection and cultural resistance.",
+        "Became the first Bolivian filmmaker to win the Golden Shell at the San Sebastián International Film Festival with The Secret Nation.",
+        "Received the Cóndor de los Andes, Bolivia's highest state distinction, in 2024."
+      ],
+      "cinematic_themes": [
+        "Indigenous identity",
+        "Decolonization",
+        "Colonialism",
+        "Political violence",
+        "Social inequality",
+        "Collective memory",
+        "Cultural resistance",
+        "Andean communities",
+        "Class struggle",
+        "National identity",
+        "Revolution",
+        "Historical memory"
+      ],
+      "cinematic_style": "Sanjinés developed a collective and politically engaged cinematic language that often moves away from the conventional individual protagonist toward the community as the central subject. His work combines documentary techniques, non-professional performers, Indigenous languages, long takes and carefully constructed historical reconstructions. His cinema is strongly connected to the political and cultural realities of Bolivia and the wider Andes.",
+      "legacy": "Sanjinés is widely regarded as one of the central figures of Bolivian cinema and one of the most important Latin American filmmakers associated with political and Indigenous cinema. His work has influenced generations of Bolivian filmmakers and remains central to discussions of Third Cinema, decolonization and Indigenous representation.",
+      "books_and_writings": [
+        "Theory and Practice of a Cinema With the People",
+        "Memorias de un cine sublevado",
+        "Cine y Sociedad",
+        "Mirar por la Neblina"
+      ],
+      "major_awards": [
+        {
+          "year": 1966,
+          "award": "Special Mention",
+          "festival": "Locarno Film Festival",
+          "film": "Revolución"
+        },
+        {
+          "year": 1969,
+          "award": "Golden Rudder",
+          "festival": "Venice Film Festival",
+          "film": "Yawar Mallku"
+        },
+        {
+          "year": 1970,
+          "award": "Golden Spike",
+          "festival": "Valladolid International Film Festival",
+          "film": "Yawar Mallku"
+        },
+        {
+          "year": 1972,
+          "award": "OCIC Award",
+          "festival": "Berlin International Film Festival",
+          "film": "The Night of San Juan"
+        },
+        {
+          "year": 1989,
+          "award": "Golden Shell",
+          "festival": "San Sebastián International Film Festival",
+          "film": "The Secret Nation"
+        },
+        {
+          "year": 2024,
+          "award": "Cóndor de los Andes",
+          "organization": "State of Bolivia",
+          "description": "Bolivia's highest state distinction."
+        }
+      ],
+      "imdb": {
+        "name_id": "nm0762805",
+        "name": "Jorge Sanjinés",
+        "note": "IMDb currently lists 15 directing credits. Its early filmography is incomplete compared with the filmography documented by Fundación Grupo Ukamau."
+      },
+      "imdb_filmography": [
+        {
+          "title": "Un día Paulino",
+          "year": 1962,
+          "type": "Short film",
+          "role": "Director",
+          "imdb_id": null
+        },
+        {
+          "title": "Revolución",
+          "english_title": "Revolution",
+          "year": 1963,
+          "type": "Short documentary",
+          "role": "Director",
+          "imdb_id": "tt0198977"
+        },
+        {
+          "title": "Aysa",
+          "alternative_title": "Derrumbe",
+          "year": 1965,
+          "type": "Short film",
+          "role": "Director",
+          "imdb_id": null
+        },
+        {
+          "title": "Ukamau",
+          "english_title": "And So It Is",
+          "year": 1966,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0061136"
+        },
+        {
+          "title": "Yawar Mallku",
+          "english_title": "Blood of the Condor",
+          "year": 1969,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0065228"
+        },
+        {
+          "title": "El coraje del pueblo",
+          "english_title": "The Courage of the People",
+          "alternative_title": "The Night of San Juan",
+          "year": 1971,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0066947"
+        },
+        {
+          "title": "Jatun auka",
+          "english_title": "The Principal Enemy",
+          "year": 1974,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0070032"
+        },
+        {
+          "title": "Lloksy Kaymata ¡Fuera de aquí!",
+          "english_title": "Get Out of Here!",
+          "year": 1977,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0076322"
+        },
+        {
+          "title": "Las banderas del amanecer",
+          "english_title": "The Flags of Dawn",
+          "year": 1984,
+          "type": "Documentary",
+          "role": "Director",
+          "co_director": "Beatriz Palacios",
+          "imdb_id": "tt0198329"
+        },
+        {
+          "title": "La nación clandestina",
+          "english_title": "The Secret Nation",
+          "year": 1989,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0097951"
+        },
+        {
+          "title": "Para recibir el canto de los pájaros",
+          "english_title": "To Hear the Birds Singing",
+          "year": 1995,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0114087"
+        },
+        {
+          "title": "Los hijos del último jardín",
+          "english_title": "Children of the Last Garden",
+          "year": 2004,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0439608"
+        },
+        {
+          "title": "Insurgentes",
+          "english_title": "Insurgents",
+          "year": 2012,
+          "type": "Documentary / Drama",
+          "role": "Director",
+          "imdb_id": "tt3109410"
+        },
+        {
+          "title": "Juana Azurduy, Guerrillera de la Patria Grande",
+          "english_title": "Juana Azurduy, Guerrilla of the Great Homeland",
+          "year": 2016,
+          "type": "Biography / Drama",
+          "role": "Director",
+          "imdb_id": "tt5033472"
+        },
+        {
+          "title": "Los Viejos Soldados",
+          "english_title": "The Old Soldiers",
+          "year": 2022,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt10940162"
+        }
+      ],
+      "complete_historical_filmography": [
+        {
+          "title": "El poroto",
+          "year": 1957,
+          "country": "Chile",
+          "type": "Short film"
+        },
+        {
+          "title": "Cobre",
+          "year": 1958,
+          "country": "Chile",
+          "type": "Short film"
+        },
+        {
+          "title": "La guitarra",
+          "year": 1959,
+          "country": "Chile",
+          "type": "Short film"
+        },
+        {
+          "title": "El maguito",
+          "year": 1959,
+          "country": "Chile",
+          "type": "Short film"
+        },
+        {
+          "title": "Sueños y realidades",
+          "year": 1961,
+          "country": "Bolivia",
+          "type": "Short film"
+        },
+        {
+          "title": "Un día Paulino",
+          "year": 1962,
+          "country": "Bolivia",
+          "type": "Short film"
+        },
+        {
+          "title": "Revolución",
+          "year": 1963,
+          "country": "Bolivia",
+          "type": "Short film"
+        },
+        {
+          "title": "Bolivia Avanza",
+          "year": 1965,
+          "country": "Bolivia",
+          "type": "Short film series"
+        },
+        {
+          "title": "¡Aysa! (Derrumbe)",
+          "year": 1965,
+          "country": "Bolivia",
+          "type": "Medium-length film"
+        },
+        {
+          "title": "El Mariscal de Zepita",
+          "year": 1965,
+          "country": "Bolivia",
+          "type": "Short film"
+        },
+        {
+          "title": "Aquí Bolivia",
+          "year": "1965-1967",
+          "country": "Bolivia",
+          "type": "Newsreel series",
+          "episodes": 27
+        },
+        {
+          "title": "Ukamau",
+          "year": 1966,
+          "country": "Bolivia",
+          "type": "Feature film"
+        },
+        {
+          "title": "Yawar Mallku",
+          "year": 1969,
+          "country": "Bolivia",
+          "type": "Feature film"
+        },
+        {
+          "title": "Los caminos de la muerte",
+          "year": 1970,
+          "country": "Bolivia / West Germany",
+          "type": "Unfinished feature film"
+        },
+        {
+          "title": "El coraje del pueblo",
+          "year": 1971,
+          "country": "Bolivia / Italy",
+          "type": "Feature film"
+        },
+        {
+          "title": "Jatun auka",
+          "year": 1974,
+          "country": "Peru",
+          "type": "Feature film"
+        },
+        {
+          "title": "Lloksy Kaymata ¡Fuera de aquí!",
+          "year": 1977,
+          "country": "Ecuador / Venezuela / Bolivia",
+          "type": "Feature film"
+        },
+        {
+          "title": "Las banderas del amanecer",
+          "year": 1984,
+          "country": "Bolivia / Ecuador",
+          "type": "Documentary"
+        },
+        {
+          "title": "La nación clandestina",
+          "year": 1989,
+          "country": "Bolivia / United Kingdom / Spain / West Germany / Japan",
+          "type": "Feature film"
+        },
+        {
+          "title": "Para recibir el canto de los pájaros",
+          "year": 1995,
+          "country": "Bolivia",
+          "type": "Feature film"
+        },
+        {
+          "title": "Los hijos del último jardín",
+          "year": 2004,
+          "country": "Bolivia",
+          "type": "Feature film"
+        },
+        {
+          "title": "Insurgentes",
+          "year": 2012,
+          "country": "Bolivia / Venezuela",
+          "type": "Feature film"
+        },
+        {
+          "title": "Juana Azurduy, Guerrillera de la Patria Grande",
+          "year": 2016,
+          "country": "Bolivia",
+          "type": "Feature film"
+        },
+        {
+          "title": "Los Viejos Soldados",
+          "year": 2022,
+          "country": "Bolivia",
+          "type": "Feature film"
+        }
+      ]
+    },
+
+    {
+      "id": "jorge-ruiz",
+      "name": "Jorge Ruiz",
+      "full_name": "Jorge Ruiz Calvimonte",
+      "nationality": "Bolivian",
+      "birth_date": "1924-03-16",
+      "birth_place": "Sucre, Bolivia",
+      "death_date": "2012-07-24",
+      "death_place": "Cochabamba, Bolivia",
+      "occupation": [
+        "Film Director",
+        "Cinematographer",
+        "Documentary Filmmaker",
+        "Writer"
+      ],
+      "active_years": "1947-1990s",
+      "education": [
+        "Agronomy studies in Argentina"
+      ],
+      "short_bio": "Jorge Ruiz was a pioneering Bolivian filmmaker whose work helped establish documentary and Indigenous cinema in the country. His films documented Bolivia's communities, landscapes and cultures with an unusual combination of ethnographic observation, poetic imagery and social commitment.",
+      "biography": "Jorge Ruiz Calvimonte was born in Sucre in 1924 and became one of the pioneers of Bolivian cinema. Originally trained in agronomy in Argentina, Ruiz began experimenting with an 8mm camera during his university years. When he returned to Bolivia, filmmaking gradually became his profession and his way of documenting a country whose geographical and cultural diversity had barely been represented on screen.\n\nWorking initially with Augusto Roca and later with other important collaborators, Ruiz developed a body of documentary, short fiction and institutional films that explored Indigenous communities, rural life, landscapes, education and social development. His early work was produced under extremely limited technical and economic conditions, at a time when Bolivia had almost no established film industry. Despite those limitations, Ruiz experimented with sound, color, location shooting and Indigenous languages, helping establish technical and artistic foundations for later generations of Bolivian filmmakers.\n\nHis best-known film, Vuelve Sebastiana, made in 1953 with Augusto Roca, follows a young girl from the Uru Chipaya community and combines fictional storytelling with documentary observation. Rather than treating Indigenous culture simply as a picturesque subject, the film places its characters, traditions and environment at the center of the narrative. Its international recognition made Ruiz the first Bolivian filmmaker to receive a major international film award and helped introduce Bolivian Indigenous culture to audiences beyond the country.\n\nRuiz later directed the Instituto Cinematográfico Boliviano and continued working across Latin America. His career took him to Peru, Chile, Ecuador, Colombia, Guatemala and the United States, where he worked with international broadcasters and production organizations. This international experience allowed him to develop a remarkably broad visual record of Latin America while continuing to return to Bolivia as a central subject.\n\nHis work spans more than five decades and includes documentaries, educational films, ethnographic works and fiction. Films such as Los Urus, La Vertiente, Mina Alaska and Donde nació un Imperio reveal his sustained interest in the relationship between people, territory, culture and historical change.",
+      "impact": "Ruiz occupies a foundational position in Bolivian cinema because he helped prove that the country's Indigenous cultures and landscapes could become subjects of serious cinematic work. His films documented communities at a time when very little audiovisual material about them existed, creating an archive that today has enormous historical and cultural value. UNESCO recognizes his surviving body of work as a major Latin American cinematographic legacy and describes Ruiz as a pioneer and a leading figure in Andean Indigenous cinema.",
+      "cinematic_legacy": "Ruiz's importance is both artistic and archival. His films preserve images, voices, languages, landscapes and social practices that form part of Bolivia's twentieth-century cultural memory. His approach also anticipated several concerns that would later become central to the work of Jorge Sanjinés and other Bolivian filmmakers: Indigenous representation, documentary realism, the use of local languages and the relationship between cinema and social reality. His surviving archive is therefore not simply a collection of films, but an audiovisual record of Bolivia itself.",
+      "themes": [
+        "Indigenous cultures",
+        "Ethnography",
+        "Rural life",
+        "Andean communities",
+        "Landscape",
+        "Cultural identity",
+        "Social development",
+        "Documentary cinema",
+        "Historical memory"
+      ],
+      "career_highlights": [
+        "One of the pioneers of Bolivian cinema.",
+        "Co-directed Vuelve Sebastiana, one of the foundational works of Bolivian Indigenous cinema.",
+        "Worked extensively as a cinematographer and documentary filmmaker.",
+        "Directed the Instituto Cinematográfico Boliviano from 1957 to 1960.",
+        "Worked in Bolivia, Peru, Ecuador, Chile, Guatemala, Colombia and the United States.",
+        "Worked with international broadcasters and organizations including the BBC, CBS and NBC.",
+        "His cinematic legacy is closely associated with documentary realism, ethnographic observation and Indigenous representation."
+      ],
+      "cinematic_themes": [
+        "Indigenous communities",
+        "Andean cultures",
+        "Ethnography",
+        "Rural life",
+        "Bolivian landscapes",
+        "Social development",
+        "Cultural identity",
+        "Documentary realism",
+        "Anthropology"
+      ],
+      "cinematic_style": "Ruiz's work occupies the border between documentary, ethnographic film and fiction. He frequently used real communities and landscapes as central elements of his films, creating observational portraits of Indigenous cultures and rural Bolivia. His cinematography emphasized landscape, people and everyday life while combining social documentation with narrative storytelling.",
+      "legacy": "Jorge Ruiz is considered one of the pioneers and foundational figures of Bolivian cinema. UNESCO's Memory of the World documentation describes his archive as a major Latin American cinematic legacy and highlights his importance as a pioneer of Andean Indigenous cinema.",
+      "major_awards": [
+        {
+          "year": 1956,
+          "award": "First Prize",
+          "festival": "SODRE International Documentary and Experimental Film Festival",
+          "film": "Vuelve Sebastiana"
+        },
+        {
+          "year": 1957,
+          "award": "Khantuta de Oro",
+          "organization": "Municipality of La Paz",
+          "film": "Un poquito de diversificación económica"
+        },
+        {
+          "year": 1956,
+          "award": "First Prize, Anthropological Category",
+          "festival": "SODRE International Documentary and Experimental Film Festival",
+          "film": "Voces de la tierra"
+        },
+        {
+          "year": 2001,
+          "award": "National Culture Award",
+          "organization": "State of Bolivia"
+        },
+        {
+          "year": 2005,
+          "award": "Bicentennial Medal",
+          "organization": "Smithsonian Institution"
+        },
+        {
+          "year": 2011,
+          "award": "Honorary Doctorate",
+          "organization": "Universidad Mayor de San Simón"
+        }
+      ],
+      "imdb": {
+        "name_id": "nm0749813",
+        "name": "Jorge Ruiz",
+        "note": "IMDb currently lists only 4 directing credits, despite Ruiz having a much larger historical filmography."
+      },
+      "imdb_filmography": [
+        {
+          "title": "Come Back, Sebastiana",
+          "original_title": "Vuelve Sebastiana",
+          "year": 1953,
+          "type": "Short film",
+          "role": "Director",
+          "co_director": "Augusto Roca",
+          "imdb_id": "tt0368419"
+        },
+        {
+          "title": "La vertiente",
+          "year": 1959,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": null
+        },
+        {
+          "title": "Mina Alaska",
+          "year": 1968,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": "tt0366779"
+        },
+        {
+          "title": "Volver",
+          "year": 1969,
+          "type": "Feature film",
+          "role": "Director",
+          "imdb_id": null
+        }
+      ],
+      "complete_historical_filmography": [
+        {
+          "title": "Viaje al Beni",
+          "year": 1947,
+          "type": "Short film"
+        },
+        {
+          "title": "El látigo del miedo",
+          "year": 1948,
+          "type": "Fiction short",
+          "co_director": "Augusto Roca"
+        },
+        {
+          "title": "Virgen india",
+          "year": 1948,
+          "type": "Documentary"
+        },
+        {
+          "title": "Los Urus",
+          "year": 1951,
+          "type": "Documentary"
+        },
+        {
+          "title": "Donde nació un Imperio",
+          "year": 1949,
+          "type": "Documentary"
+        },
+        {
+          "title": "Bolivia busca la verdad",
+          "year": 1950,
+          "type": "Documentary"
+        },
+        {
+          "title": "Cumbres de Fe",
+          "year": 1951,
+          "type": "Documentary"
+        },
+        {
+          "title": "En las noches de la historia",
+          "year": 1951,
+          "type": "Documentary"
+        },
+        {
+          "title": "Tierras olvidadas",
+          "year": 1951,
+          "type": "Documentary"
+        },
+        {
+          "title": "Vuelve Sebastiana",
+          "year": 1953,
+          "type": "Short film",
+          "co_director": "Augusto Roca"
+        },
+        {
+          "title": "Los que nunca fueron",
+          "year": 1954,
+          "type": "Short / medium-length film"
+        },
+        {
+          "title": "Juanito sabe leer",
+          "year": 1954,
+          "type": "Documentary"
+        },
+        {
+          "title": "Un poquito de diversificación económica",
+          "year": 1955,
+          "type": "Documentary"
+        },
+        {
+          "title": "Voces de la tierra",
+          "year": 1956,
+          "type": "Documentary"
+        },
+        {
+          "title": "Los Primeros",
+          "year": 1956,
+          "type": "Documentary"
+        },
+        {
+          "title": "La vertiente",
+          "year": 1959,
+          "type": "Feature film"
+        },
+        {
+          "title": "Los Ximul",
+          "year": 1960,
+          "type": "Documentary"
+        },
+        {
+          "title": "Las montañas no cambian",
+          "year": 1962,
+          "type": "Documentary"
+        },
+        {
+          "title": "Mina Alaska",
+          "year": 1968,
+          "type": "Feature film"
+        },
+        {
+          "title": "La Gran Herencia",
+          "year": 1970,
+          "type": "Documentary"
+        },
+        {
+          "title": "Tunupa",
+          "year": 1970,
+          "type": "Documentary"
+        },
+        {
+          "title": "El Desafío",
+          "year": 1978,
+          "type": "Documentary"
+        },
+        {
+          "title": "El clamor del silencio",
+          "year": 1979,
+          "type": "Documentary"
+        },
+        {
+          "title": "Los caminos de piedra",
+          "year": 1980,
+          "type": "Documentary"
+        },
+        {
+          "title": "Inocencio y Manuel",
+          "year": 1983,
+          "type": "Documentary"
+        },
+        {
+          "title": "Bolívar entre la realidad y el ensueño",
+          "year": 1984,
+          "type": "Documentary"
+        },
+        {
+          "title": "La mujer en Bolivia",
+          "year": 1986,
+          "type": "Documentary"
+        },
+        {
+          "title": "El clamor de la Historia",
+          "year": 1990,
+          "type": "Documentary"
+        },
+        {
+          "title": "El encanto del Valle de Zongo",
+          "year": 1995,
+          "type": "Documentary"
+        }
+      ]
+    },
+
+    {
+      "id": "marcos-loayza",
+      "name": "Marcos Loayza",
+      "full_name": "Marcos Loayza Montoya",
+      "nationality": "Bolivian",
+      "birth_date": "1959-11-29",
+      "birth_place": "La Paz, Bolivia",
+      "occupation": [
+        "Film Director",
+        "Screenwriter",
+        "Producer",
+        "Visual Artist",
+        "Illustrator"
+      ],
+      "active_years": "1980s-present",
+      "education": [
+        "Architecture, Universidad Mayor de San Andrés",
+        "International School of Film and Television, San Antonio de los Baños, Cuba"
+      ],
+      "teachers_and_influences": [
+        "Alfredo Bryce Echenique",
+        "Jean-Claude Carrière",
+        "José Sanchis Sinisterra",
+        "Jorge Sanjinés"
+      ],
+      "short_bio": "Marcos Loayza is one of the defining filmmakers of modern Bolivian cinema. His films combine humor, social observation, popular culture and distinctly Bolivian characters, offering an alternative to the politically militant tradition that had dominated much of the country's earlier cinema.",
+      "biography": "Marcos Loayza Montoya was born in La Paz in 1959. He initially studied Architecture before turning toward cinema and eventually studying at the International School of Film and Television in San Antonio de los Baños, Cuba. His formation combined visual design, literature, theater and filmmaking, influences that would later become visible in his distinctive approach to character, space and storytelling.\n\nLoayza emerged as a filmmaker during a period in which Bolivian cinema was searching for new ways to portray the country after the major political and revolutionary films of the previous decades. Rather than abandoning Bolivia's social reality, he approached it from another direction: through humor, everyday life, popular religion, absurdity, friendship and the peculiar contradictions of contemporary Bolivian society.\n\nHis feature debut, Cuestión de fe, released in 1995, became one of the most celebrated Bolivian films of its generation. The story follows three very different characters transporting a life-sized statue of the Virgin through Bolivia, transforming a simple journey into a comic and often surreal portrait of friendship, belief, social class and the country's geography. The film was widely recognized at international festivals and introduced a more playful, intimate and accessible cinematic voice to the international image of Bolivia.\n\nLoayza continued exploring different forms and genres throughout his career, moving between fiction, documentary, television and collaborative projects. His work includes Escrito en el agua, El corazón de Jesús, El Estado de las Cosas, Las Bellas Durmientes and Averno. Across these films, he repeatedly returns to the relationship between ordinary people and the strange, humorous or contradictory environments they inhabit.\n\nBeyond directing, Loayza has worked as a producer, teacher, illustrator and cultural figure. His background in architecture and drawing has remained visible in his interest in visual composition and in the way he observes cities and characters. He has also contributed to the development of younger generations of Bolivian filmmakers, making his importance extend beyond his own filmography.",
+      "impact": "Loayza helped broaden the emotional and stylistic vocabulary of Bolivian cinema. After decades in which political struggle, Indigenous resistance and social conflict had dominated many of the country's most internationally recognized films, his work demonstrated that Bolivia could also be portrayed through comedy, irony, friendship, popular belief and everyday absurdity without losing its cultural specificity. Cuestión de fe became especially important because it achieved both local resonance and international festival recognition while remaining deeply rooted in Bolivian life.",
+      "cinematic_legacy": "Loayza represents an important bridge between the political cinema of earlier generations and the more diverse contemporary Bolivian cinema that followed. His films showed that a distinctly Bolivian story did not need to be presented exclusively as political drama or ethnographic document. It could also be funny, strange, intimate, popular and cinematic. This expanded conception of what Bolivian cinema could look and feel like helped create space for later filmmakers to explore different genres, tones and representations of the country.",
+      "themes": [
+        "Bolivian identity",
+        "Humor",
+        "Popular culture",
+        "Religion",
+        "Urban life",
+        "Social observation",
+        "Friendship",
+        "Absurdity",
+        "Myth and folklore",
+        "Contemporary Bolivia"
+      ],
+      "career_highlights": [
+        "Made his feature-film debut with Cuestión de fe in 1995.",
+        "Cuestión de fe became one of the best-known Bolivian films of the 1990s and won numerous international awards.",
+        "Directed the documentary El Estado de las Cosas about Bolivia during the constitutional reform period under Evo Morales.",
+        "Created the documentary television series Planeta Bolivia.",
+        "Directed Averno, a surreal journey through La Paz inspired by Andean mythology and popular culture.",
+        "Served as executive producer on Alejandro Loayza Grisi's Utama.",
+        "Works across cinema, television, documentary, illustration and education."
+      ],
+      "cinematic_themes": [
+        "Bolivian identity",
+        "Urban life",
+        "Popular culture",
+        "Andean mythology",
+        "Social inequality",
+        "Politics",
+        "Faith",
+        "Death",
+        "Humor",
+        "Contemporary Bolivia",
+        "Human relationships"
+      ],
+      "cinematic_style": "Loayza's cinema often combines humor, social observation and absurdity with an interest in Bolivian popular culture. His films move between realistic social environments and symbolic or surreal spaces, frequently using the city and its inhabitants as characters in themselves.",
+      "legacy": "Loayza is an important figure in the generation that followed the political cinema of Sanjinés and the earlier Bolivian filmmakers. His work helped expand Bolivian cinema toward comedy, urban stories, contemporary social observation and surreal representations of Andean culture.",
+      "other_arts": [
+        "Illustration",
+        "Drawing",
+        "Theatre",
+        "Television",
+        "Advertising",
+        "Film education"
+      ],
+      "imdb": {
+        "name_id": "nm0516392",
+        "name": "Marcos Loayza",
+        "director_credits": 9,
+        "writer_credits": 6,
+        "producer_credits": 5,
+        "cinematographer_credits": 1
+      },
+      "imdb_filmography": [
+        {
+          "title": "Gran poder",
+          "year": 1988,
+          "type": "Short film",
+          "role": "Director",
+          "imdb_id": null
+        },
+        {
+          "title": "Cuestión de fe",
+          "english_title": "A Matter of Faith",
+          "year": 1995,
+          "type": "Feature film",
+          "role": "Director / Writer",
+          "imdb_id": "tt0139956"
+        },
+        {
+          "title": "Escrito en el agua",
+          "english_title": "Ever Changing Waters",
+          "year": 1998,
+          "type": "Feature film",
+          "role": "Director / Writer",
+          "imdb_id": "tt0146677"
+        },
+        {
+          "title": "El corazón de Jesús",
+          "english_title": "The Heart of Jesus",
+          "year": 2003,
+          "type": "Feature film",
+          "role": "Director / Writer / Producer",
+          "imdb_id": "tt0362518"
+        },
+        {
+          "title": "El Estado de las Cosas",
+          "english_title": "The State of Things",
+          "year": 2007,
+          "type": "Documentary",
+          "role": "Director / Writer",
+          "imdb_id": "tt1899167"
+        },
+        {
+          "title": "Qué culpa tiene el tomate",
+          "english_title": "What Has the Tomato Done to Deserve This?",
+          "year": 2009,
+          "type": "Documentary",
+          "role": "Co-director",
+          "imdb_id": null
+        },
+        {
+          "title": "Las Bellas Durmientes",
+          "english_title": "The Sleeping Beauties",
+          "year": 2012,
+          "type": "Feature film",
+          "role": "Director / Writer",
+          "imdb_id": "tt2525212"
+        },
+        {
+          "title": "Planeta Bolivia",
+          "year": 2016,
+          "type": "TV documentary series",
+          "role": "Director",
+          "episodes": 4,
+          "imdb_id": null
+        },
+        {
+          "title": "Averno",
+          "year": 2018,
+          "type": "Feature film",
+          "role": "Director / Writer / Executive Producer",
+          "imdb_id": "tt7851964"
+        }
+      ],
+      "notable_producing_credits": [
+        {
+          "title": "Utama",
+          "year": 2022,
+          "role": "Executive Producer",
+          "director": "Alejandro Loayza Grisi"
+        },
+        {
+          "title": "Averno",
+          "year": 2018,
+          "role": "Executive Producer"
+        },
+        {
+          "title": "Las Bellas Durmientes",
+          "year": 2012,
+          "role": "Co-producer"
+        },
+        {
+          "title": "Qué culpa tiene el tomate",
+          "year": 2009,
+          "role": "Co-producer"
+        },
+        {
+          "title": "El corazón de Jesús",
+          "year": 2003,
+          "role": "Producer"
+        }
+      ],
+      "major_awards": [
+        {
+          "year": 1995,
+          "award": "Coral Award - Best First Work",
+          "festival": "Havana Film Festival",
+          "film": "Cuestión de fe"
+        },
+        {
+          "year": 1995,
+          "award": "Special Jury Prize",
+          "festival": "Biarritz International Festival of Latin American Cinema",
+          "film": "Cuestión de fe"
+        },
+        {
+          "year": 1995,
+          "award": "OCIC Special Mention",
+          "festival": "Havana Film Festival",
+          "film": "Cuestión de fe"
+        },
+        {
+          "year": 1995,
+          "award": "International Critics Award",
+          "festival": "Huelva Latin American Film Festival",
+          "film": "Cuestión de fe"
+        },
+        {
+          "year": 1996,
+          "award": "Golden India Catalina - Best First Work",
+          "festival": "Cartagena Film Festival",
+          "film": "Cuestión de fe"
+        },
+        {
+          "year": 1996,
+          "award": "FIPRESCI Special Mention",
+          "festival": "International Film Festival Rotterdam",
+          "film": "Cuestión de fe"
+        },
+        {
+          "year": 2004,
+          "award": "Special Jury Prize",
+          "festival": "Bogotá Film Festival",
+          "film": "El corazón de Jesús"
+        },
+        {
+          "year": 2018,
+          "award": "Best Local Film / Best Latin American Film",
+          "festival": "Buenos Aires International Festival of Independent Cinema",
+          "film": "Averno"
+        },
+        {
+          "year": 2018,
+          "award": "Special Jury Award",
+          "festival": "Gramado Film Festival",
+          "film": "Averno"
+        }
+      ]
+    }
+  ]
+}

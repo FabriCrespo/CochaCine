@@ -38,10 +38,10 @@ export function MovieDetailPage() {
   if (id === null) {
     return (
       <AppShell title="Movie not found" wide>
-        <p className="text-brand/80">That address is not a movie.</p>
+        <p className="font-serif text-lg text-ivory">That address is not a movie.</p>
         <Link
           to={paths.catalog()}
-          className="mt-6 inline-block text-sm tracking-[0.18em] uppercase text-brand underline-offset-4 hover:underline"
+          className="mt-6 inline-block text-sm tracking-[0.18em] uppercase text-muted underline-offset-4 hover:text-ivory hover:underline"
         >
           Back to catalog
         </Link>

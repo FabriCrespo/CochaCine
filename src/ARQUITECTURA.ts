@@ -5,7 +5,7 @@
  *
  * Flujo de una petición (de arriba hacia abajo):
  *
- *   UI (BolivianMoviesPage / MovieDetailPage)
+ *   UI (HomePage / CatalogPage / MovieDetailPage)
  *     → hook (useBolivianMovies / useMovie)
  *       → fetchBolivianMovies / fetchMovieById + Axios
  *         → mapper (DTO TMDB → Movie / MovieDetail)
@@ -13,13 +13,16 @@
  *           → UI
  *
  * Rutas:
- *   /                  catálogo
- *   /pelicula/:movieId ficha (paths.movie(id) en lib/paths.ts)
- *   /admin             editor de overrides (paths.admin)
+ *   /                     home (populares + décadas)
+ *   /archivo              archivo con filtros (paths.catalog())
+ *   /pelicula/:movieId    ficha (paths.movie(id) en lib/paths.ts)
+ *   /director/:directorId perfil (paths.director(id))
+ *   /admin                editor de overrides (paths.admin)
  *
  * Carpetas:
  *
  *   config/          constantes y .env tipado
+ *   data/            perfiles editoriales (directors.json)
  *   domain/          modelos de la app (Movie). Cero Axios.
  *   api/http/        instancia Axios + AppError
  *   api/tmdb/        endpoints, DTOs, mappers, fetch*

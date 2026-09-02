@@ -1,12 +1,17 @@
 @import "tailwindcss";
 
 /*
- * Paleta Cochacine.
- * Oro del logo + negro. Cualquier acento de UI sale de --color-brand
- * (text-brand, border-brand, bg-brand). No uses amber ni zinc.
+ * Paleta editorial Cochacine.
+ * Negro, marfil y neutros cálidos. #CBB89A es acento, no el color de todo el texto.
  */
 @theme {
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+  --font-display: "Cormorant Garamond", "Newsreader", ui-serif, Georgia, serif;
   --color-brand: #cbb89a;
+  --color-ivory: #f4efe6;
+  --color-paper: #f6f5f0;
+  --color-muted: #a89f90;
   --color-ink: #000000;
   --color-ink-soft: #12110f;
 }
@@ -20,6 +25,8 @@ html,
 body {
   margin: 0;
   background-color: #000000;
+  color: var(--color-ivory);
+  font-family: var(--font-sans);
   overscroll-behavior: none;
 }
 
@@ -32,4 +39,143 @@ body {
   display: none;
   width: 0;
   height: 0;
+}
+
+@keyframes spotlight-zoom {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes spotlight-portrait-in {
+  from {
+    opacity: 0;
+    transform: scale(1.03) translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.04) translateY(0);
+  }
+}
+
+@keyframes spotlight-kicker {
+  from {
+    opacity: 0;
+    letter-spacing: 0.62em;
+    transform: translateY(0.55em);
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.28em;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spotlight-name {
+  from {
+    opacity: 0;
+    transform: translateY(110%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spotlight-rule {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes spotlight-button {
+  from {
+    opacity: 0;
+    transform: translateY(0.7rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spotlight-kicker {
+  animation: spotlight-kicker 1.35s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+
+.spotlight-name-word {
+  display: block;
+  overflow: hidden;
+}
+
+.spotlight-name-word > span {
+  display: block;
+  animation: spotlight-name 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.spotlight-name-word:nth-child(1) > span {
+  animation-delay: 0.32s;
+}
+
+.spotlight-name-word:nth-child(2) > span {
+  animation-delay: 0.52s;
+}
+
+.spotlight-rule {
+  animation: spotlight-rule 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.78s both;
+}
+
+.spotlight-button {
+  animation: spotlight-button 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+}
+
+.spotlight-portrait img {
+  animation:
+    spotlight-portrait-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) both,
+    spotlight-zoom 18s ease-out 1.4s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-kicker,
+  .spotlight-name-word > span,
+  .spotlight-rule,
+  .spotlight-button,
+  .spotlight-portrait img {
+    animation: none;
+  }
+
+  .profile-reveal.is-in {
+    animation: none;
+  }
+
+  .profile-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.profile-reveal {
+  opacity: 0;
+  transform: translateY(1.35rem);
+}
+
+.profile-reveal.is-in {
+  animation: profile-rise 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes profile-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

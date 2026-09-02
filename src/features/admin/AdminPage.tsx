@@ -185,7 +185,7 @@ function AdminFrame({
     <div className="min-h-screen bg-ink text-brand">
       <header className="flex items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-3">
-          <Link to={paths.catalog()} className="block w-28 shrink-0">
+          <Link to={paths.catalog()} className="block w-36 shrink-0">
             <img src="/logo.png?v=2" alt="Cochacine" className="h-auto w-full" />
           </Link>
           <p className="text-xs tracking-[0.22em] uppercase text-brand/70">Editor</p>

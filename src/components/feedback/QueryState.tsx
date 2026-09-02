@@ -40,7 +40,7 @@ export function QueryState({
   children,
 }: QueryStateProps) {
   if (isPending) {
-    return <p className="text-brand/70">{pendingMessage}</p>
+    return <p className="font-serif text-lg text-muted">{pendingMessage}</p>
   }
 
   if (isError) {
@@ -61,7 +61,7 @@ export function QueryState({
   }
 
   if (isEmpty) {
-    return <p className="text-brand/70">{emptyMessage}</p>
+    return <p className="font-serif text-lg text-muted">{emptyMessage}</p>
   }
 
   return children

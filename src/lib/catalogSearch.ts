@@ -51,8 +51,8 @@ export function rememberCatalogView(view: CatalogViewState): void {
 }
 
 export function catalogLocation(): string {
-  if (typeof sessionStorage === 'undefined') return '/'
-  return `/${sessionStorage.getItem(SEARCH_KEY) ?? ''}`
+  if (typeof sessionStorage === 'undefined') return '/archivo'
+  return `/archivo${sessionStorage.getItem(SEARCH_KEY) ?? ''}`
 }
 
 export function rememberCatalogScroll(y: number): void {

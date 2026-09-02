@@ -7,8 +7,10 @@ import { catalogLocation } from './catalogSearch.ts'
 
 export const paths = {
   home: '/',
+  archive: '/archivo',
   catalog: () => catalogLocation(),
   movie: (id: number) => `/pelicula/${id}`,
+  director: (id: string) => `/director/${id}`,
   admin: '/admin',
   adminMovie: (id: number) => `/admin/${id}`,
 } as const

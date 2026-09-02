@@ -3,8 +3,7 @@
  * MovieCard
  * =============================================================================
  *
- * Tarjeta de una película del dominio (Movie), NUNCA del DTO de TMDB.
- * Si intentas pasar vote_average, TypeScript no te deja.
+ * Póster como objeto, no tarjeta. Título serif + año muted.
  */
 
 import type { Movie } from '../../../domain/movie.ts'
@@ -15,7 +14,7 @@ type MovieCardProps = {
 
 export function MovieCard({ movie }: MovieCardProps) {
   return (
-    <article className="overflow-hidden bg-ink-soft ring-1 ring-brand/35">
+    <article>
       {movie.posterUrl ? (
         <img
           src={movie.posterUrl}
@@ -23,14 +22,16 @@ export function MovieCard({ movie }: MovieCardProps) {
           className="aspect-2/3 w-full object-cover"
         />
       ) : (
-        <div className="flex aspect-2/3 items-center justify-center bg-ink text-sm text-brand/50">
+        <div className="flex aspect-2/3 items-center justify-center bg-ink-soft text-sm text-muted">
           No poster
         </div>
       )}
-      <div className="p-3">
-        <h2 className="line-clamp-2 text-sm font-medium text-brand">{movie.title}</h2>
-        <p className="mt-1 text-xs text-brand/80">
-          {movie.releaseYear ?? '—'} · {movie.rating.toFixed(1)}
+      <div className="pt-3">
+        <h2 className="line-clamp-2 font-serif text-[15px] leading-snug text-ivory">
+          {movie.title}
+        </h2>
+        <p className="mt-1 text-xs tracking-wide text-muted">
+          {movie.releaseYear ?? '—'}
         </p>
       </div>
     </article>

@@ -18,7 +18,7 @@ export function HorizontalCarousel({ title, children }: HorizontalCarouselProps)
   return (
     <section>
       <div className="mb-5 flex items-center justify-between gap-4">
-        <h3 className="text-xl font-semibold text-white">{title}</h3>
+        <h3 className="font-display text-3xl italic text-ivory sm:text-4xl">{title}</h3>
         <div className="flex items-center gap-1">
           <CarouselArrow label="Previous" onClick={() => scrollByPage(-1)}>
             <ChevronLeft />
@@ -52,7 +52,7 @@ function CarouselArrow({
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+      className="flex h-8 w-8 items-center justify-center text-muted hover:text-ivory"
     >
       {children}
     </button>
