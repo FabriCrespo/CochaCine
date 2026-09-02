@@ -8,6 +8,7 @@ type AdminAddTitleProps = {
 
 export function AdminAddTitle({ onAdded }: AdminAddTitleProps) {
   const add = useAddCatalogMovie()
+  const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -17,36 +18,52 @@ export function AdminAddTitle({ onAdded }: AdminAddTitleProps) {
     try {
       const movie = await add.mutateAsync(input)
       setValue('')
+      setOpen(false)
       onAdded(movie)
     } catch {
       // shown via add.error
     }
   }
 
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full py-3 text-left text-[11px] tracking-[0.18em] uppercase text-muted hover:text-ivory"
+      >
+        + Add a title
+      </button>
+    )
+  }
+
   return (
-    <form onSubmit={(event) => void handleSubmit(event)} className="space-y-2">
-      <label className="block">
-        <span className="mb-1 block text-[11px] tracking-[0.16em] uppercase text-brand/55">
-          Add from IMDb
-        </span>
-        <input
-          type="text"
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          placeholder="https://www.imdb.com/title/tt1234567/"
-          className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-brand"
-        />
-      </label>
+    <form onSubmit={(event) => void handleSubmit(event)} className="space-y-3 border-t border-ivory/10 pt-3">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] tracking-[0.18em] uppercase text-muted">From IMDb or TMDB</p>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="text-[11px] tracking-[0.14em] uppercase text-muted hover:text-ivory"
+        >
+          Close
+        </button>
+      </div>
+      <input
+        type="text"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        placeholder="tt1234567 or a title URL"
+        className="w-full border-0 border-b border-ivory/20 bg-transparent py-2 font-serif text-sm text-ivory outline-none placeholder:text-ivory/30 focus:border-brand"
+      />
       <button
         type="submit"
         disabled={add.isPending || !value.trim()}
-        className="w-full border border-brand bg-brand px-3 py-1.5 text-[11px] tracking-[0.16em] uppercase text-ink disabled:opacity-40"
+        className="w-full bg-brand py-2 text-[11px] tracking-[0.18em] uppercase text-ink disabled:opacity-40"
       >
         {add.isPending ? 'Adding...' : 'Add to catalog'}
       </button>
-      {add.error ? (
-        <p className="text-xs text-red-300">{add.error.message}</p>
-      ) : null}
+      {add.error ? <p className="font-serif text-xs text-red-300">{add.error.message}</p> : null}
     </form>
   )
 }

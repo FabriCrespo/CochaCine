@@ -49,6 +49,5 @@ export const env = {
   supabasePublishableKey:
     optionalEnv('VITE_SUPABASE_PUBLISHABLE_KEY') ??
     optionalEnv('VITE_SUPABASE_ANON_KEY'),
-  adminPassword: optionalEnv('VITE_ADMIN_PASSWORD') ?? 'szactrl123C!n',
   isDev: import.meta.env.DEV,
 } as const

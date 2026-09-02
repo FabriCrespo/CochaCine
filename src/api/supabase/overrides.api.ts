@@ -1,5 +1,5 @@
 import { AppError } from '../http/errors.ts'
-import { requireWriteClient } from './adminClient.ts'
+import { requireWriteClient, writeDeniedMessage } from './adminClient.ts'
 import { getSupabase } from './client.ts'
 import {
   MOVIE_MEDIA_BUCKET,
@@ -79,7 +79,7 @@ export async function fetchAllMovieOverrides(): Promise<MovieOverride[]> {
 }
 
 export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<MovieOverride> {
-  const supabase = requireWriteClient()
+  const supabase = await requireWriteClient()
   const full = await supabase
     .from(MOVIE_OVERRIDES_TABLE)
     .upsert(payload, { onConflict: 'tmdb_id' })
@@ -92,7 +92,7 @@ export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<
   }
 
   if (!isMissingColumnError(full.error?.message)) {
-    throw new AppError(full.error?.message ?? 'Could not save the override.', 'HTTP', null)
+    throw new AppError(writeDeniedMessage(full.error?.message) ?? 'Could not save the override.', 'HTTP', null)
   }
 
   const legacyPayload: MovieOverrideLegacyWrite = toLegacyOverrideWrite(payload)
@@ -104,23 +104,23 @@ export async function upsertMovieOverride(payload: MovieOverrideWrite): Promise<
 
   const row = asOverride(legacy.data)
   if (legacy.error || !row) {
-    throw new AppError(legacy.error?.message ?? 'Could not save the override.', 'HTTP', null)
+    throw new AppError(writeDeniedMessage(legacy.error?.message) ?? 'Could not save the override.', 'HTTP', null)
   }
 
   return row
 }
 
 export async function deleteMovieOverride(tmdbId: number): Promise<void> {
-  const supabase = requireWriteClient()
+  const supabase = await requireWriteClient()
   const { error } = await supabase.from(MOVIE_OVERRIDES_TABLE).delete().eq('tmdb_id', tmdbId)
 
   if (error) {
-    throw new AppError(error.message, 'HTTP', null)
+    throw new AppError(writeDeniedMessage(error.message), 'HTTP', null)
   }
 }
 
 export async function uploadMoviePoster(tmdbId: number, file: File): Promise<string> {
-  const supabase = requireWriteClient()
+  const supabase = await requireWriteClient()
   const extension = extensionFor(file)
   const path = `${tmdbId}/poster-${Date.now()}.${extension}`
 
@@ -131,7 +131,7 @@ export async function uploadMoviePoster(tmdbId: number, file: File): Promise<str
   })
 
   if (error) {
-    throw new AppError(error.message, 'HTTP', null)
+    throw new AppError(writeDeniedMessage(error.message), 'HTTP', null)
   }
 
   const { data } = supabase.storage.from(MOVIE_MEDIA_BUCKET).getPublicUrl(path)

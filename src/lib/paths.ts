@@ -11,6 +11,7 @@ export const paths = {
   catalog: () => catalogLocation(),
   movie: (id: number) => `/pelicula/${id}`,
   director: (id: string) => `/director/${id}`,
+  project: '/project',
   admin: '/admin',
   adminMovie: (id: number) => `/admin/${id}`,
 } as const

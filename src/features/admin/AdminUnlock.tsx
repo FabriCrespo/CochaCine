@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react'
-import { verifyAdminPassword } from '../../api/supabase/adminClient.ts'
 import { AppError } from '../../api/http/errors.ts'
 
 type AdminUnlockProps = {
-  onUnlocked: () => void
+  onSignIn: (email: string, password: string) => Promise<unknown>
 }
 
-export function AdminUnlock({ onUnlocked }: AdminUnlockProps) {
+export function AdminUnlock({ onSignIn }: AdminUnlockProps) {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
@@ -16,8 +16,7 @@ export function AdminUnlock({ onUnlocked }: AdminUnlockProps) {
     setError(null)
     setPending(true)
     try {
-      await verifyAdminPassword(password)
-      onUnlocked()
+      await onSignIn(email, password)
     } catch (caught) {
       setError(caught instanceof AppError ? caught.message : 'Could not sign in.')
     } finally {
@@ -25,32 +24,48 @@ export function AdminUnlock({ onUnlocked }: AdminUnlockProps) {
     }
   }
 
+  const canSubmit = email.trim().length > 0 && password.length > 0
+
   return (
-    <div className="mx-auto max-w-md pt-16">
-      <p className="text-center text-xs tracking-[0.28em] uppercase text-brand/70">Editor</p>
-      <h1 className="mt-3 text-center text-2xl text-brand">Quick edits</h1>
-      <p className="mt-4 text-center text-sm text-brand/70">Enter the editor password.</p>
-      <form onSubmit={(event) => void handleSubmit(event)} className="mt-8 space-y-4">
-        <label className="block">
-          <span className="sr-only">Password</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Password"
-            className="w-full border border-brand/40 bg-ink px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/35 focus:border-brand"
-          />
-        </label>
-        {error ? <p className="text-sm text-red-300">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={pending || !password}
-          className="w-full border border-brand bg-brand px-3 py-2 text-sm tracking-[0.18em] uppercase text-ink disabled:opacity-40"
-        >
-          {pending ? 'Signing in...' : 'Sign in'}
-        </button>
-      </form>
+    <div className="flex min-h-[calc(100vh-4.5rem)] items-center justify-center px-6 py-16">
+      <div className="w-full max-w-sm">
+        <p className="text-[11px] tracking-[0.28em] uppercase text-brand">The desk</p>
+        <h1 className="mt-3 font-display text-5xl italic text-ivory">Sign in</h1>
+        <span className="mt-6 block h-px w-12 bg-brand" />
+        <p className="mt-6 font-serif text-base leading-7 text-ivory/60">
+          Only listed editors can write. The house stays public.
+        </p>
+        <form onSubmit={(event) => void handleSubmit(event)} className="mt-10 space-y-5">
+          <label className="block">
+            <span className="mb-2 block text-[11px] tracking-[0.18em] uppercase text-muted">Email</span>
+            <input
+              type="email"
+              autoComplete="username"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="w-full border-0 border-b border-ivory/20 bg-transparent py-2 font-serif text-ivory outline-none placeholder:text-ivory/25 focus:border-brand"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-[11px] tracking-[0.18em] uppercase text-muted">Password</span>
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="w-full border-0 border-b border-ivory/20 bg-transparent py-2 font-serif text-ivory outline-none placeholder:text-ivory/25 focus:border-brand"
+            />
+          </label>
+          {error ? <p className="font-serif text-sm text-red-300">{error}</p> : null}
+          <button
+            type="submit"
+            disabled={pending || !canSubmit}
+            className="mt-4 w-full bg-brand px-4 py-3 text-[11px] tracking-[0.22em] uppercase text-ink disabled:opacity-40"
+          >
+            {pending ? 'Signing in...' : 'Enter'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

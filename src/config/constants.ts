@@ -55,6 +55,13 @@ export const TMDB_MOVIE_AVERNO = 497945
 /** Utama (2022) — Alejandro Loayza Grisi. */
 export const TMDB_MOVIE_UTAMA = 913820
 
+export const AUTHOR = {
+  name: 'Fabricio Crespo',
+  github: 'https://github.com/FabriCrespo',
+  repo: 'https://github.com/FabriCrespo/CochaCine',
+  portfolio: 'https://fabricrespo.github.io/Portfolio/',
+} as const
+
 export const HTTP_TIMEOUT_MS = 10_000
 
 /** IMDb vía lector: la página tarda más que TMDB. */

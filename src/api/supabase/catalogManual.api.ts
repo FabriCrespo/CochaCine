@@ -1,5 +1,5 @@
 import { AppError } from '../http/errors.ts'
-import { requireWriteClient } from './adminClient.ts'
+import { requireWriteClient, writeDeniedMessage } from './adminClient.ts'
 import { getSupabase } from './client.ts'
 
 export const CATALOG_MANUAL_TABLE = 'catalog_manual'
@@ -33,7 +33,7 @@ export async function insertManualCatalogMovie(
   tmdbId: number,
   imdbId: string | null,
 ): Promise<void> {
-  const supabase = requireWriteClient()
+  const supabase = await requireWriteClient()
   const { error } = await supabase.from(CATALOG_MANUAL_TABLE).upsert(
     { tmdb_id: tmdbId, imdb_id: imdbId },
     { onConflict: 'tmdb_id' },
@@ -43,7 +43,7 @@ export async function insertManualCatalogMovie(
     const hint = isMissingTableError(error.message)
       ? ' Run supabase/migrations/20260901_catalog_manual.sql in the Supabase SQL editor.'
       : ''
-    throw new AppError(`${error.message}${hint}`, 'HTTP', null)
+    throw new AppError(`${writeDeniedMessage(error.message)}${hint}`, 'HTTP', null)
   }
 }
 

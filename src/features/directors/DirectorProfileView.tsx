@@ -10,6 +10,7 @@ import { matchCatalogMovie, matchCatalogMovieByTitle } from '../../lib/catalog.t
 import { formatReleaseDateLong } from '../../lib/dates.ts'
 import { paths } from '../../lib/paths.ts'
 import { usePrefetchMovie } from '../../query/movies/useMovie.ts'
+import { Breadcrumbs } from '../../components/layout/Breadcrumbs.tsx'
 
 type DirectorProfileViewProps = {
   director: SpotlightDirector
@@ -29,12 +30,15 @@ export function DirectorProfileView({ director, movies }: DirectorProfileViewPro
   return (
     <article className="bg-paper text-ink">
       <div className="mx-auto grid min-h-[calc(100vh-4.5rem)] max-w-360 items-center gap-10 px-6 py-16 lg:grid-cols-[1fr_minmax(18rem,32rem)_1fr] lg:px-12">
-        <Link
-          to={paths.home}
-          className="text-center text-[11px] tracking-[0.18em] uppercase text-ink/50 hover:text-ink lg:text-left"
-        >
-          ← Home
-        </Link>
+        <div className="text-center lg:text-left">
+          <Breadcrumbs
+            tone="paper"
+            items={[
+              { label: 'Home', to: paths.home },
+              { label: director.name },
+            ]}
+          />
+        </div>
         <div className="mx-auto h-[min(72vh,40rem)] w-full max-w-lg overflow-hidden">
           <img
             src={director.image}

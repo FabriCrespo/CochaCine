@@ -14,6 +14,7 @@ import { isOnWatchlist, toggleWatchlist } from '../../../lib/watchlist.ts'
 import { usePrefetchMovie } from '../../../query/movies/useMovie.ts'
 import { HorizontalCarousel } from './HorizontalCarousel.tsx'
 import { TrailerModal } from './TrailerModal.tsx'
+import { Breadcrumbs } from '../../../components/layout/Breadcrumbs.tsx'
 
 type MovieDetailViewProps = {
   movie: MovieDetail
@@ -44,6 +45,15 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
 
   return (
     <article className="text-ivory">
+      <div className="mb-10">
+        <Breadcrumbs
+          items={[
+            { label: 'Home', to: paths.home },
+            { label: 'Archive', to: paths.catalog() },
+            { label: movie.title },
+          ]}
+        />
+      </div>
       <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,280px)_1fr] xl:grid-cols-[minmax(0,320px)_1fr] xl:gap-16">
         <div className="mx-auto w-full max-w-72 bg-ink-soft lg:mx-0">
           {movie.posterUrl ? (

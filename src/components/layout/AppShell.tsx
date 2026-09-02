@@ -9,6 +9,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { paths } from '../../lib/paths.ts'
+import { SiteFooter } from './SiteFooter.tsx'
 
 type AppShellProps = {
   title: string
@@ -42,6 +43,12 @@ export function AppShell({ title, toolbar, hero, after, wide = false, children }
             Archive
           </Link>
           <Link
+            to={paths.project}
+            className="shrink-0 text-[10px] tracking-[0.22em] uppercase text-muted hover:text-ivory"
+          >
+            Project
+          </Link>
+          <Link
             to={paths.admin}
             className="shrink-0 text-[10px] tracking-[0.22em] uppercase text-muted hover:text-ivory"
           >
@@ -60,6 +67,7 @@ export function AppShell({ title, toolbar, hero, after, wide = false, children }
         </main>
       ) : null}
       {after}
+      <SiteFooter />
     </div>
   )
 }

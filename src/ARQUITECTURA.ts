@@ -17,6 +17,7 @@
  *   /archivo              archivo con filtros (paths.catalog())
  *   /pelicula/:movieId    ficha (paths.movie(id) en lib/paths.ts)
  *   /director/:directorId perfil (paths.director(id))
+ *   /project              caso de estudio (paths.project)
  *   /admin                editor de overrides (paths.admin)
  *
  * Carpetas:
@@ -27,7 +28,7 @@
  *   api/http/        instancia Axios + AppError
  *   api/tmdb/        endpoints, DTOs, mappers, fetch*
  *   api/imdb/        plot en inglés cuando TMDB no lo tiene
- *   api/supabase/    overrides editoriales (póster, sinopsis, trailer)
+ *   api/supabase/    overrides + Auth del editor (sesión, RLS)
  *   query/           QueryClient, query keys, hooks
  *   features/movies/ páginas y componentes del feature
  *   components/      UI reutilizable (layout, estados)

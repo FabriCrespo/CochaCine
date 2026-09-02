@@ -1,5 +1,6 @@
 /**
- * Cliente de Supabase (solo lectura pública).
+ * Cliente de Supabase.
+ * Anon para lectura pública. Tras sign-in, el JWT viaja solo en las escrituras.
  * El sb_secret NUNCA va acá: viaja al navegador si tiene prefijo VITE_.
  */
 
@@ -15,7 +16,11 @@ export function getSupabase(): SupabaseClient | null {
     return client
   }
   client = createClient(env.supabaseUrl, env.supabasePublishableKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
   })
   return client
 }

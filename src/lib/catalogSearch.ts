@@ -8,6 +8,7 @@ export type CatalogViewState = {
   genreIds: number[]
   year: string
   sortBy: CatalogSort
+  page: number
 }
 
 export function defaultCatalogView(): CatalogViewState {
@@ -16,6 +17,7 @@ export function defaultCatalogView(): CatalogViewState {
     genreIds: [],
     year: '',
     sortBy: CATALOG_SORT.featured,
+    page: 1,
   }
 }
 
@@ -26,12 +28,14 @@ export function parseCatalogSearch(search: string): CatalogViewState {
     .split(',')
     .map((value) => Number(value))
     .filter((id) => Number.isInteger(id) && id > 0)
+  const pageRaw = Number(params.get('p') ?? '1')
 
   return {
     query: params.get('q') ?? '',
     genreIds,
     year: params.get('y') ?? '',
     sortBy: isCatalogSort(sortRaw) ? sortRaw : CATALOG_SORT.featured,
+    page: Number.isInteger(pageRaw) && pageRaw > 0 ? pageRaw : 1,
   }
 }
 
@@ -41,6 +45,7 @@ export function catalogSearchString(view: CatalogViewState): string {
   if (view.genreIds.length > 0) params.set('g', view.genreIds.join(','))
   if (view.year) params.set('y', view.year)
   if (view.sortBy !== CATALOG_SORT.featured) params.set('s', view.sortBy)
+  if (view.page > 1) params.set('p', String(view.page))
   const encoded = params.toString()
   return encoded ? `?${encoded}` : ''
 }
