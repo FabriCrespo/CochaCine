@@ -181,3 +181,34 @@ body {
     transform: translateY(0);
   }
 }
+
+.lineage-wash {
+  background: linear-gradient(
+    to bottom,
+    var(--color-paper) 0,
+    #ddd4c4 2.5rem,
+    #6f6253 8rem,
+    #1c1915 16rem,
+    var(--color-ink) 26rem
+  );
+}
+
+.lineage-poster {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .lineage-poster,
+.group:focus-visible .lineage-poster {
+  transform: scale(1.025);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lineage-poster {
+    transition: none;
+  }
+
+  .group:hover .lineage-poster,
+  .group:focus-visible .lineage-poster {
+    transform: none;
+  }
+}

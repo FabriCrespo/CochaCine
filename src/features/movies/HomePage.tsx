@@ -18,6 +18,7 @@ import {
 import { paths } from '../../lib/paths.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
 import { CatalogHero } from './components/CatalogHero.tsx'
+import { HomeContemporary } from './components/HomeContemporary.tsx'
 import { HomeDirectors } from './components/HomeDirectors.tsx'
 import { HomeReading } from './components/HomeReading.tsx'
 import { MovieGrid } from './components/MovieGrid.tsx'
@@ -47,7 +48,16 @@ function HomeIndex() {
   )
 
   return (
-    <AppShell title="Bolivian cinema" hero={<CatalogHero />} after={<HomeDirectors />}>
+    <AppShell
+      title="Bolivian cinema"
+      hero={<CatalogHero />}
+      after={
+        <>
+          <HomeDirectors />
+          <HomeContemporary movies={movies} />
+        </>
+      }
+    >
       <QueryState
         isPending={isPending && !data}
         isError={isError}

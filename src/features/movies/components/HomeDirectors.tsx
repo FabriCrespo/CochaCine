@@ -124,7 +124,7 @@ export function HomeDirectors() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-6 pb-10">
+      <div className="flex items-center justify-center gap-6 pb-6">
         <CarouselArrow label="Previous director" onClick={() => goTo(index - 1)}>
           <ChevronLeft />
         </CarouselArrow>
