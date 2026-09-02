@@ -52,7 +52,7 @@ function CarouselArrow({
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="flex h-8 w-8 items-center justify-center text-muted hover:text-ivory"
+      className="flex h-9 w-9 items-center justify-center text-muted outline-none ring-1 ring-transparent transition-[color,box-shadow] duration-300 hover:text-ivory hover:ring-ivory/35 focus-visible:text-ivory focus-visible:ring-brand"
     >
       {children}
     </button>

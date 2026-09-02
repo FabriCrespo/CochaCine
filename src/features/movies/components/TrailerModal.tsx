@@ -41,7 +41,7 @@ export function TrailerModal({ youtubeKey, title, onClose }: TrailerModalProps) 
           <button
             type="button"
             onClick={onClose}
-            className="px-2 py-1 text-sm tracking-[0.14em] uppercase text-muted hover:text-ivory"
+            className="px-2 py-1 text-sm tracking-[0.14em] uppercase text-muted outline-none transition-colors duration-300 hover:text-ivory focus-visible:text-ivory focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-brand"
           >
             Close
           </button>

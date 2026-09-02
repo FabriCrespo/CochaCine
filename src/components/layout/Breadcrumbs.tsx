@@ -11,7 +11,10 @@ type BreadcrumbsProps = {
 }
 
 export function Breadcrumbs({ items, tone = 'dark' }: BreadcrumbsProps) {
-  const link = tone === 'paper' ? 'text-ink/40 hover:text-ink' : 'text-muted hover:text-ivory'
+  const link =
+    tone === 'paper'
+      ? 'text-ink/40 hover:text-ink focus-visible:text-ink'
+      : 'text-muted hover:text-ivory focus-visible:text-ivory'
   const current = tone === 'paper' ? 'text-ink/70' : 'text-ivory/75'
   const slash = tone === 'paper' ? 'text-ink/20' : 'text-ivory/20'
 
@@ -26,7 +29,10 @@ export function Breadcrumbs({ items, tone = 'dark' }: BreadcrumbsProps) {
               </span>
             ) : null}
             {item.to ? (
-              <Link to={item.to} className={link}>
+              <Link
+                to={item.to}
+                className={`${link} relative outline-none after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100 focus-visible:after:scale-x-100`}
+              >
                 {item.label}
               </Link>
             ) : (

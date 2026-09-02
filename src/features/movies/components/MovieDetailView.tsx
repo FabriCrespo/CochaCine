@@ -1,9 +1,10 @@
 /**
- * Ficha editorial: póster primario, título serif, plot marfil.
+ * Ficha editorial: póster, créditos en dossier de papel, notas como fichas.
  */
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
+import { Breadcrumbs } from '../../../components/layout/Breadcrumbs.tsx'
 import type { Movie, MovieCastMember, MovieDetail, MovieHighlight } from '../../../domain/movie.ts'
 import {
   formatReleaseDateLong,
@@ -14,12 +15,14 @@ import { isOnWatchlist, toggleWatchlist } from '../../../lib/watchlist.ts'
 import { usePrefetchMovie } from '../../../query/movies/useMovie.ts'
 import { HorizontalCarousel } from './HorizontalCarousel.tsx'
 import { TrailerModal } from './TrailerModal.tsx'
-import { Breadcrumbs } from '../../../components/layout/Breadcrumbs.tsx'
 
 type MovieDetailViewProps = {
   movie: MovieDetail
   similar: Movie[]
 }
+
+const focusRing =
+  'outline-none focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-brand'
 
 export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
   const [trailerOpen, setTrailerOpen] = useState(false)
@@ -31,17 +34,21 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
   const teaser = teaserOverview(overview || longPlot)
   const detailed = longPlot || overview
   const showDetailed = Boolean(longPlot) || detailed.length > teaser.length
-  const writers = movie.writers ?? []
-  const companies = movie.productionCompanies ?? []
+  const plotParagraphs = showDetailed ? splitParagraphs(detailed) : []
   const highlights = movie.highlights ?? []
-  const facts = [
-    { label: 'Director', value: movie.director?.name },
-    { label: 'Screenplay', value: joinList(writers) },
-    { label: 'Production', value: joinList(companies) },
+  const originalTitle =
+    movie.originalTitle.trim() && movie.originalTitle.trim() !== movie.title.trim()
+      ? movie.originalTitle.trim()
+      : null
+  const credits = [
+    { label: 'Director', value: movie.director?.name ?? null },
+    { label: 'Screenplay', value: joinList(movie.writers ?? []) },
+    { label: 'Production', value: joinList(movie.productionCompanies ?? []) },
     { label: 'Country', value: joinList(movie.countries) },
     { label: 'Language', value: joinList(movie.languages) },
     { label: 'Released', value: formatReleaseDateLong(movie.releaseDate) },
-  ]
+  ].filter((item): item is { label: string; value: string } => Boolean(item.value))
+  const hasDossier = credits.length > 0 || highlights.length > 0 || plotParagraphs.length > 0
 
   return (
     <article className="text-ivory">
@@ -54,47 +61,52 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
           ]}
         />
       </div>
-      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,280px)_1fr] xl:grid-cols-[minmax(0,320px)_1fr] xl:gap-16">
-        <div className="mx-auto w-full max-w-72 bg-ink-soft lg:mx-0">
-          {movie.posterUrl ? (
-            <img
-              src={movie.posterUrl}
-              alt=""
-              className="aspect-2/3 w-full object-cover"
-            />
-          ) : (
-            <div className="flex aspect-2/3 items-center justify-center text-sm text-muted">
-              No poster
-            </div>
-          )}
-        </div>
 
-        <div className="min-w-0">
-          <p className="flex items-center gap-2 font-serif text-sm italic text-muted">
+      <div className="fiche-hero grid items-start gap-12 lg:grid-cols-[minmax(0,300px)_1fr] lg:gap-16 xl:grid-cols-[minmax(0,340px)_1fr] xl:gap-20">
+        <PosterPlate
+          posterUrl={movie.posterUrl}
+          title={movie.title}
+          hasTrailer={Boolean(movie.trailerYoutubeKey)}
+          onPlay={() => setTrailerOpen(true)}
+        />
+
+        <div className="min-w-0 lg:pt-2">
+          <p className="flex items-center gap-2 text-[11px] tracking-[0.28em] uppercase text-brand">
             <BoliviaFlag />
             Bolivian cinema
           </p>
 
-          <h2 className="mt-4 font-serif text-4xl font-medium tracking-tight text-ivory sm:text-5xl">
+          <h2 className="mt-5 font-display text-5xl italic leading-[0.92] text-ivory sm:text-6xl lg:text-7xl">
             {movie.title}
           </h2>
+          <span className="fiche-mark mt-6 block h-px w-16 origin-left bg-brand" />
+
+          {originalTitle ? (
+            <p className="mt-5 font-serif text-lg italic text-ivory/45">{originalTitle}</p>
+          ) : null}
+
+          {movie.tagline ? (
+            <p className="mt-6 max-w-xl font-display text-2xl italic leading-snug text-ivory/75">
+              {movie.tagline}
+            </p>
+          ) : null}
 
           <MetaRow movie={movie} runtime={runtime} />
 
           {teaser ? (
-            <p className="mt-8 max-w-2xl text-[15px] leading-8 text-ivory/70">{teaser}</p>
+            <p className="mt-10 max-w-2xl font-serif text-lg leading-8 text-ivory/70">{teaser}</p>
           ) : (
-            <p className="mt-8 max-w-2xl text-[15px] leading-8 text-muted">
+            <p className="mt-10 max-w-2xl font-serif text-lg leading-8 text-muted">
               No English plot is available for this title.
             </p>
           )}
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap gap-3">
             {movie.trailerYoutubeKey ? (
               <button
                 type="button"
                 onClick={() => setTrailerOpen(true)}
-                className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-sm tracking-[0.12em] uppercase text-ink hover:bg-brand/90"
+                className={`inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-xs tracking-[0.16em] uppercase text-ink transition-[letter-spacing,background-color] duration-300 hover:bg-ivory hover:tracking-[0.22em] ${focusRing}`}
               >
                 <PlayIcon />
                 Watch trailer
@@ -103,26 +115,116 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
             <button
               type="button"
               onClick={() => setSaved(toggleWatchlist(movie.id))}
-              className="inline-flex items-center gap-2 border border-ivory/25 px-5 py-2.5 text-sm tracking-[0.12em] uppercase text-ivory hover:border-ivory/50"
+              className={`inline-flex items-center gap-2 border px-5 py-2.5 text-xs tracking-[0.16em] uppercase transition-[color,border-color,background-color,letter-spacing] duration-300 hover:tracking-[0.2em] ${focusRing} ${
+                saved
+                  ? 'border-brand bg-brand/12 text-brand hover:bg-brand/20'
+                  : 'border-ivory/25 text-ivory hover:border-brand hover:text-brand'
+              }`}
             >
               <BookmarkIcon filled={saved} />
               {saved ? 'On my list' : 'Want to watch'}
             </button>
           </div>
-
-          <dl className="mt-10 grid gap-x-16 gap-y-3 sm:grid-cols-2">
-            {facts.map((fact) => (
-              <div key={fact.label} className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-3 text-sm">
-                <dt className="text-muted">{fact.label}</dt>
-                <dd className="text-ivory">{fact.value || '—'}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
 
+      {hasDossier ? (
+        <FullBleed className="mt-16 bg-paper text-ink lg:mt-24">
+          <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24">
+            {credits.length > 0 ? (
+              <Reveal>
+                <section>
+                  <p className="text-[11px] tracking-[0.28em] uppercase text-ink/40">The picture</p>
+                  <h3 className="mt-3 font-display text-4xl italic sm:text-5xl">Credits</h3>
+                  <dl className="mt-12 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                    {credits.map((credit) => (
+                      <div key={credit.label} className="fiche-rule group pt-5">
+                        <dt className="text-[11px] tracking-[0.2em] uppercase text-ink/40 transition-colors duration-500 group-hover:text-brand">
+                          {credit.label}
+                        </dt>
+                        <dd className="mt-3 font-serif text-lg leading-8 text-ink transition-colors duration-500 group-hover:text-ink/90">
+                          {credit.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              </Reveal>
+            ) : null}
+
+            {highlights.length > 0 ? (
+              <Reveal className={credits.length > 0 ? 'mt-20 lg:mt-24' : undefined}>
+                <section>
+                  <p className="text-[11px] tracking-[0.28em] uppercase text-ink/40">
+                    From the archive
+                  </p>
+                  <h3 className="mt-3 font-display text-4xl italic sm:text-5xl">Notes</h3>
+                  {movie.backdropUrl ? (
+                    <figure className="group relative mt-10">
+                      <div className="fiche-media">
+                        <img
+                          src={movie.backdropUrl}
+                          alt=""
+                          className="aspect-2/1 w-full object-cover"
+                        />
+                      </div>
+                      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-linear-to-t from-ink/70 to-transparent px-5 py-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                        <span className="text-[11px] tracking-[0.2em] uppercase text-brand">
+                          Production still
+                        </span>
+                      </figcaption>
+                    </figure>
+                  ) : null}
+                  {highlights.length === 1 ? (
+                    <NotePull item={highlights[0]} />
+                  ) : (
+                    <ul
+                      className={`mt-14 grid gap-x-12 gap-y-14 ${
+                        highlights.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3'
+                      }`}
+                    >
+                      {highlights.map((item, index) => (
+                        <li key={`${item.kind}-${index}`}>
+                          <NoteCard item={item} index={index} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              </Reveal>
+            ) : null}
+
+            {plotParagraphs.length > 0 ? (
+              <Reveal
+                className={
+                  credits.length > 0 || highlights.length > 0 ? 'mt-20 lg:mt-24' : undefined
+                }
+              >
+                <section>
+                  <p className="text-[11px] tracking-[0.28em] uppercase text-ink/40">Synopsis</p>
+                  <h3 className="mt-3 font-display text-4xl italic sm:text-5xl">The story</h3>
+                  <div className="mt-10 max-w-3xl border-l border-brand/70 pl-8 sm:pl-10">
+                    <p className="font-display text-2xl italic leading-snug text-ink sm:text-3xl">
+                      {plotParagraphs[0]}
+                    </p>
+                    {plotParagraphs.slice(1).map((paragraph) => (
+                      <p
+                        key={paragraph.slice(0, 48)}
+                        className="mt-6 font-serif text-lg leading-8 text-ink/75"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </section>
+              </Reveal>
+            ) : null}
+          </div>
+        </FullBleed>
+      ) : null}
+
       {movie.cast.length > 0 ? (
-        <div className="mt-16">
+        <div className="mt-16 lg:mt-20">
           <HorizontalCarousel title="Main cast">
             {movie.cast.map((person) => (
               <CastCard key={person.id} person={person} />
@@ -131,50 +233,15 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
         </div>
       ) : null}
 
-      {showDetailed || highlights.length > 0 ? (
-        <div className="mt-16 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
-          {showDetailed ? (
-            <section>
-              <h3 className="font-serif text-xl text-ivory">Plot</h3>
-              <div className="mt-5 max-w-2xl space-y-5 text-[15px] leading-8 text-ivory/70">
-                {splitParagraphs(detailed).map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-              </div>
-            </section>
-          ) : (
-            <div />
-          )}
-          {highlights.length > 0 ? <HighlightsCard highlights={highlights} /> : null}
-        </div>
-      ) : null}
-
       {similar.length > 0 ? (
         <div className="mt-16">
           <HorizontalCarousel title="Similar titles">
             {similar.map((item) => (
-              <Link
+              <SimilarCard
                 key={item.id}
-                to={paths.movie(item.id)}
-                className="w-40 shrink-0 transition-opacity hover:opacity-80 sm:w-44"
-                onMouseEnter={() => prefetch(item.id)}
-              >
-                <div className="overflow-hidden bg-ink-soft">
-                  {item.posterUrl ? (
-                    <img
-                      src={item.posterUrl}
-                      alt=""
-                      className="aspect-2/3 w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex aspect-2/3 items-center justify-center text-xs text-muted">
-                      No poster
-                    </div>
-                  )}
-                </div>
-                <p className="mt-2.5 truncate font-serif text-sm text-ivory">{item.title}</p>
-                <p className="text-xs text-muted">{item.releaseYear ?? ''}</p>
-              </Link>
+                movie={item}
+                onPrefetch={() => prefetch(item.id)}
+              />
             ))}
           </HorizontalCarousel>
         </div>
@@ -188,6 +255,179 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
         />
       ) : null}
     </article>
+  )
+}
+
+function PosterPlate({
+  posterUrl,
+  title,
+  hasTrailer,
+  onPlay,
+}: {
+  posterUrl: string | null
+  title: string
+  hasTrailer: boolean
+  onPlay: () => void
+}) {
+  const frame = (
+    <>
+      <div className="fiche-media bg-ink-soft">
+        {posterUrl ? (
+          <img src={posterUrl} alt="" className="aspect-2/3 w-full object-cover" />
+        ) : (
+          <div className="flex aspect-2/3 items-center justify-center text-sm text-muted">
+            No poster
+          </div>
+        )}
+      </div>
+      <CropMarks />
+      {hasTrailer ? (
+        <span className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-ink/75 via-ink/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="flex items-center gap-2 px-4 py-3.5 text-[11px] tracking-[0.18em] uppercase text-brand">
+            <PlayIcon />
+            Watch trailer
+          </span>
+        </span>
+      ) : null}
+    </>
+  )
+
+  const shell =
+    'group relative mx-auto block w-full max-w-72 ring-1 ring-ivory/10 transition-[box-shadow] duration-500 hover:ring-brand/50 lg:mx-0 lg:max-w-none'
+
+  if (hasTrailer) {
+    return (
+      <button
+        type="button"
+        onClick={onPlay}
+        aria-label={`Watch trailer for ${title}`}
+        className={`${shell} ${focusRing} cursor-pointer border-0 bg-transparent p-0 text-left`}
+      >
+        {frame}
+      </button>
+    )
+  }
+
+  return <div className={shell}>{frame}</div>
+}
+
+function CropMarks() {
+  const mark = 'pointer-events-none absolute h-3.5 w-3.5 border-brand opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100'
+  return (
+    <>
+      <span className={`${mark} -left-px -top-px border-t border-l`} />
+      <span className={`${mark} -right-px -top-px border-t border-r`} />
+      <span className={`${mark} -bottom-px -left-px border-b border-l`} />
+      <span className={`${mark} -right-px -bottom-px border-b border-r`} />
+    </>
+  )
+}
+
+function NotePull({ item }: { item: MovieHighlight }) {
+  const kicker = highlightKicker(item.kind)
+
+  return (
+    <blockquote className="group relative mt-10 max-w-2xl">
+      <span
+        className="font-display text-[8rem] leading-[0.7] text-brand/30 transition-colors duration-500 group-hover:text-brand/55 sm:text-[10rem]"
+        aria-hidden
+      >
+        “
+      </span>
+      {kicker ? (
+        <p className="-mt-4 text-[11px] tracking-[0.22em] uppercase text-ink/40 transition-colors duration-500 group-hover:text-brand">
+          {kicker}
+        </p>
+      ) : null}
+      <p className="mt-4 font-display text-3xl italic leading-snug text-ink sm:text-4xl">
+        {item.text}
+      </p>
+    </blockquote>
+  )
+}
+
+function NoteCard({ item, index }: { item: MovieHighlight; index: number }) {
+  const kicker = highlightKicker(item.kind)
+
+  return (
+    <article className="fiche-rule group pt-6">
+      <p className="font-display text-4xl italic leading-none text-brand/80 transition-colors duration-500 group-hover:text-brand">
+        {String(index + 1).padStart(2, '0')}
+      </p>
+      {kicker ? (
+        <p className="mt-5 text-[11px] tracking-[0.2em] uppercase text-ink/40 transition-colors duration-500 group-hover:text-brand">
+          {kicker}
+        </p>
+      ) : null}
+      <p className="mt-4 font-display text-2xl italic leading-snug text-ink">{item.text}</p>
+    </article>
+  )
+}
+
+function SimilarCard({ movie, onPrefetch }: { movie: Movie; onPrefetch: () => void }) {
+  return (
+    <Link
+      to={paths.movie(movie.id)}
+      onMouseEnter={onPrefetch}
+      onFocus={onPrefetch}
+      className={`group w-40 shrink-0 sm:w-44 ${focusRing}`}
+    >
+      <div className="fiche-media bg-ink-soft ring-1 ring-ivory/10 transition-[box-shadow] duration-500 group-hover:ring-brand/45 group-focus-visible:ring-brand/45">
+        {movie.posterUrl ? (
+          <img src={movie.posterUrl} alt="" className="aspect-2/3 w-full object-cover" />
+        ) : (
+          <div className="flex aspect-2/3 items-center justify-center text-xs text-muted">
+            No poster
+          </div>
+        )}
+      </div>
+      <p className="mt-2.5 truncate font-serif text-sm text-ivory transition-colors duration-300 group-hover:text-brand group-focus-visible:text-brand">
+        {movie.title}
+      </p>
+      <p className="text-xs text-muted">{movie.releaseYear ?? ''}</p>
+    </Link>
+  )
+}
+
+function FullBleed({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={`relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 ${className ?? ''}`}>
+      {children}
+    </div>
+  )
+}
+
+function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} className={`profile-reveal ${visible ? 'is-in' : ''} ${className}`}>
+      {children}
+    </div>
   )
 }
 
@@ -218,7 +458,7 @@ function MetaRow({
     parts.push({ key: 'runtime', node: runtime })
   }
   if (movie.genres.length > 0) {
-    parts.push({ key: 'genres', node: movie.genres.join(', ') })
+    parts.push({ key: 'genres', node: movie.genres.join(' · ') })
   }
   if (movie.certification) {
     parts.push({
@@ -232,7 +472,7 @@ function MetaRow({
   }
 
   return (
-    <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
+    <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
       {parts.map((part, index) => (
         <span key={part.key} className="inline-flex items-center gap-3">
           {index > 0 ? <span className="h-3.5 w-px bg-ivory/20" aria-hidden /> : null}
@@ -248,40 +488,33 @@ function CastCard({ person }: { person: MovieCastMember }) {
   const showPhoto = Boolean(person.photoUrl) && !photoFailed
 
   return (
-    <div className="w-32 shrink-0 text-center">
-      <div className="mx-auto h-28 w-28 overflow-hidden rounded-full bg-ink-soft">
+    <div className="group w-36 shrink-0">
+      <div className="fiche-media bg-ink-soft ring-1 ring-ivory/10 transition-[box-shadow] duration-500 group-hover:ring-brand/40">
         {showPhoto ? (
           <img
             src={person.photoUrl ?? undefined}
             alt=""
-            className="h-full w-full object-cover"
+            className="aspect-3/4 w-full object-cover object-top"
             onError={() => setPhotoFailed(true)}
           />
         ) : (
-          <PersonPlaceholder />
+          <div className="aspect-3/4">
+            <PersonPlaceholder />
+          </div>
         )}
       </div>
-      <p className="mt-3 truncate text-sm text-ivory">{person.name}</p>
-      <p className="truncate text-xs text-muted">{person.character || '—'}</p>
+      <p className="mt-3 truncate font-serif text-sm text-ivory transition-colors duration-300 group-hover:text-brand">
+        {person.name}
+      </p>
+      <p className="truncate text-[11px] tracking-wide text-muted">{person.character || '—'}</p>
     </div>
   )
 }
 
-function HighlightsCard({ highlights }: { highlights: MovieHighlight[] }) {
-  return (
-    <aside className="bg-ink-soft px-5 py-6">
-      <ul className="space-y-4">
-        {highlights.map((item, index) => (
-          <li key={`${item.kind}-${index}`} className="flex gap-3 text-sm leading-7 text-ivory/80">
-            <span className="mt-0.5 shrink-0 text-brand">
-              <HighlightIcon kind={item.kind} index={index} />
-            </span>
-            {item.text}
-          </li>
-        ))}
-      </ul>
-    </aside>
-  )
+function highlightKicker(kind: MovieHighlight['kind']): string | null {
+  if (kind === 'bolivia') return 'On location'
+  if (kind === 'true-story') return 'True story'
+  return null
 }
 
 function teaserOverview(overview: string): string {
@@ -304,7 +537,7 @@ function splitParagraphs(overview: string): string[] {
 
 function joinList(values: string[]): string | null {
   if (values.length === 0) return null
-  return values.join(', ')
+  return values.join(' · ')
 }
 
 function PersonPlaceholder() {
@@ -352,70 +585,6 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
         stroke="currentColor"
         strokeWidth="1.6"
       />
-    </svg>
-  )
-}
-
-function HighlightIcon({
-  kind,
-  index,
-}: {
-  kind: MovieHighlight['kind']
-  index: number
-}) {
-  if (kind === 'bolivia') return <ShieldIcon />
-  if (kind === 'true-story') return <BriefcaseIcon />
-  const cycle = [TrophyIcon, StarOutlineIcon, ShieldIcon, BriefcaseIcon]
-  const Icon = cycle[index % cycle.length]
-  return <Icon />
-}
-
-function TrophyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <path
-        d="M8 4h8v4a4 4 0 0 1-8 0z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M12 12v3M9 20h6M10 17h4v3h-4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function StarOutlineIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <path
-        d="m12 3.5 2.3 4.7 5.2.8-3.8 3.6.9 5.2L12 15.7 7.4 17.8l.9-5.2-3.8-3.6 5.2-.8z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function ShieldIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <path
-        d="M12 3.5 5.5 6.2v5.3c0 4 2.7 7.5 6.5 8.5 3.8-1 6.5-4.5 6.5-8.5V6.2z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function BriefcaseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="4" y="8" width="16" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M9 8V6.5A1.5 1.5 0 0 1 10.5 5h3A1.5 1.5 0 0 1 15 6.5V8" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   )
 }
