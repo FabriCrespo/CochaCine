@@ -17,7 +17,8 @@
 export const movieKeys = {
   all: ['movies'] as const,
   lists: () => [...movieKeys.all, 'list'] as const,
-  bolivian: () => [...movieKeys.lists(), 'bolivian', { catalog: 'client-filters' }] as const,
+  bolivian: (includeHidden = false) =>
+    [...movieKeys.lists(), 'bolivian', { catalog: 'client-filters', includeHidden }] as const,
   director: (personId: number) => [...movieKeys.lists(), 'director', personId] as const,
   genres: () => [...movieKeys.all, 'genres'] as const,
   details: () => [...movieKeys.all, 'detail'] as const,
@@ -29,4 +30,9 @@ export const overrideKeys = {
   all: ['overrides'] as const,
   list: () => [...overrideKeys.all, 'list'] as const,
   detail: (id: number) => [...overrideKeys.all, 'detail', id] as const,
+}
+
+export const houseKeys = {
+  all: ['house'] as const,
+  state: () => [...houseKeys.all, 'state'] as const,
 }

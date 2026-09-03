@@ -95,7 +95,15 @@ export const CATALOG_DECADES = [
 export function popularCatalogMovies(
   movies: Movie[],
   limit = HOME_POPULAR_LIMIT,
+  belovedIds: number[] = [],
 ): Movie[] {
+  if (belovedIds.length > 0) {
+    const byId = new Map(movies.map((movie) => [movie.id, movie]))
+    return belovedIds
+      .map((id) => byId.get(id))
+      .filter((movie): movie is Movie => movie != null)
+      .slice(0, limit)
+  }
   return sortCatalogMovies(movies, CATALOG_SORT.popularity).slice(0, limit)
 }
 

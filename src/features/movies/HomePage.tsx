@@ -17,6 +17,7 @@ import {
 } from '../../lib/catalog.ts'
 import { paths } from '../../lib/paths.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
+import { useCatalogHouse } from '../../query/house/useCatalogHouse.ts'
 import { CatalogHero } from './components/CatalogHero.tsx'
 import { HomeContemporary } from './components/HomeContemporary.tsx'
 import { HomeDirectors } from './components/HomeDirectors.tsx'
@@ -35,9 +36,13 @@ export function HomePage() {
 
 function HomeIndex() {
   const { data, isPending, isError, error, refetch } = useBolivianMovies()
+  const house = useCatalogHouse()
   const movies = data?.movies ?? []
 
-  const popular = useMemo(() => popularCatalogMovies(movies), [movies])
+  const popular = useMemo(
+    () => popularCatalogMovies(movies, undefined, house.data?.belovedIds ?? []),
+    [movies, house.data?.belovedIds],
+  )
   const decades = useMemo(
     () =>
       CATALOG_DECADES.map((decade) => ({

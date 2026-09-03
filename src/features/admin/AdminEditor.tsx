@@ -4,7 +4,15 @@ import { Breadcrumbs } from '../../components/layout/Breadcrumbs.tsx'
 import type { Movie, MovieDetail } from '../../domain/movie.ts'
 import type { MovieOverride, MovieOverrideWrite } from '../../api/supabase/types.ts'
 import { paths } from '../../lib/paths.ts'
+import { HOME_POPULAR_LIMIT } from '../../lib/catalog.ts'
 import { youtubeKeyFromInput } from '../../lib/youtube.ts'
+import {
+  useHideCatalogMovie,
+  useCatalogHouse,
+  usePinCatalogBeloved,
+  useUnhideCatalogMovie,
+  useUnpinCatalogBeloved,
+} from '../../query/house/useCatalogHouse.ts'
 import {
   useDeleteOverride,
   useSaveOverride,
@@ -56,6 +64,11 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   const save = useSaveOverride()
   const remove = useDeleteOverride()
   const upload = useUploadPoster()
+  const house = useCatalogHouse()
+  const hideMovie = useHideCatalogMovie()
+  const unhideMovie = useUnhideCatalogMovie()
+  const pinBeloved = usePinCatalogBeloved()
+  const unpinBeloved = useUnpinCatalogBeloved()
   const [draft, setDraft] = useState<Draft>(() => draftFrom(override))
   const [flash, setFlash] = useState<string | null>(null)
   const [pane, setPane] = useState<Pane>('story')
@@ -66,6 +79,10 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     setDraft(draftFrom(override))
     save.reset()
     remove.reset()
+    hideMovie.reset()
+    unhideMovie.reset()
+    pinBeloved.reset()
+    unpinBeloved.reset()
   }, [override?.updated_at, movie.id])
 
   const persistRef = useRef<(next: Draft) => Promise<void>>(async () => {})
@@ -118,8 +135,24 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     [movie, source],
   )
 
+  const hidden = Boolean(house.data?.hiddenIds.includes(movie.id))
+  const beloved = Boolean(house.data?.belovedIds.includes(movie.id))
+  const belovedCount = house.data?.belovedIds.length ?? 0
+  const houseBusy =
+    hideMovie.isPending ||
+    unhideMovie.isPending ||
+    pinBeloved.isPending ||
+    unpinBeloved.isPending
+  const error =
+    save.error?.message ??
+    remove.error?.message ??
+    upload.error?.message ??
+    hideMovie.error?.message ??
+    unhideMovie.error?.message ??
+    pinBeloved.error?.message ??
+    unpinBeloved.error?.message ??
+    null
   const dirty = !sameDraft(draft, override)
-  const error = save.error?.message ?? remove.error?.message ?? upload.error?.message ?? null
   const posterSrc = draft.poster_url || hint.poster
 
   async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
@@ -133,6 +166,30 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
       await persist(next)
     } catch {
       // shown via `error`
+    }
+  }
+
+  async function handleHide() {
+    const verb = hidden ? 'restore this title to the archive' : 'hide this title from the archive and home'
+    if (!window.confirm(`${hidden ? 'Restore' : 'Hide'} — ${verb}?`)) return
+    try {
+      if (hidden) await unhideMovie.mutateAsync(movie.id)
+      else await hideMovie.mutateAsync(movie.id)
+      setFlash(hidden ? 'Restored to archive' : 'Hidden from archive')
+      window.setTimeout(() => setFlash(null), 1600)
+    } catch {
+      setFlash(null)
+    }
+  }
+
+  async function handleBeloved() {
+    try {
+      if (beloved) await unpinBeloved.mutateAsync(movie.id)
+      else await pinBeloved.mutateAsync(movie.id)
+      setFlash(beloved ? 'Removed from Most beloved' : 'Pinned to Most beloved')
+      window.setTimeout(() => setFlash(null), 1600)
+    } catch {
+      setFlash(null)
     }
   }
 
@@ -180,6 +237,34 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
               {movie.title}
             </h2>
             <p className="mt-1 font-serif text-ink/50">{movie.releaseYear ?? 'No year'}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={houseBusy}
+                onClick={() => void handleBeloved()}
+                className={
+                  beloved
+                    ? 'bg-ink px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase text-paper'
+                    : 'border border-ink/15 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase text-ink/55 hover:text-ink'
+                }
+              >
+                {beloved
+                  ? 'On Most beloved'
+                  : `Pin to Most beloved (${belovedCount}/${HOME_POPULAR_LIMIT})`}
+              </button>
+              <button
+                type="button"
+                disabled={houseBusy}
+                onClick={() => void handleHide()}
+                className={
+                  hidden
+                    ? 'border border-red-800/40 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase text-red-800'
+                    : 'border border-ink/15 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase text-ink/55 hover:text-red-800'
+                }
+              >
+                {hidden ? 'Hidden · restore' : 'Hide from archive'}
+              </button>
+            </div>
           </div>
           <Link
             to={paths.movie(movie.id)}

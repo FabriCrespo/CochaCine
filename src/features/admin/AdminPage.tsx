@@ -8,18 +8,21 @@ import { paginate } from '../../lib/pagination.ts'
 import { paths, parseMovieIdParam } from '../../lib/paths.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
 import { useMovieSource } from '../../query/movies/useMovieSource.ts'
+import { useMoveCatalogBeloved, useCatalogHouse } from '../../query/house/useCatalogHouse.ts'
 import { useMovieOverride, useOverrideList } from '../../query/overrides/useOverrides.ts'
 import { AdminAddTitle } from './AdminAddTitle.tsx'
 import { AdminEditor } from './AdminEditor.tsx'
 import { AdminUnlock } from './AdminUnlock.tsx'
 import { useAdminAuth } from './useAdminAuth.ts'
 
-type ListFilter = 'missing-overview' | 'missing-poster' | 'edited' | 'all'
+type ListFilter = 'missing-overview' | 'missing-poster' | 'edited' | 'beloved' | 'hidden' | 'all'
 
 const FILTERS: { id: ListFilter; label: string }[] = [
   { id: 'missing-overview', label: 'No plot' },
   { id: 'missing-poster', label: 'No poster' },
   { id: 'edited', label: 'Edited' },
+  { id: 'beloved', label: 'Beloved' },
+  { id: 'hidden', label: 'Hidden' },
   { id: 'all', label: 'All' },
 ]
 
@@ -33,8 +36,16 @@ export function AdminPage() {
   const [page, setPage] = useState(1)
   const [pinned, setPinned] = useState<Movie | null>(null)
 
-  const catalog = useBolivianMovies()
+  const catalog = useBolivianMovies({ includeHidden: true })
   const overrides = useOverrideList()
+  const house = useCatalogHouse()
+  const moveBeloved = useMoveCatalogBeloved()
+  const hiddenIds = useMemo(
+    () => new Set(house.data?.hiddenIds ?? []),
+    [house.data?.hiddenIds],
+  )
+  const belovedIds = house.data?.belovedIds ?? []
+  const belovedSet = useMemo(() => new Set(belovedIds), [belovedIds])
 
   const catalogMovies = useMemo(() => {
     const movies = catalog.data?.movies ?? []
@@ -56,18 +67,29 @@ export function AdminPage() {
 
   const counts = useMemo(() => {
     const searched = filterCatalogMovies(catalogMovies, query, [], '')
+    const publicMovies = searched.filter((movie) => !hiddenIds.has(movie.id))
     return {
-      'missing-overview': searched.filter((movie) => !movie.overview.trim()).length,
-      'missing-poster': searched.filter((movie) => !movie.posterUrl).length,
-      edited: searched.filter((movie) => editedIds.has(movie.id)).length,
-      all: searched.length,
+      'missing-overview': publicMovies.filter((movie) => !movie.overview.trim()).length,
+      'missing-poster': publicMovies.filter((movie) => !movie.posterUrl).length,
+      edited: publicMovies.filter((movie) => editedIds.has(movie.id)).length,
+      beloved: searched.filter((movie) => belovedSet.has(movie.id)).length,
+      hidden: searched.filter((movie) => hiddenIds.has(movie.id)).length,
+      all: publicMovies.length,
     } satisfies Record<ListFilter, number>
-  }, [catalogMovies, query, editedIds])
+  }, [catalogMovies, query, editedIds, hiddenIds, belovedSet])
 
   const visibleMovies = useMemo(() => {
     const searched = filterCatalogMovies(catalogMovies, query, [], '')
-    return searched.filter((movie) => matchesFilter(movie, filter, editedIds))
-  }, [catalogMovies, query, filter, editedIds])
+    if (filter === 'beloved') {
+      const byId = new Map(searched.map((movie) => [movie.id, movie]))
+      return belovedIds
+        .map((id) => byId.get(id))
+        .filter((movie): movie is Movie => movie != null)
+    }
+    return searched.filter((movie) =>
+      matchesFilter(movie, filter, editedIds, hiddenIds, belovedSet),
+    )
+  }, [catalogMovies, query, filter, editedIds, hiddenIds, belovedSet, belovedIds])
 
   const paged = useMemo(() => paginate(visibleMovies, page), [visibleMovies, page])
 
@@ -163,6 +185,9 @@ export function AdminPage() {
                   Could not load overrides. Did you run the SQL?
                 </p>
               ) : null}
+              {house.isError ? (
+                <p className="font-serif text-xs text-red-300/90">{house.error.message}</p>
+              ) : null}
             </div>
 
           <ul className="min-h-0 flex-1 overflow-auto px-2 pb-2">
@@ -176,36 +201,82 @@ export function AdminPage() {
               const active = movie.id === selectedId
               const edited = editedIds.has(movie.id)
               const needsPlot = !movie.overview.trim()
+              const hidden = hiddenIds.has(movie.id)
+              const beloved = belovedSet.has(movie.id)
               return (
                 <li key={movie.id}>
-                  <button
-                    type="button"
-                    onClick={() => navigate(paths.adminMovie(movie.id))}
-                    className={`flex w-full items-center gap-3 px-3 py-2.5 text-left ${
+                  <div
+                    className={`flex w-full items-center gap-3 px-3 py-2.5 ${
                       active ? 'bg-ivory/8' : 'hover:bg-ivory/5'
                     }`}
                   >
-                    {movie.posterUrl ? (
-                      <img src={movie.posterUrl} alt="" className="h-14 w-10 shrink-0 object-cover" />
-                    ) : (
-                      <div className="flex h-14 w-10 shrink-0 items-center justify-center bg-ink-soft text-[9px] text-muted">
-                        —
-                      </div>
-                    )}
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate font-serif text-[15px] text-ivory">{movie.title}</span>
-                      <span className="mt-0.5 block text-[11px] text-muted">
-                        {movie.releaseYear ?? '—'}
-                        {edited ? ' · edited' : ''}
-                        {needsPlot ? ' · no plot' : ''}
+                    <button
+                      type="button"
+                      onClick={() => navigate(paths.adminMovie(movie.id))}
+                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                    >
+                      {movie.posterUrl ? (
+                        <img src={movie.posterUrl} alt="" className="h-14 w-10 shrink-0 object-cover" />
+                      ) : (
+                        <div className="flex h-14 w-10 shrink-0 items-center justify-center bg-ink-soft text-[9px] text-muted">
+                          —
+                        </div>
+                      )}
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-serif text-[15px] text-ivory">{movie.title}</span>
+                        <span className="mt-0.5 block text-[11px] text-muted">
+                          {movie.releaseYear ?? '—'}
+                          {edited ? ' · edited' : ''}
+                          {needsPlot ? ' · no plot' : ''}
+                          {beloved ? ' · beloved' : ''}
+                          {hidden ? ' · hidden' : ''}
+                        </span>
                       </span>
-                    </span>
-                    <span
-                      className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                        needsPlot ? 'bg-brand' : edited ? 'bg-ivory/40' : 'bg-transparent'
-                      }`}
-                    />
-                  </button>
+                    </button>
+                    {filter === 'beloved' ? (
+                      <span className="flex shrink-0 flex-col">
+                        <button
+                          type="button"
+                          disabled={belovedIds.indexOf(movie.id) <= 0 || moveBeloved.isPending}
+                          onClick={() =>
+                            void moveBeloved.mutateAsync({ tmdbId: movie.id, direction: -1 })
+                          }
+                          className="px-1 text-[10px] text-muted hover:text-ivory disabled:opacity-20"
+                          aria-label="Move up"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type="button"
+                          disabled={
+                            belovedIds.indexOf(movie.id) >= belovedIds.length - 1 ||
+                            moveBeloved.isPending
+                          }
+                          onClick={() =>
+                            void moveBeloved.mutateAsync({ tmdbId: movie.id, direction: 1 })
+                          }
+                          className="px-1 text-[10px] text-muted hover:text-ivory disabled:opacity-20"
+                          aria-label="Move down"
+                        >
+                          ▼
+                        </button>
+                      </span>
+                    ) : (
+                      <span
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                          hidden
+                            ? 'bg-red-400/80'
+                            : beloved
+                              ? 'bg-brand'
+                              : needsPlot
+                                ? 'bg-brand'
+                                : edited
+                                  ? 'bg-ivory/40'
+                                  : 'bg-transparent'
+                        }`}
+                      />
+                    )}
+                  </div>
                 </li>
               )
             })}
@@ -244,8 +315,8 @@ export function AdminPage() {
               <p className="text-[11px] tracking-[0.28em] uppercase text-ink/40">The stacks</p>
               <p className="mt-4 font-display text-4xl italic text-ink">Choose a title</p>
               <p className="mt-4 max-w-sm font-serif leading-7 text-ink/55">
-                The list opens on films with no English plot. Search, then write. Empty fields keep
-                TMDB.
+                The list opens on films with no English plot. Hide a title to take it off the
+                archive, or pin up to ten for Most beloved on the home.
               </p>
             </div>
           )}
@@ -255,7 +326,16 @@ export function AdminPage() {
   )
 }
 
-function matchesFilter(movie: Movie, filter: ListFilter, editedIds: Set<number>): boolean {
+function matchesFilter(
+  movie: Movie,
+  filter: ListFilter,
+  editedIds: Set<number>,
+  hiddenIds: Set<number>,
+  belovedIds: Set<number>,
+): boolean {
+  if (filter === 'hidden') return hiddenIds.has(movie.id)
+  if (filter === 'beloved') return belovedIds.has(movie.id)
+  if (hiddenIds.has(movie.id)) return false
   if (filter === 'missing-overview') return !movie.overview.trim()
   if (filter === 'missing-poster') return !movie.posterUrl
   if (filter === 'edited') return editedIds.has(movie.id)

@@ -47,6 +47,7 @@ import {
   fetchManualCatalogIds,
   insertManualCatalogMovie,
 } from '../supabase/catalogManual.api.ts'
+import { fetchHiddenCatalogIds } from '../supabase/catalogHouse.api.ts'
 import { fetchMovieOverride, fetchMovieOverrides } from '../supabase/overrides.api.ts'
 import { axiosClient } from '../http/axiosClient.ts'
 import {
@@ -82,13 +83,17 @@ const ENGLISH_MEDIA_PARAMS = {
  * GET /discover/movie — catálogo entero (varias páginas), no una sola.
  * El orden lo aplica la página principal en cliente (filtros + sort).
  */
-export async function fetchBolivianMovies(): Promise<PopularMoviesPage> {
-  const [fromCountry, fromKeyword, manualIds] = await Promise.all([
+export async function fetchBolivianMovies(
+  options: { includeHidden?: boolean } = {},
+): Promise<PopularMoviesPage> {
+  const [fromCountry, fromKeyword, manualIds, hiddenIds] = await Promise.all([
     collectDiscoverPages('country'),
     collectDiscoverPages('keyword'),
     fetchManualCatalogIds(),
+    fetchHiddenCatalogIds(),
   ])
   const allowIds = new Set(manualIds)
+  const hidden = new Set(hiddenIds)
 
   const discoveredIds = new Set(
     [...fromCountry, ...fromKeyword].map((item) => item.id),
@@ -109,7 +114,10 @@ export async function fetchBolivianMovies(): Promise<PopularMoviesPage> {
     ...fromCountry,
     ...fromKeyword,
   ])
-  const catalog = unique.filter((item) => isBolivianCatalogMovie(item, allowIds))
+  const catalog = unique.filter((item) => {
+    if (!options.includeHidden && hidden.has(item.id)) return false
+    return isBolivianCatalogMovie(item, allowIds)
+  })
 
   console.log(
     `[TMDB] Bolivian catalog: country=${fromCountry.length}, keyword=${fromKeyword.length}, wikidata=${fromProduced.length}, titles=${fromTitles.length}, manual=${manualIds.length}, unique=${unique.length}, visible=${catalog.length}`,
