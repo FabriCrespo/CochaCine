@@ -193,13 +193,29 @@ body {
   );
 }
 
+.lineage-poster-frame {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(244, 239, 230, 0.12),
+    0 32px 72px rgba(0, 0, 0, 0.55);
+}
+
+.lineage-poster-frame::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(203, 184, 154, 0.16);
+}
+
 .lineage-poster {
   transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .group:hover .lineage-poster,
 .group:focus-visible .lineage-poster {
-  transform: scale(1.025);
+  transform: scale(1.03);
 }
 
 .fiche-media {

@@ -44,26 +44,25 @@ export function HomeContemporary({ movies }: HomeContemporaryProps) {
         </div>
       </div>
 
-      <div className="lineage-wash overflow-x-hidden px-6 pb-24 pt-28 text-ivory sm:px-10 lg:pt-32">
-        <div className="mx-auto max-w-7xl">
-          <ol className="relative grid list-none gap-16 md:grid-cols-3 md:gap-8 lg:gap-14">
-            <span
-              className="pointer-events-none absolute top-[4.35rem] right-[16.5%] left-[16.5%] hidden h-px bg-brand/50 md:block"
-              aria-hidden
-            />
+      <div className="lineage-wash overflow-x-hidden px-6 pb-28 pt-24 text-ivory sm:px-12 lg:px-16 lg:pt-36 lg:pb-32">
+        <div className="mx-auto max-w-6xl">
+          <ol className="grid list-none gap-y-24 md:grid-cols-3 md:items-start md:gap-x-12 md:gap-y-0 lg:gap-x-20 xl:gap-x-28">
             {CONTEMPORARY_FILMS.map((film, index) => (
-              <li key={film.tmdbId}>
+              <li key={film.tmdbId} className="min-w-0">
                 <FilmColumn
                   film={film}
                   movie={movies.find((entry) => entry.id === film.tmdbId) ?? null}
-                  lift={index === 1}
+                  index={index}
+                  position={
+                    index === 0 ? 'start' : index === CONTEMPORARY_FILMS.length - 1 ? 'end' : 'mid'
+                  }
                 />
               </li>
             ))}
           </ol>
         </div>
 
-        <div className="mx-auto mt-28 max-w-3xl text-center lg:mt-40">
+        <div className="mx-auto mt-32 max-w-3xl text-center lg:mt-44">
           <p className="text-[11px] tracking-[0.28em] uppercase text-brand">
             {CONTEMPORARY_CLOSE.kicker}
           </p>
@@ -93,50 +92,66 @@ export function HomeContemporary({ movies }: HomeContemporaryProps) {
 function FilmColumn({
   film,
   movie,
-  lift,
+  index,
+  position,
 }: {
   film: ContemporaryFilm
   movie: Movie | null
-  lift: boolean
+  index: number
+  position: 'start' | 'mid' | 'end'
 }) {
   const prefetch = usePrefetchMovie()
   const poster = largePosterUrl(movie?.posterUrl ?? null)
+  const lineClass =
+    position === 'start'
+      ? 'md:left-1/2 md:right-0'
+      : position === 'end'
+        ? 'md:left-0 md:right-1/2'
+        : 'md:inset-x-0'
 
   return (
-    <article className="text-center">
-      <p className="text-[11px] tracking-[0.28em] uppercase text-brand">{film.year}</p>
-      <p className="mt-3 text-[11px] tracking-[0.16em] uppercase text-ivory/60">{film.director}</p>
-        <span className="relative z-10 mx-auto mt-5 block h-1.5 w-1.5 rounded-full bg-brand" />
+    <article className="mx-auto flex max-w-sm flex-col items-center text-center md:max-w-none">
+      <p className="text-[10px] tracking-[0.36em] text-ivory/30">
+        {String(index + 1).padStart(2, '0')}
+      </p>
+      <p className="mt-5 text-[11px] tracking-[0.28em] uppercase text-brand">{film.year}</p>
+      <p className="mt-3 min-h-10 px-1 text-[11px] leading-5 tracking-[0.16em] uppercase text-ivory/55">
+        {film.director}
+      </p>
+
+      <div className="relative my-10 flex w-full items-center justify-center md:my-12 lg:my-14">
+        <span
+          className={`pointer-events-none absolute top-1/2 hidden h-px -translate-y-1/2 bg-brand/45 md:block ${lineClass}`}
+          aria-hidden
+        />
+        <span className="relative z-10 block h-1.5 w-1.5 rounded-full bg-brand ring-4 ring-ink" />
+      </div>
 
       <Link
         to={paths.movie(film.tmdbId)}
         onPointerEnter={() => prefetch(film.tmdbId)}
         onFocus={() => prefetch(film.tmdbId)}
-        className={`group mt-8 block outline-none focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-brand ${
-          lift ? 'md:-translate-y-6 lg:-translate-y-10' : ''
-        }`}
+        className="group block w-[min(100%,18.5rem)] outline-none focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-brand lg:w-[min(100%,19.5rem)]"
       >
         {poster ? (
-          <img
-            src={poster}
-            alt={film.title}
-            className="lineage-poster mx-auto aspect-2/3 w-full max-w-md object-cover md:max-w-none"
-          />
+          <div className="lineage-poster-frame">
+            <img
+              src={poster}
+              alt={film.title}
+              className="lineage-poster aspect-2/3 w-full object-cover"
+            />
+          </div>
         ) : (
-          <div className="mx-auto flex aspect-2/3 w-full max-w-md items-center justify-center bg-ink-soft font-display text-2xl italic text-muted md:max-w-none">
+          <div className="lineage-poster-frame flex aspect-2/3 w-full items-center justify-center bg-ink-soft font-display text-2xl italic text-muted">
             {film.title}
           </div>
         )}
-        <h3 className="mt-7 font-display text-3xl italic leading-tight text-ivory transition-colors group-hover:text-brand lg:text-4xl">
+        <h3 className="mt-10 min-h-16 font-display text-[1.85rem] italic leading-[1.12] text-ivory transition-colors group-hover:text-brand lg:mt-12 lg:min-h-20 lg:text-[2.15rem]">
           {film.title}
         </h3>
       </Link>
 
-      <p
-        className={`mx-auto mt-4 max-w-sm font-serif text-sm leading-7 text-ivory/65 lg:text-[15px] lg:leading-8 ${
-          lift ? 'md:-translate-y-6 lg:-translate-y-10' : ''
-        }`}
-      >
+      <p className="mt-5 max-w-68 font-serif text-[15px] leading-8 text-ivory/60 lg:mt-6 lg:max-w-72 lg:leading-8">
         {film.dek}
       </p>
     </article>
