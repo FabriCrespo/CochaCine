@@ -28,7 +28,7 @@ import {
 } from '../../lib/catalogSearch.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
 import { useMovieGenres } from '../../query/movies/useMovieGenres.ts'
-import { CatalogControls } from './components/CatalogControls.tsx'
+import { CatalogControls, CatalogMobileFilters } from './components/CatalogControls.tsx'
 import { MovieGrid } from './components/MovieGrid.tsx'
 
 export function CatalogPage() {
@@ -148,6 +148,22 @@ export function CatalogPage() {
           { label: 'Archive' },
         ]}
       />
+
+      {filtersOpen ? (
+        <div className="mt-6">
+          <CatalogMobileFilters
+            genres={catalogGenres}
+            selectedGenreIds={view.genreIds}
+            onToggleGenre={toggleGenre}
+            onClear={() => patchView({ genreIds: [], year: '' })}
+            years={catalogYears}
+            selectedYear={view.year}
+            onYearChange={(year) => patchView({ year })}
+            sortBy={view.sortBy}
+            onSortByChange={(sortBy) => patchView({ sortBy })}
+          />
+        </div>
+      ) : null}
 
       {view.genreIds.length > 0 ? (
         <ul className="mt-8 mb-8 flex flex-wrap gap-x-4 gap-y-2">

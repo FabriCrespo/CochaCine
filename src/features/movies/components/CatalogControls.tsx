@@ -79,10 +79,13 @@ export function CatalogControls({
     setActiveIndex(0)
   }, [draft])
 
+  const filterCount = selectedCount + (selectedYear ? 1 : 0)
+
   useEffect(() => {
     if (!filtersOpen) return
 
     function handlePointer(event: MouseEvent) {
+      if (!window.matchMedia('(min-width: 768px)').matches) return
       if (!rootRef.current?.contains(event.target as Node)) {
         onCloseFilters()
       }
@@ -152,8 +155,8 @@ export function CatalogControls({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="relative min-w-40 flex-1" ref={searchRef}>
+    <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:gap-2">
+      <div className="relative min-w-0 flex-1" ref={searchRef}>
         <label className="block">
           <span className="sr-only">Search movies</span>
           <input
@@ -176,7 +179,7 @@ export function CatalogControls({
             onFocus={() => setOpenSuggestions(true)}
             onKeyDown={handleSearchKey}
             placeholder="Search the archive..."
-            className="w-full border-0 border-b border-ivory/15 bg-transparent px-0 py-1.5 text-sm text-ivory outline-none placeholder:text-muted/70 focus:border-brand"
+            className="w-full border-0 border-b border-ivory/15 bg-transparent px-0 py-2.5 text-base text-ivory outline-none placeholder:text-muted/70 focus:border-brand md:py-1.5 md:text-sm"
           />
         </label>
 
@@ -184,7 +187,7 @@ export function CatalogControls({
           <ul
             id={listId}
             role="listbox"
-            className="absolute z-50 mt-1 max-h-80 w-full overflow-auto border border-ivory/10 bg-ink"
+            className="absolute z-40 mt-1 max-h-64 w-full overflow-auto border border-ivory/10 bg-ink md:max-h-80"
           >
             {suggestions.length === 0 ? (
               <li className="px-3 py-2.5 text-sm text-muted">No titles match.</li>
@@ -231,27 +234,66 @@ export function CatalogControls({
         ) : null}
       </div>
 
-      <div className="relative" ref={rootRef}>
+      <div className="relative md:flex md:items-center md:gap-2" ref={rootRef}>
+        <button
+          type="button"
+          aria-expanded={filtersOpen}
+          aria-controls={panelId}
+          onClick={() => {
+            setOpenSuggestions(false)
+            onToggleFilters()
+          }}
+          className={`${fieldClass} w-full py-2.5 text-left md:hidden`}
+        >
+          Filters
+          {filterCount > 0 ? ` (${filterCount})` : ''}
+        </button>
+
         <button
           type="button"
           aria-expanded={filtersOpen}
           aria-controls={panelId}
           onClick={onToggleFilters}
-          className={fieldClass}
+          className={`${fieldClass} hidden md:inline`}
         >
           Genres
           {selectedCount > 0 ? ` (${selectedCount})` : ''}
         </button>
 
+        <select
+          aria-label="Year"
+          value={selectedYear}
+          onChange={(event) => onYearChange(event.target.value)}
+          className={`${fieldClass} hidden [&>option]:bg-ink [&>option]:text-ivory md:inline`}
+        >
+          <option value="">Year</option>
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+
+        <select
+          aria-label="Sort"
+          value={sortBy}
+          onChange={(event) => onSortByChange(event.target.value as CatalogSort)}
+          className={`${fieldClass} hidden [&>option]:bg-ink [&>option]:text-ivory md:inline`}
+        >
+          {(Object.values(CATALOG_SORT) as CatalogSort[]).map((value) => (
+            <option key={value} value={value}>
+              {CATALOG_SORT_LABELS[value]}
+            </option>
+          ))}
+        </select>
+
         {filtersOpen ? (
           <div
             id={panelId}
-            className="absolute right-0 z-50 mt-2 w-72 border border-ivory/10 bg-ink p-4"
+            className="absolute right-0 z-40 mt-2 hidden w-72 border border-ivory/10 bg-ink p-4 md:block"
           >
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs tracking-[0.2em] uppercase text-muted">
-                Categories
-              </p>
+              <p className="text-xs tracking-[0.2em] uppercase text-muted">Categories</p>
               {selectedCount > 0 ? (
                 <button
                   type="button"
@@ -287,33 +329,108 @@ export function CatalogControls({
           </div>
         ) : null}
       </div>
+    </div>
+  )
+}
 
-      <select
-        aria-label="Year"
-        value={selectedYear}
-        onChange={(event) => onYearChange(event.target.value)}
-        className={`${fieldClass} [&>option]:bg-ink [&>option]:text-ivory`}
-      >
-        <option value="">Year</option>
-        {years.map((year) => (
-          <option key={year} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
+type CatalogMobileFiltersProps = {
+  genres: MovieGenre[]
+  selectedGenreIds: number[]
+  onToggleGenre: (id: number) => void
+  onClear: () => void
+  years: string[]
+  selectedYear: string
+  onYearChange: (value: string) => void
+  sortBy: CatalogSort
+  onSortByChange: (value: CatalogSort) => void
+}
 
-      <select
-        aria-label="Sort"
-        value={sortBy}
-        onChange={(event) => onSortByChange(event.target.value as CatalogSort)}
-        className={`${fieldClass} [&>option]:bg-ink [&>option]:text-ivory`}
-      >
-        {(Object.values(CATALOG_SORT) as CatalogSort[]).map((value) => (
-          <option key={value} value={value}>
-            {CATALOG_SORT_LABELS[value]}
-          </option>
-        ))}
-      </select>
+export function CatalogMobileFilters({
+  genres,
+  selectedGenreIds,
+  onToggleGenre,
+  onClear,
+  years,
+  selectedYear,
+  onYearChange,
+  sortBy,
+  onSortByChange,
+}: CatalogMobileFiltersProps) {
+  const filterCount = selectedGenreIds.length + (selectedYear ? 1 : 0)
+
+  return (
+    <div className="mb-8 space-y-5 border-b border-ivory/10 pb-8 md:hidden">
+      <label className="block">
+        <span className="mb-2 block text-[11px] tracking-[0.2em] uppercase text-muted">Sort</span>
+        <select
+          aria-label="Sort"
+          value={sortBy}
+          onChange={(event) => onSortByChange(event.target.value as CatalogSort)}
+          className="w-full border-0 border-b border-ivory/15 bg-transparent py-2.5 text-sm text-ivory outline-none focus:border-brand [&>option]:bg-ink [&>option]:text-ivory"
+        >
+          {(Object.values(CATALOG_SORT) as CatalogSort[]).map((value) => (
+            <option key={value} value={value}>
+              {CATALOG_SORT_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="block">
+        <span className="mb-2 block text-[11px] tracking-[0.2em] uppercase text-muted">Year</span>
+        <select
+          aria-label="Year"
+          value={selectedYear}
+          onChange={(event) => onYearChange(event.target.value)}
+          className="w-full border-0 border-b border-ivory/15 bg-transparent py-2.5 text-sm text-ivory outline-none focus:border-brand [&>option]:bg-ink [&>option]:text-ivory"
+        >
+          <option value="">Any year</option>
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[11px] tracking-[0.2em] uppercase text-muted">Categories</p>
+          {filterCount > 0 ? (
+            <button
+              type="button"
+              onClick={onClear}
+              className="text-xs tracking-wide text-muted underline-offset-4 hover:text-ivory hover:underline"
+            >
+              Clear
+            </button>
+          ) : null}
+        </div>
+        {genres.length === 0 ? (
+          <p className="text-sm text-muted">No genres in this catalog yet.</p>
+        ) : (
+          <ul className="flex flex-wrap gap-2">
+            {genres.map((genre) => {
+              const checked = selectedGenreIds.includes(genre.id)
+              return (
+                <li key={genre.id}>
+                  <button
+                    type="button"
+                    onClick={() => onToggleGenre(genre.id)}
+                    className={
+                      checked
+                        ? 'bg-brand px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-ink'
+                        : 'border border-ivory/15 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-ivory/70'
+                    }
+                  >
+                    {genre.name}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }
