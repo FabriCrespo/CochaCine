@@ -3,7 +3,6 @@
  */
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Link } from 'react-router'
 import { Breadcrumbs } from '../../../components/layout/Breadcrumbs.tsx'
 import type { Movie, MovieCastMember, MovieDetail, MovieHighlight } from '../../../domain/movie.ts'
 import {
@@ -11,9 +10,10 @@ import {
   formatRuntimeCompact,
 } from '../../../lib/dates.ts'
 import { paths } from '../../../lib/paths.ts'
-import { isOnWatchlist, toggleWatchlist } from '../../../lib/watchlist.ts'
-import { usePrefetchMovie } from '../../../query/movies/useMovie.ts'
+import { useWatchlist } from '../../../lib/useWatchlist.ts'
+import { toggleWatchlist } from '../../../lib/watchlist.ts'
 import { HorizontalCarousel } from './HorizontalCarousel.tsx'
+import { MovieCardLink } from './MovieCard.tsx'
 import { TrailerModal } from './TrailerModal.tsx'
 
 type MovieDetailViewProps = {
@@ -26,8 +26,8 @@ const focusRing =
 
 export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
   const [trailerOpen, setTrailerOpen] = useState(false)
-  const [saved, setSaved] = useState(() => isOnWatchlist(movie.id))
-  const prefetch = usePrefetchMovie()
+  const watchlist = useWatchlist()
+  const saved = watchlist.some((item) => item.id === movie.id)
   const runtime = formatRuntimeCompact(movie.runtimeMinutes)
   const overview = movie.overview.trim()
   const longPlot = (movie.plot ?? '').trim()
@@ -114,7 +114,14 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
             ) : null}
             <button
               type="button"
-              onClick={() => setSaved(toggleWatchlist(movie.id))}
+              onClick={() =>
+                toggleWatchlist({
+                  id: movie.id,
+                  title: movie.title,
+                  posterUrl: movie.posterUrl,
+                  releaseYear: movie.releaseYear,
+                })
+              }
               className={`inline-flex items-center gap-2 border px-5 py-2.5 text-xs tracking-[0.16em] uppercase transition-[color,border-color,background-color,letter-spacing] duration-300 hover:tracking-[0.2em] ${focusRing} ${
                 saved
                   ? 'border-brand bg-brand/12 text-brand hover:bg-brand/20'
@@ -237,10 +244,10 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
         <div className="mt-16">
           <HorizontalCarousel title="Similar titles">
             {similar.map((item) => (
-              <SimilarCard
+              <MovieCardLink
                 key={item.id}
                 movie={item}
-                onPrefetch={() => prefetch(item.id)}
+                className="w-40 shrink-0 sm:w-44"
               />
             ))}
           </HorizontalCarousel>
@@ -361,31 +368,6 @@ function NoteCard({ item, index }: { item: MovieHighlight; index: number }) {
       ) : null}
       <p className="mt-4 font-display text-2xl italic leading-snug text-ink">{item.text}</p>
     </article>
-  )
-}
-
-function SimilarCard({ movie, onPrefetch }: { movie: Movie; onPrefetch: () => void }) {
-  return (
-    <Link
-      to={paths.movie(movie.id)}
-      onMouseEnter={onPrefetch}
-      onFocus={onPrefetch}
-      className={`group w-40 shrink-0 sm:w-44 ${focusRing}`}
-    >
-      <div className="fiche-media bg-ink-soft ring-1 ring-ivory/10 transition-[box-shadow] duration-500 group-hover:ring-brand/45 group-focus-visible:ring-brand/45">
-        {movie.posterUrl ? (
-          <img src={movie.posterUrl} alt="" className="aspect-2/3 w-full object-cover" />
-        ) : (
-          <div className="flex aspect-2/3 items-center justify-center text-xs text-muted">
-            No poster
-          </div>
-        )}
-      </div>
-      <p className="mt-2.5 truncate font-serif text-sm text-ivory transition-colors duration-300 group-hover:text-brand group-focus-visible:text-brand">
-        {movie.title}
-      </p>
-      <p className="text-xs text-muted">{movie.releaseYear ?? ''}</p>
-    </Link>
   )
 }
 

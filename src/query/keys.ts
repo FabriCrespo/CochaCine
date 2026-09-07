@@ -19,7 +19,6 @@ export const movieKeys = {
   lists: () => [...movieKeys.all, 'list'] as const,
   bolivian: (includeHidden = false) =>
     [...movieKeys.lists(), 'bolivian', { catalog: 'client-filters', includeHidden }] as const,
-  director: (personId: number) => [...movieKeys.lists(), 'director', personId] as const,
   genres: () => [...movieKeys.all, 'genres'] as const,
   details: () => [...movieKeys.all, 'detail'] as const,
   detail: (id: number) => [...movieKeys.details(), id, 'supabase-overlay-v5'] as const,

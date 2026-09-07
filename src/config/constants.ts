@@ -38,11 +38,6 @@ export const TMDB_IMAGE_LANGUAGES = 'en,null'
 /** Código ISO 3166-1 de Bolivia para /discover/movie?with_origin_country= */
 export const BOLIVIA_ORIGIN_COUNTRY = 'BO'
 
-/** Director paceño del special de la home. Filmografía: GET /person/{id}/movie_credits */
-export const TMDB_PERSON_MARCOS_LOAYZA = 1372187
-
-export const MARCOS_LOAYZA_PHOTO = '/directors/marcos-loayza.jpg'
-
 /** Still del hero del catálogo (archivo local en /public). */
 export const CATALOG_HERO_IMAGE = '/hero-catalog.jpg'
 

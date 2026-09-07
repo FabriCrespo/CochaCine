@@ -115,12 +115,13 @@ Map: [`src/ARQUITECTURA.ts`](src/ARQUITECTURA.ts)
 - Editor: Supabase Auth + RLS, then posters, copy, and titles TMDB never listed
 - Director filmographies linked to a real ficha when the title exists
 - Home descent: Averno, Utama, *La Hija Cóndor*
+- Watchlist in the header when a title is saved (browser-local)
+- Monthly library inbox (RSS + Crossref) for Essential reading — suggestions only
 
 **Not this**
 
 - No public accounts or a recommendation engine
 - Only three director rooms — not a director CMS
-- `LoayzaSpecial.tsx` is leftover and unwired
 
 ---
 
@@ -135,6 +136,8 @@ Map: [`src/ARQUITECTURA.ts`](src/ARQUITECTURA.ts)
 ## CI
 
 Every push and pull request runs [GitHub Actions](https://github.com/FabriCrespo/CochaCine/actions/workflows/ci.yml): `npm run lint`, `npm test`, and `npm run build`. The badge at the top of this README tracks that workflow.
+
+On the first of each month (and on demand), [Library inbox](https://github.com/FabriCrespo/CochaCine/actions/workflows/reading-inbox.yml) reads cinema/academic RSS feeds plus Crossref and opens a GitHub issue. It does **not** change the home. MUBI Notebook has no public RSS — the issue reminds you to search it by hand.
 
 ## Run locally
 
@@ -160,6 +163,7 @@ npm run dev
 Then open `/` for the house and `/project` for the case study.
 
 ```bash
+npm run harvest:readings   # inbox JSON for /admin; home library stays curated
 npm run build    # tsc -b && vite build
 npm run preview
 ```

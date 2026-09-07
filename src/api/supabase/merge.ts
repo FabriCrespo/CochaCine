@@ -53,6 +53,7 @@ export function applyMovieOverride<T extends Movie>(movie: T, override: MovieOve
     overview: overview ?? movie.overview,
     posterUrl: posterUrl ?? movie.posterUrl,
     releaseYear: yearFromDate(releaseDate) ?? movie.releaseYear,
+    directorName: text(override.director_name) ?? movie.directorName,
   }
 }
 

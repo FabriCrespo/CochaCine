@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Movie } from '../domain/movie.ts'
-import { matchCatalogMovie, matchCatalogMovieByTitle } from './catalog.ts'
+import { matchCatalogMovie, matchCatalogMovieByTitle, primaryGenreName } from './catalog.ts'
 
 function movie(partial: Partial<Movie> & Pick<Movie, 'id' | 'title'>): Movie {
   return {
@@ -12,6 +12,7 @@ function movie(partial: Partial<Movie> & Pick<Movie, 'id' | 'title'>): Movie {
     posterUrl: '/p.jpg',
     releaseYear: '1969',
     genreIds: [],
+    directorName: null,
     ...partial,
   }
 }
@@ -64,5 +65,21 @@ describe('matchCatalogMovie — editorial names vs TMDB records', () => {
 
   it('returns null when nothing scores', () => {
     expect(matchCatalogMovieByTitle(catalog, 'zxq', 1995)).toBeNull()
+  })
+})
+
+describe('primaryGenreName', () => {
+  it('uses the first genre id that exists in the list', () => {
+    const title = movie({
+      id: 1,
+      title: 'X',
+      genreIds: [18, 99],
+    })
+    expect(
+      primaryGenreName(title, [
+        { id: 99, name: 'Documentary' },
+        { id: 18, name: 'Drama' },
+      ]),
+    ).toBe('Drama')
   })
 })

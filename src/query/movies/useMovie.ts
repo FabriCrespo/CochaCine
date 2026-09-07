@@ -46,7 +46,9 @@ function movieFromListCache(queryClient: QueryClient, id: number): MovieDetail |
       countries: [],
       backdropUrl: null,
       voteCount: listed.voteCount,
-      director: null,
+      director: listed.directorName
+        ? { name: listed.directorName, photoUrl: null }
+        : null,
       writers: [],
       productionCompanies: [],
       releaseDate: null,

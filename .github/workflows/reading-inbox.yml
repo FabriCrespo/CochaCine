@@ -1,0 +1,28 @@
+name: Library inbox
+
+on:
+  schedule:
+    - cron: '0 12 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: library-inbox
+  cancel-in-progress: true
+
+jobs:
+  harvest:
+    name: harvest readings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/harvest-reading-inbox.mjs
+        env:
+          READING_INBOX_ISSUE: '1'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

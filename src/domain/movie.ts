@@ -31,6 +31,7 @@ export type Movie = {
   posterUrl: string | null
   releaseYear: string | null
   genreIds: number[]
+  directorName: string | null
 }
 
 export type MovieGenre = {

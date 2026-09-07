@@ -1,5 +1,5 @@
 import { CATALOG_SORT, type CatalogSort } from '../api/tmdb/sort.ts'
-import type { FilmmakerFilm } from '../config/directors.ts'
+import { SPOTLIGHT_DIRECTORS, type FilmmakerFilm } from '../config/directors.ts'
 import type { Movie, MovieGenre } from '../domain/movie.ts'
 
 export function filterCatalogMovies(
@@ -139,6 +139,14 @@ export function genresPresentInCatalog(
     .sort((left, right) => left.name.localeCompare(right.name, 'en'))
 }
 
+export function primaryGenreName(movie: Movie, genres: MovieGenre[]): string | null {
+  for (const id of movie.genreIds) {
+    const match = genres.find((genre) => genre.id === id)
+    if (match?.name) return match.name
+  }
+  return null
+}
+
 function compareMovies(left: Movie, right: Movie, sortBy: CatalogSort): number {
   switch (sortBy) {
     case CATALOG_SORT.featured:
@@ -273,4 +281,27 @@ function matchCatalogMovieByNames(
   }
 
   return bestScore >= 2 ? best : null
+}
+
+const spotlightDirectorCache = new Map<number, string | null>()
+
+export function cardDirectorName(movie: Movie): string | null {
+  if (movie.directorName) return movie.directorName
+  if (spotlightDirectorCache.has(movie.id)) return spotlightDirectorCache.get(movie.id) ?? null
+
+  let found: string | null = null
+  for (const director of SPOTLIGHT_DIRECTORS) {
+    const films = director.complete_historical_filmography ?? director.imdb_filmography
+    if (!films) continue
+    for (const film of films) {
+      if (matchCatalogMovie([movie], film)?.id === movie.id) {
+        found = director.name
+        break
+      }
+    }
+    if (found) break
+  }
+
+  spotlightDirectorCache.set(movie.id, found)
+  return found
 }

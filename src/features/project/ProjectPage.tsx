@@ -279,14 +279,16 @@ const SHIPPED = [
   'Three director profiles with filmography linked into the catalog when the title exists.',
   'Home program: hero, beloved, reading, spotlight, Averno / Utama / La Hija Cóndor.',
   'English-first images and copy. Prefetch on hover. SPA deploy on Vercel.',
+  'Want to watch: a header list that appears only after you save a title. Local to the browser.',
+  'Library inbox: monthly RSS + Crossref suggestions for Essential reading. The home still has three curated essays.',
 ] as const
 
 const NOT_THIS = [
   'No public user accounts or comments — only listed editors sign in.',
-  'LoayzaSpecial.tsx is leftover — the spotlight replaced it. Not wired.',
   'Only Ruiz, Sanjinés, Loayza as full rooms. Not a director CMS.',
   'Wikidata titles with no TMDB id stay on an unresolved list.',
   'Watchlist is local to the browser. It is not a social feature.',
+  'Essential reading is curated. The inbox never publishes itself.',
 ] as const
 
 const CHALLENGES = [

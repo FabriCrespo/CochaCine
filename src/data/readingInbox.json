@@ -1,0 +1,477 @@
+{
+  "harvestedAt": "2026-09-07T05:01:07.944Z",
+  "note": "Candidates only. The home library stays curated in src/config/readings.ts. MUBI has no public RSS — search Notebook by hand.",
+  "alsoCheck": [
+    "https://mubi.com/en/notebook (search Bolivia, Sanjinés, Ukamau)",
+    "https://www.ejumpcut.org/",
+    "https://cineaste.com/"
+  ],
+  "sources": [
+    {
+      "id": "senses",
+      "kicker": "Senses of Cinema",
+      "ok": true,
+      "found": 20
+    },
+    {
+      "id": "film-comment",
+      "kicker": "Film Comment",
+      "ok": true,
+      "found": 100
+    },
+    {
+      "id": "revista",
+      "kicker": "ReVista · Harvard",
+      "ok": true,
+      "found": 10
+    },
+    {
+      "id": "reverse-shot",
+      "kicker": "Reverse Shot",
+      "ok": true,
+      "found": 0
+    },
+    {
+      "id": "film-quarterly",
+      "kicker": "Film Quarterly",
+      "ok": true,
+      "found": 10
+    },
+    {
+      "id": "guardian-film",
+      "kicker": "The Guardian Film",
+      "ok": true,
+      "found": 32
+    },
+    {
+      "id": "variety",
+      "kicker": "Variety",
+      "ok": true,
+      "found": 10
+    },
+    {
+      "id": "indiewire",
+      "kicker": "IndieWire",
+      "ok": true,
+      "found": 12
+    },
+    {
+      "id": "lwlies",
+      "kicker": "Little White Lies",
+      "ok": true,
+      "found": 10
+    },
+    {
+      "id": "hyperallergic",
+      "kicker": "Hyperallergic",
+      "ok": true,
+      "found": 15
+    },
+    {
+      "id": "crossref:Bolivian cinema",
+      "kicker": "Crossref",
+      "ok": true,
+      "found": 20
+    },
+    {
+      "id": "crossref:Jorge Sanjinés",
+      "kicker": "Crossref",
+      "ok": true,
+      "found": 20
+    },
+    {
+      "id": "crossref:Grupo Ukamau",
+      "kicker": "Crossref",
+      "ok": true,
+      "found": 20
+    },
+    {
+      "id": "crossref:Bolivian film",
+      "kicker": "Crossref",
+      "ok": false,
+      "error": "HTTP 429"
+    }
+  ],
+  "items": [
+    {
+      "id": "doi.org-tn.23i52.66794",
+      "sourceId": "crossref",
+      "kicker": "Revista Trabalho Necessário",
+      "title": "O CONCEITO DE CINEMA REVOLUCIONÁRIO SOB TRÊS PERSPECTIVAS LATINO-AMERICANAS: ICAIC, GRUPO UKAMAU E CINE LIBERACIÓN",
+      "dek": "Revista Trabalho Necessário — Allan Brasil de Freitas, Vicente Gosciola — This article aims to discuss the concept of revolutionary cinema from the perspective of three militant Latin American film groups: the Instituto Cubano del Arte e Industria Cinematográficos (ICAIC), Grupo ",
+      "href": "https://doi.org/10.22409/tn.23i52.66794",
+      "date": "2025-12-10",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-rcyc.2025541377",
+      "sourceId": "crossref",
+      "kicker": "Revista Ciencia y Cultura",
+      "title": "El discurso indigenista en La nación clandestina de Jorge Sanjinés",
+      "dek": "Revista Ciencia y Cultura — Zatny Fabiola Irahola Meléndrez — El presente artículo examina, través del análisis del discurso, los componentes ideológicos, el sometimiento de los pueblos indígenas y la violencia cultural representada en La nación clandestina (1989), del cineasta b",
+      "href": "https://doi.org/10.35319/rcyc.2025541377",
+      "date": "2025-07-30",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-978-3-031-32018-7_17",
+      "sourceId": "crossref",
+      "kicker": "Small Cinemas of the Andes",
+      "title": "Images of Difference in Bolivian Cinema",
+      "dek": "Small Cinemas of the Andes — Sergio Zapata",
+      "href": "https://doi.org/10.1007/978-3-031-32018-7_17",
+      "date": "2023-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-t411162840",
+      "sourceId": "crossref",
+      "kicker": "TRANSMODERNITY",
+      "title": "Política y forma visual. En torno al Grupo Ukamau y el Cine Club Cusco",
+      "dek": "TRANSMODERNITY — Talía Dajes — Este artículo indaga en los puntos de contacto entre la producción del Grupo Ukamau (formado en Bolivia en 1968 por Jorge Sanjinés, Óscar Soria y Antonio Eguino) y la del Cine Club Cusco (Perú, 1955, fundado por, Manuel Chambi, Luis Figueroa y Eulog",
+      "href": "https://doi.org/10.5070/t411162840",
+      "date": "2023-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-s0717-69962021000300111",
+      "sourceId": "crossref",
+      "kicker": "ARQ (Santiago)",
+      "title": "Comunidad Ukamau: primeros y segundos planos de la vivienda social",
+      "dek": "ARQ (Santiago) — Francisco Cardemil",
+      "href": "https://doi.org/10.4067/s0717-69962021000300111",
+      "date": "2021-12-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-sk.4485",
+      "sourceId": "crossref",
+      "kicker": "Studia Krytyczne/Critical Studies",
+      "title": "W kierunku sztuki radykalnej polityczności. O filmach politycznych boliwijskiego kolektywu Ukamau",
+      "dek": "Studia Krytyczne/Critical Studies — Kamil Minkner — Tekst przedstawia rozważania na temat twórczości boliwijskiego reżysera filmowego, Jorge Sanjinésa w szerokim kontekście społeczno-politycznym i artystycznym. Autor analizuje również manifest teoretyczny Sanjinésa (1976), w któr",
+      "href": "https://doi.org/10.25167/sk.4485",
+      "date": "2021-08-08",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-secuencias2019.49-50.002",
+      "sourceId": "crossref",
+      "kicker": "Secuencias",
+      "title": "Las mujeres del Grupo Ukamau: dentro y fuera de la pantalla",
+      "dek": "Secuencias — ISABEL SEGUÍ — The Ukamau group has a long history which spans for more than sixty years. The oral accounts acknowledge that women participated in all the different phases of the group, undertaking instrumental roles in front of and behind the camera. However, they h",
+      "href": "https://doi.org/10.15366/secuencias2019.49-50.002",
+      "date": "2020-07-15",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-secuencias2019.49-50.001",
+      "sourceId": "crossref",
+      "kicker": "Secuencias",
+      "title": "¿Ukamau antes de Ukamau? Nuevos acercamientos a la historia del cine en la Bolivia de los años sesenta",
+      "dek": "Secuencias — DAVID M. J. WOOD — This article analyses the work carried out in promoting, historizing, producing and exhibiting cinema in early 1960s Bolivia by the group of filmmakers who would go on to establish the Ukamau Group towards the end of that decade. Firstly, it discus",
+      "href": "https://doi.org/10.15366/secuencias2019.49-50.001",
+      "date": "2020-07-15",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-secuencias2019.49-50.003",
+      "sourceId": "crossref",
+      "kicker": "Secuencias",
+      "title": "La nación Ukamau: apropiaciones de la técnica cinematográfica y actuación indígena en La nación clandestina (1989)",
+      "dek": "Secuencias — ANA DANIELA NAHMAD RODRÍGUEZ — From its origins the Ukamau Group unleashed the amazement of scholars, critics and film historians, as well as of hundreds of spectators around the world. From these first moments, the figure of Jorge Sanjinés eclipsed the panorama of f",
+      "href": "https://doi.org/10.15366/secuencias2019.49-50.003",
+      "date": "2020-07-15",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-secuencias2019.49-50.006",
+      "sourceId": "crossref",
+      "kicker": "Secuencias",
+      "title": "Entre imágenes y reflejos… o despeñarse en la alucinación identitaria: a propósito de Para recibir el canto de los pájaros (Jorge Sanjinés, 1995)",
+      "dek": "Secuencias — MARIA AIMARETTI — The article explores the way in which, within the framework of the fifth centenary of the arrival of the Spaniards in America, the Ukamau Group (UG) contributed to the discussion on the prevalence of the effects of the conquest in the present throug",
+      "href": "https://doi.org/10.15366/secuencias2019.49-50.006",
+      "date": "2020-07-03",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-0719-5370.2020.57141",
+      "sourceId": "crossref",
+      "kicker": "Investigaciones Geográficas",
+      "title": "La política de vivienda de la despolitización: gobernanza neoliberal, tecnocracia y luchas urbanas. El caso del Movimiento de pobladores Ukamau, Estación Central",
+      "dek": "Investigaciones Geográficas — Alex Paulsen Espinoza — La política de vivienda ha actuado como un sedante para los sectores vulnerados despolitizándolos y transformándolos en sujetos beneficiarios. Bajo un marco teórico que considera las características de la gobernanza urbana neo",
+      "href": "https://doi.org/10.5354/0719-5370.2020.57141",
+      "date": "2020-06-23",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-issn.2316-7114.sig.2020.157678",
+      "sourceId": "crossref",
+      "kicker": "Significação: Revista de Cultura Audiovisual",
+      "title": "Teoria e prática de um cinema junto ao povo de Jorge Sanjinés e Grupo Ukamau",
+      "dek": "Significação: Revista de Cultura Audiovisual — Fabián Núñez — O livro Teoria e prática de um cinema junto ao povo de Jorge Sanjinés e Grupo Ukamau é publicado no Brasil, quase quarenta anos depois de sua edição original no México. Trata-se de uma coletânea de textos que visa apre",
+      "href": "https://doi.org/10.11606/issn.2316-7114.sig.2020.157678",
+      "date": "2020-05-04",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-9780520957411-080",
+      "sourceId": "crossref",
+      "kicker": "Film Manifestos and Global Cinema Cultures",
+      "title": "PROBLEMS OF FORM AND CONTENT IN REVOLUTIONARY CINEMA (Bolivia, 1976)",
+      "dek": "Film Manifestos and Global Cinema Cultures — Jorge Sanjinés",
+      "href": "https://doi.org/10.1525/9780520957411-080",
+      "date": "2019-12-31",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-secuencia.v0i0.1683",
+      "sourceId": "crossref",
+      "kicker": "Secuencia",
+      "title": "El espectador pensante. El cine de Jorge Sanjinés y el grupo Ukamau",
+      "dek": "Secuencia — Carlos Alejandro Belmonte Grey — David M. J. Wood, El espectador pensante. El cine de Jorge Sanjinés y el grupo Ukamau, México, UNAM- Instituto de Investigaciones Estéticas/La Carreta Editores E.U., 2017, 187 pp.",
+      "href": "https://doi.org/10.18234/secuencia.v0i0.1683",
+      "date": "2019-08-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-fotocinema.2018.v0i17.5100",
+      "sourceId": "crossref",
+      "kicker": "Fotocinema. Revista científica de cine y fotografía",
+      "title": "Aportes de Jorge Sanjinés al cine revolucionario",
+      "dek": "Fotocinema. Revista científica de cine y fotografía — Óscar Andrés Pardo Vélez",
+      "href": "https://doi.org/10.24310/fotocinema.2018.v0i17.5100",
+      "date": "2018-07-10",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-978-3-319-76807-6_11",
+      "sourceId": "crossref",
+      "kicker": "Global Cinema",
+      "title": "Bolivian Indigenous Film and the Aesthetics of the Precarious",
+      "dek": "Global Cinema — Gabriela Zamorano Villarreal",
+      "href": "https://doi.org/10.1007/978-3-319-76807-6_11",
+      "date": "2018-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-secuencias2016.42.006",
+      "sourceId": "crossref",
+      "kicker": "Secuencias",
+      "title": "Mirada-límen y memoria heterogénea. Acerca de La nación clandestina (Jorge Sanjinés, 1989) / Gaze-limen and Heterogeneous Memory. About La nación clandestina (Jorge Sanjinés, 1989)",
+      "dek": "Secuencias — María Aimaretti — Aprovechando las tensiones entre adentros-afueras socio-culturales, el interés privado y el comunitario, la dimensión íntima y la compartida, la circulación entre fronteras materiales, simbólicas y cronotópicas, y la fluctuación entre el campo y la ",
+      "href": "https://doi.org/10.15366/secuencias2016.42.006",
+      "date": "2016-11-11",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-issn.2316-7114.sig.2015.103790",
+      "sourceId": "crossref",
+      "kicker": "Significação: Revista de Cultura Audiovisual",
+      "title": "Un ojo responsable frente al dolor de los demás: imágenes de la violencia en dos films del Grupo Ukamau",
+      "dek": "Significação: Revista de Cultura Audiovisual — María Gabriela Aimaretti — &lt;p&gt;A revelação das diferentes expressões da violência política —institucional, económica, social e simbólica–, e a problematización do exercício da força “desde abaixo” em pos de uma mudança revolucio",
+      "href": "https://doi.org/10.11606/issn.2316-7114.sig.2015.103790",
+      "date": "2015-12-18",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-books.pur.55487",
+      "sourceId": "crossref",
+      "kicker": "La culture de l'engagement au cinéma",
+      "title": "Indianité et engagement : le cinéma de Jorge Sanjinés",
+      "dek": "La culture de l'engagement au cinéma — Erich Fisbach",
+      "href": "https://doi.org/10.4000/books.pur.55487",
+      "date": "2015-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-ntc.2013.0000",
+      "sourceId": "crossref",
+      "kicker": "Nuevo Texto Crítico",
+      "title": "Diez Miradas al cine de Jorge Sanjinés",
+      "dek": "Nuevo Texto Crítico — Jorge Ruffinelli",
+      "href": "https://doi.org/10.1353/ntc.2013.0000",
+      "date": "2013-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-ntc.2013.0017",
+      "sourceId": "crossref",
+      "kicker": "Nuevo Texto Crítico",
+      "title": "Entrevista a Jorge Sanjinés",
+      "dek": "Nuevo Texto Crítico — Manuel Pérez Paredes",
+      "href": "https://doi.org/10.1353/ntc.2013.0017",
+      "date": "2013-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-ntc.2013.0005",
+      "sourceId": "crossref",
+      "kicker": "Nuevo Texto Crítico",
+      "title": "Las Banderas de Jorge Sanjinés: Ukamau (1966)",
+      "dek": "Nuevo Texto Crítico — Fernando Birri",
+      "href": "https://doi.org/10.1353/ntc.2013.0005",
+      "date": "2013-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-bsj.2010.14",
+      "sourceId": "crossref",
+      "kicker": "Bolivian Studies Journal",
+      "title": "The Need to Compromise Existence. Nation and Decolonization in the Bolivian Cinema of the Neoliberal Era",
+      "dek": "Bolivian Studies Journal — Diego Mattos Vazualdo — The aim of this essay is twofold: to analyze post-dictatorial Bolivian filmic discourse on the thematic of the nation vis-à-vis processes of decolonization, and to observe the effect that this relation had in the formation of sub",
+      "href": "https://doi.org/10.5195/bsj.2010.14",
+      "date": "2011-01-15",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-chime.060.0115",
+      "sourceId": "crossref",
+      "kicker": "Chimères",
+      "title": "Révolution et perplexité",
+      "dek": "Chimères — Jorge Sanjinés, Antoine Soriano",
+      "href": "https://doi.org/10.3917/chime.060.0115",
+      "date": "2006-03-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-chime.2006.1605",
+      "sourceId": "crossref",
+      "kicker": "Chimères",
+      "title": "Révolution et perplexité",
+      "dek": "Chimères — Jorge Sanjinés, Antoine Soriano",
+      "href": "https://doi.org/10.3406/chime.2006.1605",
+      "date": "2006-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-9781846152788.010",
+      "sourceId": "crossref",
+      "kicker": "A Companion to Latin American Film",
+      "title": "Yawar Mallku: La Sangre Del Cóndor (The Blood of the Condor, 1969), Directed by Jorge Sanjinés",
+      "dek": "A Companion to Latin American Film",
+      "href": "https://doi.org/10.1017/9781846152788.010",
+      "date": "2004-10-14",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-chime.054.0195",
+      "sourceId": "crossref",
+      "kicker": "Chimères",
+      "title": "Deux essais pour le cinéma (suivi d'un entretien avec Catherine Roux)",
+      "dek": "Chimères — Jorge Sanjinés, Jean-Philippe Cazier",
+      "href": "https://doi.org/10.3917/chime.054.0195",
+      "date": "2004-06-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-chime.2004.1362",
+      "sourceId": "crossref",
+      "kicker": "Chimères",
+      "title": "Deux essais pour le cinéma (suivi d'un entretien avec Catherine Roux)",
+      "dek": "Chimères — Jorge Sanjinés",
+      "href": "https://doi.org/10.3406/chime.2004.1362",
+      "date": "2004-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-choice.37-5586",
+      "sourceId": "crossref",
+      "kicker": "Choice Reviews Online",
+      "title": "The art and politics of Bolivian cinema",
+      "dek": "Choice Reviews Online",
+      "href": "https://doi.org/10.5860/choice.37-5586",
+      "date": "2000-06-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-fq.2000.53.3.04a00140",
+      "sourceId": "crossref",
+      "kicker": "Film Quarterly",
+      "title": ": The Art and Politics of Bolivian Cinema . Jose Sanchez-H.",
+      "dek": "Film Quarterly — John Hess",
+      "href": "https://doi.org/10.1525/fq.2000.53.3.04a00140",
+      "date": "2000-04-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-1213743",
+      "sourceId": "crossref",
+      "kicker": "Film Quarterly",
+      "title": "Review: The Art and Politics of Bolivian Cinema by José Sanchez-H",
+      "dek": "Film Quarterly — John Hess",
+      "href": "https://doi.org/10.2307/1213743",
+      "date": "2000-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-m3281014526",
+      "sourceId": "crossref",
+      "kicker": "Mester",
+      "title": "Una mirada estética e ideológica al testimonio visual de Jorge Sanjinés y al testimonio oral de Domitila Barrios de Chungara",
+      "dek": "Mester — Karina Wigozki — [No abstract]",
+      "href": "https://doi.org/10.5070/m3281014526",
+      "date": "1999-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-contratexto1995.n009.2527",
+      "sourceId": "crossref",
+      "kicker": "Contratexto",
+      "title": "No creamos solos",
+      "dek": "Contratexto — Jorge Sanjinés — No presenta resumen.",
+      "href": "https://doi.org/10.26439/contratexto1995.n009.2527",
+      "date": "1995-12-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-9780520908017-023",
+      "sourceId": "crossref",
+      "kicker": "Third World Film Making and the West",
+      "title": "16. Jorge Sanjinés",
+      "dek": "Third World Film Making and the West",
+      "href": "https://doi.org/10.1525/9780520908017-023",
+      "date": "1988-12-31",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-724532-006",
+      "sourceId": "crossref",
+      "kicker": "Cinema and Social Change in Latin America",
+      "title": "4. Jorge Sanjines (Bolivia), Revolutionary Cinema: The Bolivian Experience",
+      "dek": "Cinema and Social Change in Latin America",
+      "href": "https://doi.org/10.7560/724532-006",
+      "date": "1986-12-31",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-03064228108533235",
+      "sourceId": "crossref",
+      "kicker": "Index on Censorship",
+      "title": "Cameras are dangerous: Bolivian cinema returns to exile",
+      "dek": "Index on Censorship — Alfonso Gumucio Dagron — Filmwork stopped after the coup of July 1980 — except in exile or in secret",
+      "href": "https://doi.org/10.1080/03064228108533235",
+      "date": "1981-08-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-9781135000356-rem344-1",
+      "sourceId": "crossref",
+      "kicker": "Routledge Encyclopedia of Modernism",
+      "title": "Sanjinés, Jorge (1936--)",
+      "dek": "Routledge Encyclopedia of Modernism — Jorge E. Cuéllar — Jorge Sanjinés is a Bolivian director, screenwriter, and author. A committed political filmmaker, Sanjinés’s films and essays attempt to integrate Marxist revolutionary theory and indigenous ways of knowing towards the crea",
+      "href": "https://doi.org/10.4324/9781135000356-rem344-1",
+      "date": "0-01-01",
+      "kind": "crossref"
+    },
+    {
+      "id": "doi.org-cc7bba71z34fbz4900z8dcczfdaf0ed5e040",
+      "sourceId": "crossref",
+      "kicker": "Crossref",
+      "title": "Le voyage circulaire : représentation historique et politique des identités culturelles boliviennes dans l’oeuvre cinématographique de Jorge Sanjinés",
+      "dek": "Ronald Ariel Vargas Ovando — La Bolivie, fruit de la colonisation espagnole et des guerres d’indépendance, est née de manière arbitraire au début du XIXe siècle. Elle conserve à l’intérieur de ses frontières une diversité de cultures natives, exploitées pendant la majeure partie ",
+      "href": "https://doi.org/10.70675/cc7bba71z34fbz4900z8dcczfdaf0ed5e040",
+      "date": "0-01-01",
+      "kind": "crossref"
+    }
+  ]
+}

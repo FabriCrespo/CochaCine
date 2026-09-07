@@ -46,6 +46,7 @@ export function mapMovie(dto: TmdbMovieListItemDto): Movie {
     posterUrl: posterUrl(dto.poster_path),
     releaseYear: dto.release_date ? dto.release_date.slice(0, 4) : null,
     genreIds: dto.genre_ids ?? [],
+    directorName: pickDirectorName(dto),
   }
 }
 
@@ -70,6 +71,7 @@ export function mapMovieListItemFromDetail(dto: TmdbMovieDetailDto): TmdbMovieLi
       .map((country) => country.iso_3166_1)
       .filter((code): code is string => Boolean(code)),
     genre_ids: (dto.genres ?? []).map((genre) => genre.id),
+    credits: dto.credits,
   }
 }
 
@@ -96,6 +98,7 @@ export function mapMovieDetail(dto: TmdbMovieDetailDto): MovieDetail {
     title,
     overview,
     poster_path: pickEnglishImagePath(dto.images?.posters, dto.poster_path),
+    genre_ids: dto.genre_ids ?? (dto.genres ?? []).map((genre) => genre.id),
   })
 
   return {
@@ -125,6 +128,16 @@ export function mapMovieDetail(dto: TmdbMovieDetailDto): MovieDetail {
     trailerYoutubeKey: pickYoutubeTrailer(dto.videos?.results),
     watch: mapWatchOptions(dto, BOLIVIA_ORIGIN_COUNTRY),
   }
+}
+
+function pickDirectorName(dto: { credits?: { crew?: Array<{ name: string; job: string }> } }): string | null {
+  const names = uniqueStrings(
+    (dto.credits?.crew ?? [])
+      .filter((person) => person.job === 'Director')
+      .map((person) => person.name.trim())
+      .filter(Boolean),
+  )
+  return names.length > 0 ? names.join(', ') : null
 }
 
 function pickDirector(dto: TmdbMovieDetailDto): MoviePerson | null {

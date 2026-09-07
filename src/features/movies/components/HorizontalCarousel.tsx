@@ -30,7 +30,7 @@ export function HorizontalCarousel({ title, children }: HorizontalCarouselProps)
       </div>
       <div
         ref={scrollerRef}
-        className="flex gap-6 overflow-x-auto scroll-smooth pb-1"
+        className="flex gap-6 overflow-x-auto overflow-y-visible scroll-smooth py-3"
       >
         {children}
       </div>

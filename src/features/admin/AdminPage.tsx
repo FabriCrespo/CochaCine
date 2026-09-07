@@ -13,6 +13,7 @@ import { useMovieOverride, useOverrideList } from '../../query/overrides/useOver
 import { AdminAddTitle } from './AdminAddTitle.tsx'
 import { AdminEditor } from './AdminEditor.tsx'
 import { AdminUnlock } from './AdminUnlock.tsx'
+import { ReadingInbox } from './ReadingInbox.tsx'
 import { useAdminAuth } from './useAdminAuth.ts'
 
 type ListFilter = 'missing-overview' | 'missing-poster' | 'edited' | 'beloved' | 'hidden' | 'all'
@@ -302,6 +303,7 @@ export function AdminPage() {
               }}
             />
           </div>
+          <ReadingInbox />
         </aside>
 
         <section className="min-h-0 overflow-auto bg-paper text-ink">

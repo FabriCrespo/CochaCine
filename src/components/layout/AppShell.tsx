@@ -10,6 +10,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { paths } from '../../lib/paths.ts'
 import { SiteFooter } from './SiteFooter.tsx'
+import { WatchlistMenu } from './WatchlistMenu.tsx'
 
 type AppShellProps = {
   title: string
@@ -42,6 +43,7 @@ export function AppShell({ title, toolbar, hero, after, wide = false, children }
             >
               Archive
             </Link>
+            <WatchlistMenu />
             <Link
               to={paths.project}
               className="text-[10px] tracking-[0.22em] uppercase text-muted hover:text-ivory"

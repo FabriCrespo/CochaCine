@@ -35,6 +35,7 @@ export type TmdbMovieListItemDto = {
   /** ISO de production_countries cuando el ítem viene de GET /movie/{id}. */
   production_country_codes?: string[]
   genre_ids?: number[]
+  credits?: TmdbCreditsDto
 }
 
 export type TmdbFindDto = {
@@ -46,17 +47,6 @@ export type TmdbPopularMoviesDto = {
   results: TmdbMovieListItemDto[]
   total_pages: number
   total_results: number
-}
-
-export type TmdbCrewMovieCreditDto = TmdbMovieListItemDto & {
-  job?: string
-  department?: string
-}
-
-export type TmdbPersonMovieCreditsDto = {
-  id: number
-  crew?: TmdbCrewMovieCreditDto[]
-  cast?: TmdbMovieListItemDto[]
 }
 
 /** Cuerpo de error que TMDB manda cuando algo sale mal. */

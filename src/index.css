@@ -270,17 +270,90 @@ body {
   }
 }
 
+.title-card {
+  transform-origin: center top;
+  transition: transform 250ms ease;
+}
+
+.title-card-poster {
+  overflow: hidden;
+}
+
+.title-card-poster img {
+  display: block;
+}
+
+.title-card-overlay,
+.title-card-play,
+.title-card-copy {
+  opacity: 0;
+}
+
+.title-card-play {
+  transform: scale(0.92);
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
+}
+
+.title-card-overlay {
+  transition: opacity 250ms ease;
+}
+
+.title-card-copy {
+  transform: translateY(0.4rem);
+  transition:
+    opacity 250ms ease 50ms,
+    transform 250ms ease 50ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .title-card,
+  .group:focus-visible .title-card {
+    transform: scale(1.03);
+  }
+
+  .group:hover .title-card-overlay,
+  .group:focus-visible .title-card-overlay,
+  .group:hover .title-card-play,
+  .group:focus-visible .title-card-play,
+  .group:hover .title-card-copy,
+  .group:focus-visible .title-card-copy {
+    opacity: 1;
+  }
+
+  .group:hover .title-card-play,
+  .group:focus-visible .title-card-play {
+    transform: scale(1);
+  }
+
+  .group:hover .title-card-copy,
+  .group:focus-visible .title-card-copy {
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lineage-poster,
   .fiche-media img,
-  .fiche-rule::before {
+  .fiche-rule::before,
+  .title-card,
+  .title-card-overlay,
+  .title-card-play,
+  .title-card-copy {
     transition: none;
   }
 
   .group:hover .lineage-poster,
   .group:focus-visible .lineage-poster,
   .group:hover .fiche-media img,
-  .group:focus-visible .fiche-media img {
+  .group:focus-visible .fiche-media img,
+  .group:hover .title-card,
+  .group:focus-visible .title-card,
+  .group:hover .title-card-play,
+  .group:focus-visible .title-card-play,
+  .group:hover .title-card-copy,
+  .group:focus-visible .title-card-copy {
     transform: none;
   }
 

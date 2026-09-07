@@ -37,7 +37,7 @@
  * No saltes capas. No llames axiosClient desde un componente.
  */
 
-import { DEFAULT_LANGUAGE, TMDB_IMAGE_LANGUAGES, TMDB_PERSON_MARCOS_LOAYZA } from '../../config/constants.ts'
+import { DEFAULT_LANGUAGE, TMDB_IMAGE_LANGUAGES } from '../../config/constants.ts'
 import type { Movie, MovieDetail, MovieGenre, PopularMoviesPage } from '../../domain/movie.ts'
 import { AppError } from '../http/errors.ts'
 import { fetchImdbPlot } from '../imdb/plot.api.ts'
@@ -69,7 +69,6 @@ import type {
   TmdbMovieDetailDto,
   TmdbMovieImagesDto,
   TmdbMovieListItemDto,
-  TmdbPersonMovieCreditsDto,
   TmdbPopularMoviesDto,
   TmdbVideoDto,
 } from './tmdb.types.ts'
@@ -185,7 +184,7 @@ async function fetchMoviesByIds(ids: readonly number[]): Promise<TmdbMovieListIt
       try {
         const { data } = await axiosClient.get<TmdbMovieDetailDto>(
           TMDB_ENDPOINTS.movies.detail(id),
-          { params: { ...ENGLISH_MEDIA_PARAMS, append_to_response: 'images,translations' } },
+          { params: { ...ENGLISH_MEDIA_PARAMS, append_to_response: 'images,translations,credits' } },
         )
         return mapMovieListItemFromDetail(data)
       } catch {
@@ -307,34 +306,6 @@ export async function fetchMovieGenres(): Promise<MovieGenre[]> {
     { params: { language: DEFAULT_LANGUAGE } },
   )
   return data.genres ?? []
-}
-
-/**
- * GET /person/{id}/movie_credits — solo créditos como Director.
- */
-export async function fetchMoviesDirectedBy(
-  personId: number,
-): Promise<Movie[]> {
-  const { data } = await axiosClient.get<TmdbPersonMovieCreditsDto>(
-    TMDB_ENDPOINTS.people.movieCredits(personId),
-    { params: ENGLISH_MEDIA_PARAMS },
-  )
-
-  const directed = uniqueById(
-    (data.crew ?? []).filter(
-      (credit) => credit.job === 'Director' && !credit.adult && credit.id > 0,
-    ),
-  ).sort((left, right) =>
-    (right.release_date ?? '').localeCompare(left.release_date ?? ''),
-  )
-
-  const movies = directed.map(mapMovie)
-  const overrides = await fetchMovieOverrides(movies.map((movie) => movie.id))
-  return movies.map((movie) => applyMovieOverride(movie, overrides.get(movie.id)))
-}
-
-export async function fetchMarcosLoayzaMovies(): Promise<Movie[]> {
-  return fetchMoviesDirectedBy(TMDB_PERSON_MARCOS_LOAYZA)
 }
 
 /**

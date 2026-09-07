@@ -24,7 +24,4 @@ export const TMDB_ENDPOINTS = {
   genres: {
     movieList: '/genre/movie/list',
   },
-  people: {
-    movieCredits: (id: number) => `/person/${id}/movie_credits`,
-  },
 } as const
