@@ -19,9 +19,10 @@ type AdminAuth = {
 }
 
 export function useAdminAuth() {
+  const configured = isSupabaseConfigured()
   const [state, setState] = useState<AdminAuth>({
-    ready: false,
-    configured: isSupabaseConfigured(),
+    ready: !configured,
+    configured,
     user: null,
     isEditor: false,
     error: null,
@@ -30,13 +31,6 @@ export function useAdminAuth() {
   useEffect(() => {
     const supabase = getSupabase()
     if (!supabase) {
-      setState({
-        ready: true,
-        configured: false,
-        user: null,
-        isEditor: false,
-        error: null,
-      })
       return
     }
 

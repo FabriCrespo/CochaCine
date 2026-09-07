@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs.tsx'
 import { Pagination } from '../../components/layout/Pagination.tsx'
@@ -34,6 +34,12 @@ export function AdminPage() {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<ListFilter>('missing-overview')
   const [page, setPage] = useState(1)
+  const listKey = `${query}\0${filter}`
+  const [pageKey, setPageKey] = useState(listKey)
+  if (pageKey !== listKey) {
+    setPageKey(listKey)
+    setPage(1)
+  }
   const [pinned, setPinned] = useState<Movie | null>(null)
 
   const catalog = useBolivianMovies({ includeHidden: true })
@@ -92,10 +98,6 @@ export function AdminPage() {
   }, [catalogMovies, query, filter, editedIds, hiddenIds, belovedSet, belovedIds])
 
   const paged = useMemo(() => paginate(visibleMovies, page), [visibleMovies, page])
-
-  useEffect(() => {
-    setPage(1)
-  }, [query, filter])
 
   if (!auth.ready) {
     return (

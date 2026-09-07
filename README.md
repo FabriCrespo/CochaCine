@@ -3,6 +3,17 @@
   <h1>Cochacine</h1>
   <p><em>An editorial archive of Bolivian cinema — a house, not a moodboard.</em></p>
   <p>
+    <a href="https://github.com/FabriCrespo/CochaCine/actions/workflows/ci.yml">
+      <img src="https://github.com/FabriCrespo/CochaCine/actions/workflows/ci.yml/badge.svg" alt="CI" />
+    </a>
+    <a href="https://cochacine.vercel.app">
+      <img src="https://img.shields.io/github/deployments/FabriCrespo/CochaCine/Production?label=vercel&logo=vercel&logoColor=white" alt="Vercel" />
+    </a>
+    <a href="LICENSE">
+      <img src="https://img.shields.io/github/license/FabriCrespo/CochaCine?style=flat-square" alt="MIT License" />
+    </a>
+  </p>
+  <p>
     <img src="https://img.shields.io/badge/React_19-000000?style=flat-square&logo=react&logoColor=CBB89A" alt="React 19" />
     <img src="https://img.shields.io/badge/Vite_8-000000?style=flat-square&logo=vite&logoColor=CBB89A" alt="Vite 8" />
     <img src="https://img.shields.io/badge/TypeScript-000000?style=flat-square&logo=typescript&logoColor=CBB89A" alt="TypeScript" />
@@ -20,9 +31,17 @@
 
 <br />
 
-<img src="public/hero-catalog.jpg" alt="Home hero — La Hija Cóndor" />
-
-<p align="center"><sub>Home program. <em>La Hija Cóndor</em> as a current presentation, not a TMDB carousel.</sub></p>
+<p align="center">
+  <img src="public/hero-catalog.jpg" alt="Home hero — La Hija Cóndor" width="49%" />
+  <img src="public/directors/jorgesanjinez.png" alt="Director spotlight — Jorge Sanjinés" width="49%" />
+</p>
+<p align="center">
+  <img src="public/readings/utama.jpg" alt="Essential reading — Utama" width="49%" />
+  <img src="public/readings/cinemateca.jpg" alt="The library — Cinemateca Boliviana" width="49%" />
+</p>
+<p align="center">
+  <sub>Home program · Director spotlight · Essential reading · The library</sub>
+</p>
 
 ---
 
@@ -113,20 +132,16 @@ Map: [`src/ARQUITECTURA.ts`](src/ARQUITECTURA.ts)
 
 ---
 
-<p align="center">
-  <img src="public/directors/jorgesanjinez.png" alt="Jorge Sanjinés — director spotlight" height="320" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="public/readings/utama.jpg" alt="Still from Utama" height="320" />
-</p>
-<p align="center"><sub>Director spotlight · Essential reading</sub></p>
+## CI
 
----
+Every push and pull request runs [GitHub Actions](https://github.com/FabriCrespo/CochaCine/actions/workflows/ci.yml): `npm run lint`, `npm test`, and `npm run build`. The badge at the top of this README tracks that workflow.
 
 ## Run locally
 
 ```bash
 cp .env.example .env
 npm install
+npm test
 npm run dev
 ```
 

@@ -131,11 +131,11 @@ export async function fetchBolivianMovies(
   })
 
   const overrides = await fetchMovieOverrides(page.movies.map((movie) => movie.id))
-  const movies = page.movies.map((movie) =>
-    applyMovieOverride(movie, overrides.get(movie.id)),
-  )
+  const movies = page.movies
+    .map((movie) => applyMovieOverride(movie, overrides.get(movie.id)))
+    .filter((movie) => options.includeHidden || Boolean(movie.posterUrl))
 
-  return { ...page, movies }
+  return { ...page, movies, totalResults: movies.length }
 }
 
 async function collectDiscoverPages(

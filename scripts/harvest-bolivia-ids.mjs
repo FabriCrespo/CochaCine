@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parseWikidataBindings } from './wikidataHarvest.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -30,27 +31,7 @@ if (!res.ok) {
 }
 
 const data = await res.json()
-const rows = data.results.bindings.map((row) => ({
-  label: row.filmLabel?.value ?? '',
-  tmdb: row.tmdb?.value ?? null,
-}))
-
-const ids = [
-  ...new Set(
-    rows
-      .map((row) => Number.parseInt(row.tmdb ?? '', 10))
-      .filter((id) => Number.isFinite(id) && id > 0),
-  ),
-].sort((a, b) => a - b)
-
-const unresolvedTitles = [
-  ...new Set(
-    rows
-      .filter((row) => !row.tmdb)
-      .map((row) => row.label.trim())
-      .filter((label) => label && !/^Q\d+$/i.test(label)),
-  ),
-].sort((a, b) => a.localeCompare(b, 'es'))
+const { ids, unresolvedTitles } = parseWikidataBindings(data.results.bindings)
 
 const dest = join(root, 'src/api/tmdb/boliviaProducedIds.ts')
 const idsLiteral = ids.join(',\n  ')

@@ -73,19 +73,27 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   const [flash, setFlash] = useState<string | null>(null)
   const [pane, setPane] = useState<Pane>('story')
   const draftRef = useRef(draft)
-  draftRef.current = draft
+  const persistRef = useRef<(next: Draft) => Promise<void>>(async () => {})
+  const draftKey = `${movie.id}:${override?.updated_at ?? ''}`
+  const [appliedDraftKey, setAppliedDraftKey] = useState(draftKey)
+
+  if (appliedDraftKey !== draftKey) {
+    setAppliedDraftKey(draftKey)
+    setDraft(draftFrom(override))
+  }
 
   useEffect(() => {
-    setDraft(draftFrom(override))
+    draftRef.current = draft
+  }, [draft])
+
+  useEffect(() => {
     save.reset()
     remove.reset()
     hideMovie.reset()
     unhideMovie.reset()
     pinBeloved.reset()
     unpinBeloved.reset()
-  }, [override?.updated_at, movie.id])
-
-  const persistRef = useRef<(next: Draft) => Promise<void>>(async () => {})
+  }, [draftKey, save, remove, hideMovie, unhideMovie, pinBeloved, unpinBeloved])
 
   async function persist(next: Draft) {
     try {
@@ -96,7 +104,10 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
       setFlash(null)
     }
   }
-  persistRef.current = persist
+
+  useEffect(() => {
+    persistRef.current = persist
+  })
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {

@@ -74,10 +74,11 @@ export function CatalogControls({
   )
 
   const showSuggestions = openSuggestions && draft.trim().length > 0
-
-  useEffect(() => {
+  const [indexForDraft, setIndexForDraft] = useState(draft)
+  if (indexForDraft !== draft) {
+    setIndexForDraft(draft)
     setActiveIndex(0)
-  }, [draft])
+  }
 
   const filterCount = selectedCount + (selectedYear ? 1 : 0)
 
