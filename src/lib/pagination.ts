@@ -1,4 +1,5 @@
 export const PAGE_SIZE = 10
+export const ARCHIVE_PAGE_SIZE = 20
 
 export type PageSlice<T> = {
   items: T[]

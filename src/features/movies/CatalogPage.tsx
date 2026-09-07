@@ -14,9 +14,10 @@ import {
   filterCatalogMovies,
   genresPresentInCatalog,
   sortCatalogMovies,
+  decadesPresentInCatalog,
   yearsPresentInCatalog,
 } from '../../lib/catalog.ts'
-import { paginate } from '../../lib/pagination.ts'
+import { paginate, ARCHIVE_PAGE_SIZE } from '../../lib/pagination.ts'
 import { paths } from '../../lib/paths.ts'
 import {
   catalogSearchString,
@@ -27,8 +28,10 @@ import {
   type CatalogViewState,
 } from '../../lib/catalogSearch.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
+import { useCatalogHouse } from '../../query/house/useCatalogHouse.ts'
 import { useMovieGenres } from '../../query/movies/useMovieGenres.ts'
 import { CatalogControls, CatalogMobileFilters } from './components/CatalogControls.tsx'
+import { CatalogProgram } from './components/CatalogProgram.tsx'
 import { MovieGrid } from './components/MovieGrid.tsx'
 
 export function CatalogPage() {
@@ -41,6 +44,7 @@ export function CatalogPage() {
 
   const { data, isPending, isError, error, refetch } = useBolivianMovies()
   const { data: genres = [] } = useMovieGenres()
+  const house = useCatalogHouse()
 
   useEffect(() => {
     rememberCatalogView(view)
@@ -67,29 +71,39 @@ export function CatalogPage() {
     [data?.movies],
   )
 
+  const catalogDecades = useMemo(
+    () => decadesPresentInCatalog(data?.movies ?? []),
+    [data?.movies],
+  )
+
   const visibleMovies = useMemo(() => {
     const filtered = filterCatalogMovies(
       data?.movies ?? [],
       view.query,
       view.genreIds,
       view.year,
+      view.decade,
     )
     return sortCatalogMovies(filtered, view.sortBy)
-  }, [data?.movies, view.query, view.genreIds, view.year, view.sortBy])
+  }, [data?.movies, view.query, view.genreIds, view.year, view.decade, view.sortBy])
 
   const paged = useMemo(
-    () => paginate(visibleMovies, view.page),
+    () => paginate(visibleMovies, view.page, ARCHIVE_PAGE_SIZE),
     [visibleMovies, view.page],
   )
 
   const filtersActive = Boolean(
-    view.query.trim() || view.genreIds.length > 0 || view.year,
+    view.query.trim() || view.genreIds.length > 0 || view.year || view.decade,
   )
 
   function patchView(partial: Partial<CatalogViewState>) {
     const resetsPage =
       partial.page == null &&
-      ('query' in partial || 'genreIds' in partial || 'year' in partial || 'sortBy' in partial)
+      ('query' in partial ||
+        'genreIds' in partial ||
+        'year' in partial ||
+        'decade' in partial ||
+        'sortBy' in partial)
     const next = { ...view, ...partial, ...(resetsPage ? { page: 1 } : {}) }
     rememberCatalogView(next)
     const queryString = catalogSearchString(next)
@@ -109,6 +123,18 @@ export function CatalogPage() {
     if (!data) return
     if (view.page !== paged.page) patchView({ page: paged.page })
   }, [data, view.page, paged.page])
+
+  useEffect(() => {
+    if (!filtersOpen) return
+    const media = window.matchMedia('(max-width: 767px)')
+    if (!media.matches) return
+
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [filtersOpen])
 
   const skipPageScroll = useRef(true)
   useEffect(() => {
@@ -133,7 +159,10 @@ export function CatalogPage() {
           onClearGenres={() => patchView({ genreIds: [] })}
           years={catalogYears}
           selectedYear={view.year}
-          onYearChange={(year) => patchView({ year })}
+          onYearChange={(year) => patchView({ year, decade: year ? '' : view.decade })}
+          decades={catalogDecades}
+          selectedDecade={view.decade}
+          onDecadeChange={(decade) => patchView({ decade, year: decade ? '' : view.year })}
           filtersOpen={filtersOpen}
           onToggleFilters={() => setFiltersOpen((open) => !open)}
           onCloseFilters={() => setFiltersOpen(false)}
@@ -150,23 +179,52 @@ export function CatalogPage() {
       />
 
       {filtersOpen ? (
-        <div className="mt-6">
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto overscroll-contain bg-ink px-5 pt-5 md:hidden"
+          style={{ top: 'var(--app-header-h, 8.5rem)' }}
+        >
           <CatalogMobileFilters
             genres={catalogGenres}
             selectedGenreIds={view.genreIds}
             onToggleGenre={toggleGenre}
-            onClear={() => patchView({ genreIds: [], year: '' })}
+            onClear={() => patchView({ genreIds: [], year: '', decade: '' })}
+            onDone={() => setFiltersOpen(false)}
             years={catalogYears}
             selectedYear={view.year}
-            onYearChange={(year) => patchView({ year })}
+            onYearChange={(year) => patchView({ year, decade: year ? '' : view.decade })}
+            decades={catalogDecades}
+            selectedDecade={view.decade}
+            onDecadeChange={(decade) => patchView({ decade, year: decade ? '' : view.year })}
             sortBy={view.sortBy}
             onSortByChange={(sortBy) => patchView({ sortBy })}
           />
         </div>
       ) : null}
 
-      {view.genreIds.length > 0 ? (
+      {!filtersActive && (data?.movies.length ?? 0) > 0 ? (
+        <CatalogProgram
+          movies={data?.movies ?? []}
+          belovedIds={house.data?.belovedIds ?? []}
+          genres={catalogGenres}
+          years={catalogYears}
+          onPickGenre={(id) => patchView({ genreIds: [id] })}
+          onPickYear={(year) => patchView({ year, decade: '' })}
+        />
+      ) : null}
+
+      {view.genreIds.length > 0 || view.decade ? (
         <ul className="mt-8 mb-8 flex flex-wrap gap-x-4 gap-y-2">
+          {view.decade ? (
+            <li>
+              <button
+                type="button"
+                onClick={() => patchView({ decade: '' })}
+                className="text-xs tracking-[0.16em] uppercase text-brand hover:text-ivory"
+              >
+                {catalogDecades.find((decade) => decade.id === view.decade)?.label ?? view.decade} ×
+              </button>
+            </li>
+          ) : null}
           {catalogGenres
             .filter((genre) => view.genreIds.includes(genre.id))
             .map((genre) => (

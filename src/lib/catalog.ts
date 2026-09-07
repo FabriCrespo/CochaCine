@@ -7,8 +7,10 @@ export function filterCatalogMovies(
   query: string,
   selectedGenreIds: number[],
   selectedYear: string,
+  selectedDecade = '',
 ): Movie[] {
   const needle = foldText(query)
+  const decade = findCatalogDecade(selectedDecade)
 
   return movies.filter((movie) => {
     if (needle) {
@@ -23,6 +25,9 @@ export function filterCatalogMovies(
 
     if (selectedYear) {
       if (movie.releaseYear !== selectedYear) return false
+    } else if (decade) {
+      const year = Number(movie.releaseYear)
+      if (!Number.isFinite(year) || year < decade.from || year > decade.to) return false
     }
 
     return true
@@ -92,6 +97,33 @@ export const CATALOG_DECADES = [
   { id: '1980s', label: 'The 1980s', from: 1980, to: 1989 },
 ] as const
 
+export type CatalogDecade = {
+  id: string
+  label: string
+  from: number
+  to: number
+}
+
+export function findCatalogDecade(id: string): CatalogDecade | null {
+  const match = /^(\d{3}0)s$/.exec(id)
+  if (!match) return null
+  const from = Number(match[1])
+  if (!Number.isFinite(from) || from < 1890 || from > 2090) return null
+  return { id, label: `The ${from}s`, from, to: from + 9 }
+}
+
+export function decadesPresentInCatalog(movies: Movie[]): CatalogDecade[] {
+  const seen = new Map<string, CatalogDecade>()
+  for (const movie of movies) {
+    const year = Number(movie.releaseYear)
+    if (!Number.isFinite(year)) continue
+    const from = Math.floor(year / 10) * 10
+    const decade = findCatalogDecade(`${from}s`)
+    if (decade) seen.set(decade.id, decade)
+  }
+  return [...seen.values()].sort((left, right) => right.from - left.from)
+}
+
 export function popularCatalogMovies(
   movies: Movie[],
   limit = HOME_POPULAR_LIMIT,
@@ -105,6 +137,24 @@ export function popularCatalogMovies(
       .slice(0, limit)
   }
   return sortCatalogMovies(movies, CATALOG_SORT.popularity).slice(0, limit)
+}
+
+/** Titles the archive can rotate as “a door in the stacks”: posters first, beloved first. */
+export function archiveSpotlightMovies(
+  movies: Movie[],
+  belovedIds: number[] = [],
+  limit = 12,
+): Movie[] {
+  const withPoster = movies.filter((movie) => Boolean(movie.posterUrl))
+  const belovedSet = new Set(belovedIds)
+  const pinned = belovedIds
+    .map((id) => withPoster.find((movie) => movie.id === id))
+    .filter((movie): movie is Movie => movie != null)
+  const rest = sortCatalogMovies(
+    withPoster.filter((movie) => !belovedSet.has(movie.id)),
+    CATALOG_SORT.popularity,
+  )
+  return [...pinned, ...rest].slice(0, limit)
 }
 
 export function moviesInDecade(

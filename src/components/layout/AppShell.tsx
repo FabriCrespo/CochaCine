@@ -6,7 +6,7 @@
  * Logo a la izquierda. `toolbar` (buscador/filtros) al lado.
  */
 
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { paths } from '../../lib/paths.ts'
 import { SiteFooter } from './SiteFooter.tsx'
@@ -23,10 +23,34 @@ type AppShellProps = {
 
 export function AppShell({ title, toolbar, hero, after, wide = false, children }: AppShellProps) {
   const width = wide ? 'max-w-7xl' : 'max-w-6xl'
+  const headerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const node = headerRef.current
+    if (!node) return
+
+    const sync = () => {
+      document.documentElement.style.setProperty(
+        '--app-header-h',
+        `${Math.round(node.getBoundingClientRect().height)}px`,
+      )
+    }
+
+    sync()
+    const observer = new ResizeObserver(sync)
+    observer.observe(node)
+    return () => {
+      observer.disconnect()
+      document.documentElement.style.removeProperty('--app-header-h')
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-ink font-sans text-ivory">
-      <header className="sticky top-0 z-50 border-b border-ivory/8 bg-ink/90 backdrop-blur-sm">
+      <header
+        ref={headerRef}
+        className="sticky top-0 z-50 overflow-visible border-b border-ivory/8 bg-ink/90 backdrop-blur-sm"
+      >
         <div className={`mx-auto flex ${width} flex-wrap items-center gap-x-4 px-5 py-3 md:py-4`}>
           <Link to={paths.home} className="shrink-0">
             <img

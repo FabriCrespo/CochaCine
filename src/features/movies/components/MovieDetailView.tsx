@@ -14,7 +14,7 @@ import { useWatchlist } from '../../../lib/useWatchlist.ts'
 import { toggleWatchlist } from '../../../lib/watchlist.ts'
 import { HorizontalCarousel } from './HorizontalCarousel.tsx'
 import { MovieCardLink } from './MovieCard.tsx'
-import { TrailerModal } from './TrailerModal.tsx'
+import { MovieTrailer } from './MovieTrailer.tsx'
 
 type MovieDetailViewProps = {
   movie: MovieDetail
@@ -25,7 +25,6 @@ const focusRing =
   'outline-none focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-brand'
 
 export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
-  const [trailerOpen, setTrailerOpen] = useState(false)
   const watchlist = useWatchlist()
   const saved = watchlist.some((item) => item.id === movie.id)
   const runtime = formatRuntimeCompact(movie.runtimeMinutes)
@@ -48,7 +47,18 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
     { label: 'Language', value: joinList(movie.languages) },
     { label: 'Released', value: formatReleaseDateLong(movie.releaseDate) },
   ].filter((item): item is { label: string; value: string } => Boolean(item.value))
-  const hasDossier = credits.length > 0 || highlights.length > 0 || plotParagraphs.length > 0
+  const hasTrailer = Boolean(movie.trailerYoutubeKey)
+  const hasDossier = credits.length > 0 || highlights.length > 0 || plotParagraphs.length > 0 || hasTrailer
+
+  function showTrailer() {
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document.getElementById('title-trailer')?.scrollIntoView({
+      behavior: prefersReduced ? 'auto' : 'smooth',
+      block: 'center',
+    })
+  }
 
   return (
     <article className="text-ivory">
@@ -66,8 +76,8 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
         <PosterPlate
           posterUrl={movie.posterUrl}
           title={movie.title}
-          hasTrailer={Boolean(movie.trailerYoutubeKey)}
-          onPlay={() => setTrailerOpen(true)}
+          hasTrailer={hasTrailer}
+          onPlay={showTrailer}
         />
 
         <div className="min-w-0 lg:pt-2">
@@ -105,7 +115,7 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
             {movie.trailerYoutubeKey ? (
               <button
                 type="button"
-                onClick={() => setTrailerOpen(true)}
+                onClick={showTrailer}
                 className={`inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-xs tracking-[0.16em] uppercase text-ink transition-[letter-spacing,background-color] duration-300 hover:bg-ivory hover:tracking-[0.22em] ${focusRing}`}
               >
                 <PlayIcon />
@@ -166,21 +176,10 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
                     From the archive
                   </p>
                   <h3 className="mt-3 font-display text-4xl italic sm:text-5xl">Notes</h3>
-                  {movie.backdropUrl ? (
-                    <figure className="group relative mt-10">
-                      <div className="fiche-media">
-                        <img
-                          src={movie.backdropUrl}
-                          alt=""
-                          className="aspect-2/1 w-full object-cover"
-                        />
-                      </div>
-                      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-linear-to-t from-ink/70 to-transparent px-5 py-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                        <span className="text-[11px] tracking-[0.2em] uppercase text-brand">
-                          Production still
-                        </span>
-                      </figcaption>
-                    </figure>
+                  {hasTrailer && movie.trailerYoutubeKey ? (
+                    <div id="title-trailer" className="mt-10">
+                      <MovieTrailer youtubeKey={movie.trailerYoutubeKey} title={movie.title} />
+                    </div>
                   ) : null}
                   {highlights.length === 1 ? (
                     <NotePull item={highlights[0]} />
@@ -201,10 +200,22 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
               </Reveal>
             ) : null}
 
+            {hasTrailer && movie.trailerYoutubeKey && highlights.length === 0 ? (
+              <Reveal className={credits.length > 0 ? 'mt-20 lg:mt-24' : undefined}>
+                <section>
+                  <p className="text-[11px] tracking-[0.28em] uppercase text-ink/40">The reel</p>
+                  <h3 className="mt-3 font-display text-4xl italic sm:text-5xl">Trailer</h3>
+                  <div id="title-trailer" className="mt-10">
+                    <MovieTrailer youtubeKey={movie.trailerYoutubeKey} title={movie.title} />
+                  </div>
+                </section>
+              </Reveal>
+            ) : null}
+
             {plotParagraphs.length > 0 ? (
               <Reveal
                 className={
-                  credits.length > 0 || highlights.length > 0 ? 'mt-20 lg:mt-24' : undefined
+                  credits.length > 0 || highlights.length > 0 || hasTrailer ? 'mt-20 lg:mt-24' : undefined
                 }
               >
                 <section>
@@ -252,14 +263,6 @@ export function MovieDetailView({ movie, similar }: MovieDetailViewProps) {
             ))}
           </HorizontalCarousel>
         </div>
-      ) : null}
-
-      {trailerOpen && movie.trailerYoutubeKey ? (
-        <TrailerModal
-          youtubeKey={movie.trailerYoutubeKey}
-          title={movie.title}
-          onClose={() => setTrailerOpen(false)}
-        />
       ) : null}
     </article>
   )

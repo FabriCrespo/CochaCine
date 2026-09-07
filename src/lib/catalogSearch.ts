@@ -1,4 +1,5 @@
 import { CATALOG_SORT, type CatalogSort } from '../api/tmdb/sort.ts'
+import { findCatalogDecade } from './catalog.ts'
 
 const SEARCH_KEY = 'cochacine.catalog.search'
 const SCROLL_KEY = 'cochacine.catalog.scroll'
@@ -7,6 +8,7 @@ export type CatalogViewState = {
   query: string
   genreIds: number[]
   year: string
+  decade: string
   sortBy: CatalogSort
   page: number
 }
@@ -16,6 +18,7 @@ export function defaultCatalogView(): CatalogViewState {
     query: '',
     genreIds: [],
     year: '',
+    decade: '',
     sortBy: CATALOG_SORT.featured,
     page: 1,
   }
@@ -34,6 +37,7 @@ export function parseCatalogSearch(search: string): CatalogViewState {
     query: params.get('q') ?? '',
     genreIds,
     year: params.get('y') ?? '',
+    decade: findCatalogDecade(params.get('d') ?? '')?.id ?? '',
     sortBy: isCatalogSort(sortRaw) ? sortRaw : CATALOG_SORT.featured,
     page: Number.isInteger(pageRaw) && pageRaw > 0 ? pageRaw : 1,
   }
@@ -44,6 +48,7 @@ export function catalogSearchString(view: CatalogViewState): string {
   if (view.query.length > 0) params.set('q', view.query)
   if (view.genreIds.length > 0) params.set('g', view.genreIds.join(','))
   if (view.year) params.set('y', view.year)
+  if (view.decade) params.set('d', view.decade)
   if (view.sortBy !== CATALOG_SORT.featured) params.set('s', view.sortBy)
   if (view.page > 1) params.set('p', String(view.page))
   const encoded = params.toString()

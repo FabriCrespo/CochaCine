@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Movie } from '../domain/movie.ts'
-import { matchCatalogMovie, matchCatalogMovieByTitle, primaryGenreName } from './catalog.ts'
+import { filterCatalogMovies, matchCatalogMovie, matchCatalogMovieByTitle, primaryGenreName, archiveSpotlightMovies } from './catalog.ts'
 
 function movie(partial: Partial<Movie> & Pick<Movie, 'id' | 'title'>): Movie {
   return {
@@ -81,5 +81,30 @@ describe('primaryGenreName', () => {
         { id: 18, name: 'Drama' },
       ]),
     ).toBe('Drama')
+  })
+})
+
+describe('archiveSpotlightMovies', () => {
+  it('skips titles without posters and puts beloved first', () => {
+    const pool = archiveSpotlightMovies(
+      [
+        movie({ id: 1, title: 'No still', posterUrl: null, popularity: 90 }),
+        movie({ id: 2, title: 'Quiet', popularity: 10 }),
+        movie({ id: 3, title: 'Beloved', popularity: 1 }),
+      ],
+      [3],
+      5,
+    )
+    expect(pool.map((item) => item.id)).toEqual([3, 2])
+  })
+})
+
+describe('filterCatalogMovies — decade', () => {
+  it('keeps titles in the chosen decade', () => {
+    const titles = [
+      movie({ id: 1, title: 'Sixties', releaseYear: '1969' }),
+      movie({ id: 2, title: 'Nineties', releaseYear: '1995' }),
+    ]
+    expect(filterCatalogMovies(titles, '', [], '', '1960s').map((item) => item.id)).toEqual([1])
   })
 })

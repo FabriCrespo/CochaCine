@@ -1,6 +1,17 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router'
 import type { Movie, MovieGenre } from '../../../domain/movie.ts'
+import type { CatalogDecade } from '../../../lib/catalog.ts'
 import {
   CATALOG_SORT,
   CATALOG_SORT_LABELS,
@@ -21,6 +32,9 @@ type CatalogControlsProps = {
   years: string[]
   selectedYear: string
   onYearChange: (value: string) => void
+  decades: CatalogDecade[]
+  selectedDecade: string
+  onDecadeChange: (value: string) => void
   filtersOpen: boolean
   onToggleFilters: () => void
   onCloseFilters: () => void
@@ -42,6 +56,9 @@ export function CatalogControls({
   years,
   selectedYear,
   onYearChange,
+  decades,
+  selectedDecade,
+  onDecadeChange,
   filtersOpen,
   onToggleFilters,
   onCloseFilters,
@@ -51,7 +68,10 @@ export function CatalogControls({
   const panelId = useId()
   const listId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
+  const genreButtonRef = useRef<HTMLButtonElement>(null)
+  const genrePanelRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLDivElement>(null)
+  const [genrePanelStyle, setGenrePanelStyle] = useState<CSSProperties>({})
   const navigate = useNavigate()
   const prefetchMovie = usePrefetchMovie()
   const selectedCount = selectedGenreIds.length
@@ -80,16 +100,18 @@ export function CatalogControls({
     setActiveIndex(0)
   }
 
-  const filterCount = selectedCount + (selectedYear ? 1 : 0)
+  const filterCount = selectedCount + (selectedYear ? 1 : 0) + (selectedDecade ? 1 : 0)
 
   useEffect(() => {
     if (!filtersOpen) return
 
     function handlePointer(event: MouseEvent) {
       if (!window.matchMedia('(min-width: 768px)').matches) return
-      if (!rootRef.current?.contains(event.target as Node)) {
-        onCloseFilters()
+      const target = event.target as Node
+      if (rootRef.current?.contains(target) || genrePanelRef.current?.contains(target)) {
+        return
       }
+      onCloseFilters()
     }
 
     function handleKey(event: globalThis.KeyboardEvent) {
@@ -103,6 +125,42 @@ export function CatalogControls({
       document.removeEventListener('keydown', handleKey)
     }
   }, [filtersOpen, onCloseFilters])
+
+  useLayoutEffect(() => {
+    if (!filtersOpen) return
+
+    function placePanel() {
+      if (!window.matchMedia('(min-width: 768px)').matches) return
+      const anchor = genreButtonRef.current
+      if (!anchor) return
+
+      const rect = anchor.getBoundingClientRect()
+      const width = Math.min(22 * 16, window.innerWidth - 24)
+      const left = Math.min(
+        Math.max(12, rect.right - width),
+        window.innerWidth - width - 12,
+      )
+      const gap = 10
+      const below = window.innerHeight - rect.bottom - gap - 16
+      const above = rect.top - gap - 16
+      const openDown = below >= 220 || below >= above
+      const maxHeight = Math.max(160, Math.min(openDown ? below : above, 420))
+
+      setGenrePanelStyle(
+        openDown
+          ? { top: rect.bottom + gap, left, width, maxHeight }
+          : { top: Math.max(12, rect.top - gap - maxHeight), left, width, maxHeight },
+      )
+    }
+
+    placePanel()
+    window.addEventListener('resize', placePanel)
+    window.addEventListener('scroll', placePanel, true)
+    return () => {
+      window.removeEventListener('resize', placePanel)
+      window.removeEventListener('scroll', placePanel, true)
+    }
+  }, [filtersOpen])
 
   useEffect(() => {
     if (!showSuggestions) return
@@ -155,8 +213,61 @@ export function CatalogControls({
     }
   }
 
+  const genrePanel =
+    filtersOpen &&
+    typeof document !== 'undefined' &&
+    typeof genrePanelStyle.top === 'number'
+      ? createPortal(
+          <div
+            ref={genrePanelRef}
+            id={panelId}
+            role="dialog"
+            aria-label="Categories"
+            style={genrePanelStyle}
+            className="fixed z-60 hidden overflow-y-auto overscroll-contain border border-ivory/10 bg-ink p-4 shadow-[0_18px_40px_rgba(0,0,0,0.45)] md:block"
+          >
+            <div className="sticky top-0 z-10 mb-3 flex items-center justify-between bg-ink pb-1">
+              <p className="text-xs tracking-[0.2em] uppercase text-muted">Categories</p>
+              {selectedCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={onClearGenres}
+                  className="text-xs tracking-wide text-muted underline-offset-4 hover:text-ivory hover:underline"
+                >
+                  Clear
+                </button>
+              ) : null}
+            </div>
+            {genres.length === 0 ? (
+              <p className="text-sm text-muted">No genres in this catalog yet.</p>
+            ) : (
+              <ul className="space-y-1">
+                {genres.map((genre) => {
+                  const checked = selectedGenreIds.includes(genre.id)
+                  return (
+                    <li key={genre.id}>
+                      <label className="flex cursor-pointer items-center gap-2 py-1 text-sm text-ivory">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => onToggleGenre(genre.id)}
+                          className="accent-brand"
+                        />
+                        {genre.name}
+                      </label>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>,
+          document.body,
+        )
+      : null
+
   return (
-    <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:gap-2">
+    <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2">
+      {genrePanel}
       <div className="relative min-w-0 flex-1" ref={searchRef}>
         <label className="block">
           <span className="sr-only">Search movies</span>
@@ -251,6 +362,7 @@ export function CatalogControls({
         </button>
 
         <button
+          ref={genreButtonRef}
           type="button"
           aria-expanded={filtersOpen}
           aria-controls={panelId}
@@ -260,6 +372,20 @@ export function CatalogControls({
           Genres
           {selectedCount > 0 ? ` (${selectedCount})` : ''}
         </button>
+
+        <select
+          aria-label="Decade"
+          value={selectedDecade}
+          onChange={(event) => onDecadeChange(event.target.value)}
+          className={`${fieldClass} hidden [&>option]:bg-ink [&>option]:text-ivory md:inline`}
+        >
+          <option value="">Decade</option>
+          {decades.map((decade) => (
+            <option key={decade.id} value={decade.id}>
+              {decade.label}
+            </option>
+          ))}
+        </select>
 
         <select
           aria-label="Year"
@@ -288,47 +414,6 @@ export function CatalogControls({
           ))}
         </select>
 
-        {filtersOpen ? (
-          <div
-            id={panelId}
-            className="absolute right-0 z-40 mt-2 hidden w-72 border border-ivory/10 bg-ink p-4 md:block"
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs tracking-[0.2em] uppercase text-muted">Categories</p>
-              {selectedCount > 0 ? (
-                <button
-                  type="button"
-                  onClick={onClearGenres}
-                  className="text-xs tracking-wide text-muted underline-offset-4 hover:text-ivory hover:underline"
-                >
-                  Clear
-                </button>
-              ) : null}
-            </div>
-            {genres.length === 0 ? (
-              <p className="text-sm text-muted">No genres in this catalog yet.</p>
-            ) : (
-              <ul className="max-h-64 space-y-2 overflow-auto">
-                {genres.map((genre) => {
-                  const checked = selectedGenreIds.includes(genre.id)
-                  return (
-                    <li key={genre.id}>
-                      <label className="flex cursor-pointer items-center gap-2 text-sm text-ivory">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => onToggleGenre(genre.id)}
-                          className="accent-brand"
-                        />
-                        {genre.name}
-                      </label>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-          </div>
-        ) : null}
       </div>
     </div>
   )
@@ -339,9 +424,13 @@ type CatalogMobileFiltersProps = {
   selectedGenreIds: number[]
   onToggleGenre: (id: number) => void
   onClear: () => void
+  onDone: () => void
   years: string[]
   selectedYear: string
   onYearChange: (value: string) => void
+  decades: CatalogDecade[]
+  selectedDecade: string
+  onDecadeChange: (value: string) => void
   sortBy: CatalogSort
   onSortByChange: (value: CatalogSort) => void
 }
@@ -351,16 +440,30 @@ export function CatalogMobileFilters({
   selectedGenreIds,
   onToggleGenre,
   onClear,
+  onDone,
   years,
   selectedYear,
   onYearChange,
+  decades,
+  selectedDecade,
+  onDecadeChange,
   sortBy,
   onSortByChange,
 }: CatalogMobileFiltersProps) {
-  const filterCount = selectedGenreIds.length + (selectedYear ? 1 : 0)
+  const filterCount = selectedGenreIds.length + (selectedYear ? 1 : 0) + (selectedDecade ? 1 : 0)
 
   return (
-    <div className="mb-8 space-y-5 border-b border-ivory/10 pb-8 md:hidden">
+    <div className="space-y-6 pb-8 md:hidden">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[11px] tracking-[0.2em] uppercase text-muted">Filters</p>
+        <button
+          type="button"
+          onClick={onDone}
+          className="text-xs tracking-[0.16em] uppercase text-ivory"
+        >
+          Done
+        </button>
+      </div>
       <label className="block">
         <span className="mb-2 block text-[11px] tracking-[0.2em] uppercase text-muted">Sort</span>
         <select
@@ -372,6 +475,23 @@ export function CatalogMobileFilters({
           {(Object.values(CATALOG_SORT) as CatalogSort[]).map((value) => (
             <option key={value} value={value}>
               {CATALOG_SORT_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="block">
+        <span className="mb-2 block text-[11px] tracking-[0.2em] uppercase text-muted">Decade</span>
+        <select
+          aria-label="Decade"
+          value={selectedDecade}
+          onChange={(event) => onDecadeChange(event.target.value)}
+          className="w-full border-0 border-b border-ivory/15 bg-transparent py-2.5 text-sm text-ivory outline-none focus:border-brand [&>option]:bg-ink [&>option]:text-ivory"
+        >
+          <option value="">Any decade</option>
+          {decades.map((decade) => (
+            <option key={decade.id} value={decade.id}>
+              {decade.label}
             </option>
           ))}
         </select>
@@ -410,18 +530,18 @@ export function CatalogMobileFilters({
         {genres.length === 0 ? (
           <p className="text-sm text-muted">No genres in this catalog yet.</p>
         ) : (
-          <ul className="flex flex-wrap gap-2">
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {genres.map((genre) => {
               const checked = selectedGenreIds.includes(genre.id)
               return (
-                <li key={genre.id}>
+                <li key={genre.id} className="min-w-0">
                   <button
                     type="button"
                     onClick={() => onToggleGenre(genre.id)}
                     className={
                       checked
-                        ? 'bg-brand px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-ink'
-                        : 'border border-ivory/15 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-ivory/70'
+                        ? 'w-full truncate bg-brand px-3 py-2.5 text-left text-[11px] tracking-[0.14em] uppercase text-ink'
+                        : 'w-full truncate border border-ivory/15 px-3 py-2.5 text-left text-[11px] tracking-[0.14em] uppercase text-ivory/70'
                     }
                   >
                     {genre.name}
