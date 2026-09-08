@@ -1,7 +1,8 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs.tsx'
 import { Pagination } from '../../components/layout/Pagination.tsx'
+import type { MovieOverride } from '../../api/supabase/types.ts'
 import type { Movie } from '../../domain/movie.ts'
 import { filterCatalogMovies } from '../../lib/catalog.ts'
 import { paginate } from '../../lib/pagination.ts'
@@ -9,18 +10,33 @@ import { paths, parseMovieIdParam } from '../../lib/paths.ts'
 import { useBolivianMovies } from '../../query/movies/useBolivianMovies.ts'
 import { useMovieSource } from '../../query/movies/useMovieSource.ts'
 import { useMoveCatalogBeloved, useCatalogHouse } from '../../query/house/useCatalogHouse.ts'
-import { useMovieOverride, useOverrideList } from '../../query/overrides/useOverrides.ts'
+import { useOverrideList } from '../../query/overrides/useOverrides.ts'
 import { AdminAddTitle } from './AdminAddTitle.tsx'
 import { AdminEditor } from './AdminEditor.tsx'
 import { AdminUnlock } from './AdminUnlock.tsx'
 import { ReadingInbox } from './ReadingInbox.tsx'
 import { useAdminAuth } from './useAdminAuth.ts'
 
-type ListFilter = 'missing-overview' | 'missing-poster' | 'edited' | 'beloved' | 'hidden' | 'all'
+type ListFilter =
+  | 'missing-overview'
+  | 'missing-poster'
+  | 'missing-date'
+  | 'missing-director'
+  | 'missing-facts'
+  | 'edited'
+  | 'beloved'
+  | 'hidden'
+  | 'all'
 
-const FILTERS: { id: ListFilter; label: string }[] = [
+const GAP_FILTERS: { id: ListFilter; label: string }[] = [
   { id: 'missing-overview', label: 'No plot' },
   { id: 'missing-poster', label: 'No poster' },
+  { id: 'missing-date', label: 'No date' },
+  { id: 'missing-director', label: 'No director' },
+  { id: 'missing-facts', label: 'No facts' },
+]
+
+const LIBRARY_FILTERS: { id: ListFilter; label: string }[] = [
   { id: 'edited', label: 'Edited' },
   { id: 'beloved', label: 'Beloved' },
   { id: 'hidden', label: 'Hidden' },
@@ -29,8 +45,10 @@ const FILTERS: { id: ListFilter; label: string }[] = [
 
 export function AdminPage() {
   const { movieId } = useParams()
+  const { pathname } = useLocation()
   const navigate = useNavigate()
-  const selectedId = parseMovieIdParam(movieId)
+  const selectedId =
+    parseMovieIdParam(pathname.match(/^\/admin\/(\d+)/)?.[1]) ?? parseMovieIdParam(movieId)
   const auth = useAdminAuth()
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<ListFilter>('missing-overview')
@@ -66,11 +84,14 @@ export function AdminPage() {
     catalogMovies.find((movie) => movie.id === selectedId) ??
     (pinned?.id === selectedId ? pinned : null)
   const source = useMovieSource(selectedId ?? 0)
-  const override = useMovieOverride(selectedId ?? 0)
 
-  const editedIds = useMemo(() => {
-    return new Set((overrides.data ?? []).map((row) => row.tmdb_id))
+  const overrideById = useMemo(() => {
+    const map = new Map<number, MovieOverride>()
+    for (const row of overrides.data ?? []) map.set(row.tmdb_id, row)
+    return map
   }, [overrides.data])
+
+  const editedIds = useMemo(() => new Set(overrideById.keys()), [overrideById])
 
   const counts = useMemo(() => {
     const searched = filterCatalogMovies(catalogMovies, query, [], '')
@@ -78,12 +99,16 @@ export function AdminPage() {
     return {
       'missing-overview': publicMovies.filter((movie) => !movie.overview.trim()).length,
       'missing-poster': publicMovies.filter((movie) => !movie.posterUrl).length,
+      'missing-date': publicMovies.filter((movie) => missingReleaseDate(movie)).length,
+      'missing-director': publicMovies.filter((movie) => missingDirector(movie)).length,
+      'missing-facts': publicMovies.filter((movie) => missingFunFacts(overrideById.get(movie.id)))
+        .length,
       edited: publicMovies.filter((movie) => editedIds.has(movie.id)).length,
       beloved: searched.filter((movie) => belovedSet.has(movie.id)).length,
       hidden: searched.filter((movie) => hiddenIds.has(movie.id)).length,
       all: publicMovies.length,
     } satisfies Record<ListFilter, number>
-  }, [catalogMovies, query, editedIds, hiddenIds, belovedSet])
+  }, [catalogMovies, query, editedIds, hiddenIds, belovedSet, overrideById])
 
   const visibleMovies = useMemo(() => {
     const searched = filterCatalogMovies(catalogMovies, query, [], '')
@@ -94,9 +119,9 @@ export function AdminPage() {
         .filter((movie): movie is Movie => movie != null)
     }
     return searched.filter((movie) =>
-      matchesFilter(movie, filter, editedIds, hiddenIds, belovedSet),
+      matchesFilter(movie, filter, editedIds, hiddenIds, belovedSet, overrideById),
     )
-  }, [catalogMovies, query, filter, editedIds, hiddenIds, belovedSet, belovedIds])
+  }, [catalogMovies, query, filter, editedIds, hiddenIds, belovedSet, belovedIds, overrideById])
 
   const paged = useMemo(() => paginate(visibleMovies, page), [visibleMovies, page])
 
@@ -166,22 +191,19 @@ export function AdminPage() {
                 placeholder="Search the stacks..."
                 className="w-full border-0 border-b border-ivory/20 bg-transparent py-2 font-serif text-ivory outline-none placeholder:text-ivory/30 focus:border-brand"
               />
-              <div className="flex flex-wrap gap-1.5">
-                {FILTERS.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setFilter(item.id)}
-                    className={
-                      filter === item.id
-                        ? 'bg-brand px-2.5 py-1 text-[10px] tracking-[0.16em] uppercase text-ink'
-                        : 'px-2.5 py-1 text-[10px] tracking-[0.16em] uppercase text-muted hover:text-ivory'
-                    }
-                  >
-                    {item.label}
-                    <span className="ml-1.5 opacity-60">{counts[item.id]}</span>
-                  </button>
-                ))}
+              <div className="space-y-2.5">
+                <FilterRow
+                  items={GAP_FILTERS}
+                  filter={filter}
+                  counts={counts}
+                  onPick={setFilter}
+                />
+                <FilterRow
+                  items={LIBRARY_FILTERS}
+                  filter={filter}
+                  counts={counts}
+                  onPick={setFilter}
+                />
               </div>
               {overrides.isError ? (
                 <p className="font-serif text-xs text-red-300/90">
@@ -204,6 +226,7 @@ export function AdminPage() {
               const active = movie.id === selectedId
               const edited = editedIds.has(movie.id)
               const needsPlot = !movie.overview.trim()
+              const needsFacts = missingFunFacts(overrideById.get(movie.id))
               const hidden = hiddenIds.has(movie.id)
               const beloved = belovedSet.has(movie.id)
               return (
@@ -213,9 +236,8 @@ export function AdminPage() {
                       active ? 'bg-ivory/8' : 'hover:bg-ivory/5'
                     }`}
                   >
-                    <button
-                      type="button"
-                      onClick={() => navigate(paths.adminMovie(movie.id))}
+                    <Link
+                      to={paths.adminMovie(movie.id)}
                       className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     >
                       {movie.posterUrl ? (
@@ -231,11 +253,12 @@ export function AdminPage() {
                           {movie.releaseYear ?? '—'}
                           {edited ? ' · edited' : ''}
                           {needsPlot ? ' · no plot' : ''}
+                          {needsFacts ? ' · no facts' : ''}
                           {beloved ? ' · beloved' : ''}
                           {hidden ? ' · hidden' : ''}
                         </span>
                       </span>
-                    </button>
+                    </Link>
                     {filter === 'beloved' ? (
                       <span className="flex shrink-0 flex-col">
                         <button
@@ -311,8 +334,8 @@ export function AdminPage() {
             <AdminEditor
               key={selectedMovie.id}
               movie={selectedMovie}
-              source={source.data}
-              override={override.data}
+              source={source.data?.id === selectedMovie.id ? source.data : undefined}
+              override={overrideById.get(selectedMovie.id) ?? null}
             />
           ) : (
             <div className="flex min-h-[calc(100vh-4.5rem)] flex-col items-center justify-center px-8 text-center">
@@ -330,18 +353,70 @@ export function AdminPage() {
   )
 }
 
+function FilterRow({
+  items,
+  filter,
+  counts,
+  onPick,
+}: {
+  items: { id: ListFilter; label: string }[]
+  filter: ListFilter
+  counts: Record<ListFilter, number>
+  onPick: (id: ListFilter) => void
+}) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => onPick(item.id)}
+          className={
+            filter === item.id
+              ? 'bg-brand px-2.5 py-1 text-[10px] tracking-[0.16em] uppercase text-ink'
+              : 'px-2.5 py-1 text-[10px] tracking-[0.16em] uppercase text-muted hover:text-ivory'
+          }
+        >
+          {item.label}
+          <span className="ml-1.5 opacity-60">{counts[item.id]}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function missingReleaseDate(movie: Movie): boolean {
+  return !movie.releaseYear
+}
+
+function missingDirector(movie: Movie): boolean {
+  return !movie.directorName?.trim()
+}
+
+function missingFunFacts(override: MovieOverride | undefined): boolean {
+  if (!override?.highlights_en) return true
+  return !override.highlights_en
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .some(Boolean)
+}
+
 function matchesFilter(
   movie: Movie,
   filter: ListFilter,
   editedIds: Set<number>,
   hiddenIds: Set<number>,
   belovedIds: Set<number>,
+  overrideById: Map<number, MovieOverride>,
 ): boolean {
   if (filter === 'hidden') return hiddenIds.has(movie.id)
   if (filter === 'beloved') return belovedIds.has(movie.id)
   if (hiddenIds.has(movie.id)) return false
   if (filter === 'missing-overview') return !movie.overview.trim()
   if (filter === 'missing-poster') return !movie.posterUrl
+  if (filter === 'missing-date') return missingReleaseDate(movie)
+  if (filter === 'missing-director') return missingDirector(movie)
+  if (filter === 'missing-facts') return missingFunFacts(overrideById.get(movie.id))
   if (filter === 'edited') return editedIds.has(movie.id)
   return true
 }

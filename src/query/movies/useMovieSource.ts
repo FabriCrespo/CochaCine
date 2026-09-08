@@ -9,5 +9,6 @@ export function useMovieSource(id: number) {
     queryKey: movieKeys.detailSource(id),
     queryFn: () => fetchMovieByIdFromSources(id),
     enabled: id > 0,
+    placeholderData: (previous) => (previous?.id === id ? previous : undefined),
   })
 }

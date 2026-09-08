@@ -61,6 +61,7 @@ const fieldClass =
 const areaClass = `${fieldClass} resize-y leading-7`
 
 export function AdminEditor({ movie, source, override }: AdminEditorProps) {
+  const row = override?.tmdb_id === movie.id ? override : null
   const save = useSaveOverride()
   const remove = useDeleteOverride()
   const upload = useUploadPoster()
@@ -69,22 +70,16 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   const unhideMovie = useUnhideCatalogMovie()
   const pinBeloved = usePinCatalogBeloved()
   const unpinBeloved = useUnpinCatalogBeloved()
-  const [draft, setDraft] = useState<Draft>(() => draftFrom(override))
+  const [edits, setEdits] = useState<{ movieId: number; draft: Draft } | null>(null)
   const [flash, setFlash] = useState<string | null>(null)
   const [pane, setPane] = useState<Pane>('story')
-  const draftRef = useRef(draft)
+  const usingEdits = edits?.movieId === movie.id
+  const draft = usingEdits ? edits.draft : draftFrom(movie, row, source)
+  const draftRef = useRef({ movieId: movie.id, draft })
   const persistRef = useRef<(next: Draft) => Promise<void>>(async () => {})
-  const draftKey = `${movie.id}:${override?.updated_at ?? ''}`
-  const [appliedDraftKey, setAppliedDraftKey] = useState(draftKey)
-
-  if (appliedDraftKey !== draftKey) {
-    setAppliedDraftKey(draftKey)
-    setDraft(draftFrom(override))
-  }
-
-  useEffect(() => {
-    draftRef.current = draft
-  }, [draft])
+  const movieIdRef = useRef(movie.id)
+  movieIdRef.current = movie.id
+  draftRef.current = { movieId: movie.id, draft }
 
   useEffect(() => {
     save.reset()
@@ -93,11 +88,14 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     unhideMovie.reset()
     pinBeloved.reset()
     unpinBeloved.reset()
-  }, [draftKey, save, remove, hideMovie, unhideMovie, pinBeloved, unpinBeloved])
+  }, [movie.id])
 
   async function persist(next: Draft) {
+    const tmdbId = movieIdRef.current
     try {
-      await save.mutateAsync(toWrite(movie.id, next))
+      await save.mutateAsync(toWrite(tmdbId, next))
+      if (movieIdRef.current !== tmdbId) return
+      setEdits({ movieId: tmdbId, draft: next })
       setFlash('Saved')
       window.setTimeout(() => setFlash(null), 1600)
     } catch {
@@ -113,7 +111,9 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     function onKey(event: KeyboardEvent) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
         event.preventDefault()
-        void persistRef.current(draftRef.current)
+        const snap = draftRef.current
+        if (snap.movieId !== movieIdRef.current) return
+        void persistRef.current(snap.draft)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -163,7 +163,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     pinBeloved.error?.message ??
     unpinBeloved.error?.message ??
     null
-  const dirty = !sameDraft(draft, override)
+  const dirty = !sameDraft(draft, movie, row, source)
   const posterSrc = draft.poster_url || hint.poster
 
   async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
@@ -173,7 +173,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     try {
       const url = await upload.mutateAsync({ tmdbId: movie.id, file })
       const next = { ...draft, poster_url: url }
-      setDraft(next)
+      setEdits({ movieId: movie.id, draft: next })
       await persist(next)
     } catch {
       // shown via `error`
@@ -205,11 +205,11 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   }
 
   async function handleDelete() {
-    if (!override) return
+    if (!row) return
     if (!window.confirm('Delete this override and revert to TMDB?')) return
     try {
       await remove.mutateAsync(movie.id)
-      setDraft(emptyDraft())
+      setEdits({ movieId: movie.id, draft: draftFrom(movie, null, source) })
       setFlash('Reverted to TMDB')
       window.setTimeout(() => setFlash(null), 1600)
     } catch {
@@ -218,7 +218,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   }
 
   function field<K extends keyof Draft>(key: K, value: Draft[K]) {
-    setDraft((current) => ({ ...current, [key]: value }))
+    setEdits({ movieId: movie.id, draft: { ...draft, [key]: value } })
   }
 
   return (
@@ -242,7 +242,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
           <div>
             <p className="text-[11px] tracking-[0.22em] uppercase text-ink/40">
               TMDB {movie.id}
-              {override ? ' · override' : ' · TMDB only'}
+              {row ? ' · override' : ' · TMDB only'}
             </p>
             <h2 className="mt-2 font-display text-3xl italic leading-tight text-ink sm:text-4xl">
               {movie.title}
@@ -483,7 +483,7 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
               onUseHint={() => undefined}
               placeholder="Just for you. Not shown on the site."
             />
-            {override ? (
+            {row ? (
               <button
                 type="button"
                 onClick={() => void handleDelete()}
@@ -617,53 +617,40 @@ function LabelRow({
   )
 }
 
-function emptyDraft(): Draft {
+function draftFrom(
+  movie: Movie,
+  override: MovieOverride | null | undefined,
+  source?: MovieDetail,
+): Draft {
+  const row = override?.tmdb_id === movie.id ? override : null
+  const fromSource = source?.id === movie.id ? source : undefined
   return {
-    title_en: '',
-    overview_en: '',
-    plot_en: '',
-    tagline_en: '',
-    poster_url: '',
-    backdrop_url: '',
-    trailer_youtube_key: '',
-    director_name: '',
-    writers: '',
-    production: '',
-    countries: '',
-    languages: '',
-    genres: '',
-    release_date: '',
-    runtime_minutes: '',
-    certification: '',
-    highlights_en: '',
-    notes: '',
-  }
-}
-
-function draftFrom(override: MovieOverride | null | undefined): Draft {
-  if (!override) return emptyDraft()
-  return {
-    title_en: override.title_en ?? '',
-    overview_en: override.overview_en ?? '',
-    plot_en: override.plot_en ?? '',
-    tagline_en: override.tagline_en ?? '',
-    poster_url: override.poster_url ?? '',
-    backdrop_url: override.backdrop_url ?? '',
-    trailer_youtube_key: override.trailer_youtube_key ?? '',
-    director_name: override.director_name ?? '',
-    writers: override.writers ?? '',
-    production: override.production ?? '',
-    countries: override.countries ?? '',
-    languages: override.languages ?? '',
-    genres: override.genres ?? '',
-    release_date: (override.release_date ?? '').slice(0, 10),
+    title_en: row?.title_en ?? fromSource?.title ?? movie.title,
+    overview_en: row?.overview_en ?? fromSource?.overview ?? movie.overview,
+    plot_en: row?.plot_en ?? fromSource?.plot ?? '',
+    tagline_en: row?.tagline_en ?? fromSource?.tagline ?? '',
+    poster_url: row?.poster_url ?? fromSource?.posterUrl ?? movie.posterUrl ?? '',
+    backdrop_url: row?.backdrop_url ?? fromSource?.backdropUrl ?? '',
+    trailer_youtube_key: row?.trailer_youtube_key ?? fromSource?.trailerYoutubeKey ?? '',
+    director_name: row?.director_name ?? fromSource?.director?.name ?? movie.directorName ?? '',
+    writers: row?.writers ?? joinHint(fromSource?.writers),
+    production: row?.production ?? joinHint(fromSource?.productionCompanies),
+    countries: row?.countries ?? joinHint(fromSource?.countries),
+    languages: row?.languages ?? joinHint(fromSource?.languages),
+    genres: row?.genres ?? joinHint(fromSource?.genres),
+    release_date:
+      (row?.release_date ?? fromSource?.releaseDate ?? '').slice(0, 10),
     runtime_minutes:
-      override.runtime_minutes != null && override.runtime_minutes > 0
-        ? String(override.runtime_minutes)
-        : '',
-    certification: override.certification ?? '',
-    highlights_en: override.highlights_en ?? '',
-    notes: override.notes ?? '',
+      row?.runtime_minutes != null && row.runtime_minutes > 0
+        ? String(row.runtime_minutes)
+        : fromSource?.runtimeMinutes != null && fromSource.runtimeMinutes > 0
+          ? String(fromSource.runtimeMinutes)
+          : '',
+    certification: row?.certification ?? fromSource?.certification ?? '',
+    highlights_en:
+      row?.highlights_en ??
+      (fromSource?.highlights ?? []).map((item) => item.text).join('\n'),
+    notes: row?.notes ?? '',
   }
 }
 
@@ -708,7 +695,12 @@ function joinHint(values: string[] | undefined): string {
   return (values ?? []).join(', ')
 }
 
-function sameDraft(draft: Draft, override: MovieOverride | null | undefined): boolean {
-  const current = draftFrom(override)
+function sameDraft(
+  draft: Draft,
+  movie: Movie,
+  override: MovieOverride | null | undefined,
+  source?: MovieDetail,
+): boolean {
+  const current = draftFrom(movie, override, source)
   return (Object.keys(current) as Array<keyof Draft>).every((key) => draft[key] === current[key])
 }
