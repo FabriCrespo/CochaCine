@@ -122,7 +122,7 @@ export function CatalogPage() {
   useEffect(() => {
     if (!data) return
     if (view.page !== paged.page) patchView({ page: paged.page })
-  }, [data, view.page, paged.page])
+  }, [data, view.page, paged.page, patchView])
 
   useEffect(() => {
     if (!filtersOpen) return

@@ -37,7 +37,7 @@ export function HomePage() {
 function HomeIndex() {
   const { data, isPending, isError, error, refetch } = useBolivianMovies()
   const house = useCatalogHouse()
-  const movies = data?.movies ?? []
+  const movies = useMemo(() => data?.movies ?? [], [data?.movies])
 
   const popular = useMemo(
     () => popularCatalogMovies(movies, undefined, house.data?.belovedIds ?? []),

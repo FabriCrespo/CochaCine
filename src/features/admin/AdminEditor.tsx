@@ -78,8 +78,11 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
   const draftRef = useRef({ movieId: movie.id, draft })
   const persistRef = useRef<(next: Draft) => Promise<void>>(async () => {})
   const movieIdRef = useRef(movie.id)
-  movieIdRef.current = movie.id
-  draftRef.current = { movieId: movie.id, draft }
+
+  useEffect(() => {
+    movieIdRef.current = movie.id
+    draftRef.current = { movieId: movie.id, draft }
+  }, [movie.id, draft])
 
   useEffect(() => {
     save.reset()
@@ -88,7 +91,15 @@ export function AdminEditor({ movie, source, override }: AdminEditorProps) {
     unhideMovie.reset()
     pinBeloved.reset()
     unpinBeloved.reset()
-  }, [movie.id])
+  }, [
+    movie.id,
+    save.reset,
+    remove.reset,
+    hideMovie.reset,
+    unhideMovie.reset,
+    pinBeloved.reset,
+    unpinBeloved.reset,
+  ])
 
   async function persist(next: Draft) {
     const tmdbId = movieIdRef.current

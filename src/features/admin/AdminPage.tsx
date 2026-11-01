@@ -69,7 +69,7 @@ export function AdminPage() {
     () => new Set(house.data?.hiddenIds ?? []),
     [house.data?.hiddenIds],
   )
-  const belovedIds = house.data?.belovedIds ?? []
+  const belovedIds = useMemo(() => house.data?.belovedIds ?? [], [house.data?.belovedIds])
   const belovedSet = useMemo(() => new Set(belovedIds), [belovedIds])
 
   const catalogMovies = useMemo(() => {
